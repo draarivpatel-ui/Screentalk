@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta property="og:title" content="ScreenTalk: help your family get cancer screening on time" />
+  <meta property="og:description" content="A free, private tool that turns American Cancer Society screening guidelines into a family plan and a conversation starter. Built by a teen for CodeTheCure 2026." />
+  <meta property="og:type" content="website" />
+  <title>ScreenTalk: help your family get cancer screening on time</title>
+  <meta name="description" content="ScreenTalk helps teens turn American Cancer Society screening guidelines into a family plan and a conversation starter. Free, private, no sign-up." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <p class="sr-only" id="status-live" role="status" aria-live="polite"></p>
+
+  <header class="topbar">
+    <a class="brand" href="#top"><span aria-hidden="true">💬</span> ScreenTalk</a>
+    <nav aria-label="Sections">
+      <a href="#plan">Family plan</a>
+      <a href="#talk">Start the talk</a>
+      <a href="#game">Myth or Fact</a>
+      <a href="#habits">Habits</a>
+      <a href="#help">Get help</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <p class="print-only print-head">ScreenTalk family screening plan · <span id="print-date"></span> · Bring this to a checkup. Based on American Cancer Society guidelines for people at average risk. Not medical advice.</p>
+    <section class="hero" id="top">
+      <div class="hero-text">
+        <p class="eyebrow">Prevention &amp; Education · built by a teen, for teens</p>
+        <h1>You can't order your parents a colonoscopy.<br /><span>But you can start the conversation.</span></h1>
+        <p class="lead">Screening tests can find some cancers early, before symptoms, when they are easier to treat. ScreenTalk turns the American Cancer Society (ACS) guidelines into a simple plan for the people you love, then helps you bring it up.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#plan">Build my family plan</a>
+          <a class="btn ghost" href="#game">Play Myth or Fact</a>
+        </div>
+        <ul class="trust">
+          <li><span aria-hidden="true">🔒</span> Nothing leaves your device</li>
+          <li><span aria-hidden="true">📚</span> Every fact links to ACS or NCI</li>
+          <li><span aria-hidden="true">🩺</span> Education, not a diagnosis</li>
+        </ul>
+      </div>
+      <aside class="hero-card" aria-label="How it works">
+        <ol>
+          <li><strong>Add family members</strong> by nickname and age. No names, no accounts.</li>
+          <li><strong>See what ACS recommends</strong> for each person: talk now, a choice to discuss, or coming up later.</li>
+          <li><strong>Get a conversation starter</strong> you can say at dinner or send as a text.</li>
+          <li><strong>Print or save the plan</strong> to bring to the next checkup.</li>
+        </ol>
+      </aside>
+    </section>
+
+    <div class="disclaimer" role="note">
+      <strong>Important:</strong> ScreenTalk shares general ACS guidelines for people at <em>average risk</em> with <em>no symptoms</em>. It does not diagnose, estimate anyone's risk, or replace a healthcare provider. Anyone with symptoms or a strong family history should talk with a provider.
+    </div>
+
+    <!-- ============ FAMILY PLAN ============ -->
+    <section id="plan" class="section">
+      <div class="section-head">
+        <h2>1 · Your family screening plan</h2>
+        <p>Add the adults in your life. Use nicknames like “Mom” or “Nana”. Everything is saved only in this browser.</p>
+      </div>
+
+      <div class="plan-grid">
+        <form id="person-form" class="card form" autocomplete="off" novalidate>
+          <h3 id="form-title">Add a family member</h3>
+          <input type="hidden" id="edit-id" />
+          <div class="row two">
+            <label>Nickname
+              <input id="f-label" type="text" maxlength="24" placeholder="Mom" required />
+            </label>
+            <label>Age
+              <input id="f-age" type="number" min="0" max="120" placeholder="47" required />
+            </label>
+          </div>
+
+          <fieldset>
+            <legend>Body <span class="legend-note">(decides which screenings apply)</span></legend>
+            <div class="chips" role="group" aria-label="Quick choices">
+              <button type="button" class="chip preset" data-preset="female" aria-pressed="false">Female</button>
+              <button type="button" class="chip preset" data-preset="male" aria-pressed="false">Male</button>
+              <button type="button" class="chip preset" data-preset="custom" aria-pressed="false">Choose myself</button>
+            </div>
+            <div class="checks">
+              <label><input type="checkbox" id="f-breasts" /> Has breast tissue</label>
+              <label><input type="checkbox" id="f-cervix" /> Has a cervix</label>
+              <label><input type="checkbox" id="f-uterus" /> Has a uterus</label>
+              <label><input type="checkbox" id="f-prostate" /> Has a prostate</label>
+              <label class="dep" data-dep="f-uterus f-cervix"><input type="checkbox" id="f-menopause" /> Has reached menopause</label>
+            </div>
+            <p class="hint">Total hysterectomy (uterus and cervix removed, not for cancer)? ACS says cervical screening stops, so uncheck both. After a partial hysterectomy the cervix stays.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Smoking</legend>
+            <div class="radios" role="radiogroup" aria-label="Smoking">
+              <label><input type="radio" name="smoking" value="never" id="f-smoke-never" checked /> Never smoked</label>
+              <label><input type="radio" name="smoking" value="former" id="f-smoke-former" /> Used to smoke</label>
+              <label><input type="radio" name="smoking" value="current" id="f-smoke-current" /> Smokes now</label>
+            </div>
+            <div class="smoke-calc dep" data-dep="f-smoke-former f-smoke-current">
+              <div class="row three">
+                <label>Packs per day
+                  <input id="f-ppd" type="number" min="0" max="10" step="0.25" inputmode="decimal" placeholder="1" />
+                </label>
+                <label>Years smoked
+                  <input id="f-years" type="number" min="0" max="120" inputmode="numeric" placeholder="20" />
+                </label>
+                <div class="py-out" aria-live="polite"><span id="py-value">0</span><small>pack-years</small></div>
+              </div>
+              <p class="hint">A pack-year is 1 pack (about 20 cigarettes) a day for a year (ACS). Rough numbers are fine.</p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Family history <span class="legend-note">(optional)</span></legend>
+            <div class="checks">
+              <label><input type="checkbox" id="f-fh" /> Family history of cancer or a known inherited condition</label>
+              <label class="dep" data-dep="f-prostate"><input type="checkbox" id="f-aa" /> Is African American</label>
+              <label class="dep select-row" data-dep="f-prostate">Father or brother with prostate cancer before 65
+                <select id="f-pfam">
+                  <option value="none">No / not sure</option>
+                  <option value="one">One</option>
+                  <option value="multiple">More than one</option>
+                </select>
+              </label>
+            </div>
+            <p class="hint">These only change which ACS guideline note we show. We never calculate risk.</p>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit" class="btn primary" id="save-btn">Add to plan</button>
+            <button type="button" class="btn ghost hidden" id="cancel-edit">Cancel</button>
+          </div>
+          <p class="form-error" id="form-error" role="alert"></p>
+        </form>
+
+        <div class="plan-out">
+          <div class="summary card" id="summary" aria-live="polite"></div>
+          <p class="plan-note hidden" id="plan-note">These are general ACS guidelines for people at <strong>average risk</strong> with <strong>no symptoms</strong>. Anyone with symptoms should see a provider, whatever their age.</p>
+          <div id="people"></div>
+          <div class="empty card" id="empty">
+            <p><strong>No one added yet.</strong> Add someone with the form, or load a made-up demo family to see how it works.</p>
+            <button class="btn ghost" id="demo-btn" type="button">Load demo family</button>
+          </div>
+          <div class="plan-tools">
+            <button class="btn ghost" id="print-btn" type="button" disabled><span aria-hidden="true">🖨️</span> Print / save as PDF</button>
+            <button class="btn ghost danger" id="clear-btn" type="button">Clear all data</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TIMELINE ============ -->
+    <section id="timeline-section" class="section">
+      <div class="section-head">
+        <h2>Family timeline</h2>
+        <p>When each ACS guideline applies. <strong>Solid</strong> = ACS recommends it. <strong>Lighter</strong> = a choice to discuss with a provider. ▼ = age today. “90+” bars continue while ACS says screening still makes sense for that person’s health.</p>
+      </div>
+      <div class="card timeline-card">
+        <div id="timeline" aria-hidden="true"></div>
+        <ul class="sr-only" id="timeline-text" aria-label="Timeline in words"></ul>
+        <div class="legend" id="legend"></div>
+      </div>
+    </section>
+
+    <!-- ============ TALK ============ -->
+    <section id="talk" class="section">
+      <div class="section-head">
+        <h2>2 · Start the talk</h2>
+        <p>Health talks are awkward. Pick a person and a style, then say it out loud or send it.</p>
+      </div>
+      <div class="card talk-card">
+        <div class="row two">
+          <label>Who
+            <select id="talk-who" disabled><option>Add someone to your plan first</option></select>
+          </label>
+          <label>Style
+            <select id="talk-tone">
+              <option value="casual">Casual (at dinner)</option>
+              <option value="heartfelt">Heartfelt</option>
+              <option value="text">Text message</option>
+            </select>
+          </label>
+        </div>
+        <label class="talk-label" for="talk-text">Your message <span class="legend-note">(edit it so it sounds like you)</span></label>
+        <textarea id="talk-text" class="talk-text" rows="5" disabled>Add someone to your plan first, then pick a style.</textarea>
+        <div class="form-actions">
+          <button class="btn primary" id="copy-btn" type="button" disabled>Copy</button>
+          <button class="btn ghost" id="share-btn" type="button" disabled>Share…</button>
+          <span id="copy-status" class="hint" aria-live="polite"></span>
+        </div>
+        <details class="tips">
+          <summary>Tips that make it easier</summary>
+          <ul>
+            <li>Pick a calm moment, not right after bad news or during an argument.</li>
+            <li>Lead with care: “I want you around for a long time.”</li>
+            <li>Offer one concrete thing: find the clinic number, sit with them while they call, or set a reminder.</li>
+            <li>If they say no, that is okay. You planted the idea. Try again in a few weeks.</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ GAME ============ -->
+    <section id="game" class="section">
+      <div class="section-head">
+        <h2>3 · Myth or Fact?</h2>
+        <p>Twelve claims you have probably heard. Each answer links to the source.</p>
+      </div>
+      <div class="card game-card">
+        <div class="game-top">
+          <span id="game-progress">Card 1 of 12</span>
+          <span id="game-score">Score: 0</span>
+        </div>
+        <div class="progress"><div id="game-bar"></div></div>
+        <p class="claim" id="game-claim" tabindex="-1"></p>
+        <div class="game-buttons" id="game-buttons">
+          <button class="btn big myth" data-answer="myth" type="button"><span aria-hidden="true">❌</span> Myth</button>
+          <button class="btn big fact" data-answer="fact" type="button"><span aria-hidden="true">✅</span> Fact</button>
+        </div>
+        <div class="reveal hidden" id="game-reveal" aria-live="polite">
+          <p class="verdict" id="game-verdict"></p>
+          <p id="game-why"></p>
+          <p class="src">Source: <a id="game-src" target="_blank" rel="noopener noreferrer"></a></p>
+          <button class="btn primary" id="game-next" type="button">Next card →</button>
+        </div>
+        <div class="done hidden" id="game-done">
+          <p class="verdict" id="game-final" tabindex="-1"></p>
+          <p>Share the one that surprised you most with someone at home.</p>
+          <button class="btn primary" id="game-restart" type="button">Play again</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HABITS ============ -->
+    <section id="habits" class="section">
+      <div class="section-head">
+        <h2>4 · Habits for you, starting now</h2>
+        <p>Screening is for adults, but prevention starts in your teens. These are the ACS steps to help reduce cancer risk. Check the ones you'll commit to.</p>
+      </div>
+      <div class="card">
+        <ul class="habits" id="habit-list"></ul>
+        <p class="habit-count" id="habit-count" aria-live="polite"></p>
+        <p class="hint">Source: “Take control of your health” in the <a href="https://www.cancer.org/cancer/screening/american-cancer-society-guidelines-for-the-early-detection-of-cancer.html" target="_blank" rel="noopener noreferrer">ACS screening guidelines</a>. One more for teens: ACS says anyone 13 through 26 who hasn’t finished the HPV vaccine should get it as soon as possible (<a href="https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html" target="_blank" rel="noopener noreferrer">ACS HPV vaccines</a>).</p>
+      </div>
+    </section>
+
+    <!-- ============ HELP ============ -->
+    <section id="help" class="section">
+      <div class="section-head">
+        <h2>Get help and get screened</h2>
+        <p>Free, trusted places to call or visit, including options without insurance or a doctor.</p>
+      </div>
+      <div class="resources" id="resources"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p><strong>ScreenTalk</strong> is an educational project for the 2026 International CodeTheCure Hackathon (Prevention &amp; Education). Content summarizes the <a href="https://www.cancer.org/cancer/screening/american-cancer-society-guidelines-for-the-early-detection-of-cancer.html" target="_blank" rel="noopener noreferrer">ACS Guidelines for the Early Detection of Cancer</a> (revised May 27, 2026), <a href="https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html" target="_blank" rel="noopener noreferrer">ACS HPV Vaccines</a> (revised Sep 3, 2026), and <a href="https://www.cancer.gov/about-cancer/causes-prevention/risk/myths" target="_blank" rel="noopener noreferrer">NCI Common Cancer Myths</a>. Every guideline was checked against the live ACS and NCI pages on October 10, 2026. Not affiliated with or endorsed by ACS or NCI. Not medical advice. Guidelines are for the United States.</p>
+  </footer>
+
+  <script src="js/rules.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
