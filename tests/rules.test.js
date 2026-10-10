@@ -223,6 +223,34 @@ test('checkup questions follow the topics, with no duplicates', () => {
   assert.deepEqual(C.questions({}, R.evaluate(M(20)).topics), ['Is my HPV vaccine series complete?']);
 });
 
+test('checkup sheet: rows for now/discuss/info, later list, pack-years, questions', () => {
+  const dad = { label: 'Dad', age: 52, prostate: true, smoking: 'former', ppd: '1', years: '22', packYears: 22 };
+  const d = C.checkupSheet(dad, R.evaluate(dad));
+  assert.equal(d.title, 'Checkup sheet: Dad, age 52');
+  assert.deepEqual(d.rows.map(r => r.key).sort(), ['colorectal', 'lung', 'prostate']);
+  assert.ok(d.rows.every(r => r.source.startsWith('https://www.cancer.org/') && r.statusLabel && r.test));
+  assert.equal(d.rows.find(r => r.key === 'prostate').statusLabel, 'A choice to discuss');
+  assert.match(d.smoking, /Used to smoke/);
+  assert.match(d.smoking, /22 pack-years \(1 pack a day for 22 years\)/);
+  assert.deepEqual(d.questions, C.questions(dad, R.evaluate(dad).topics));
+  assert.match(d.footer, /not medical advice/);
+  // upcoming topics go to "later" with the ACS start age, never into the fill-in table
+  const sis = { label: 'Sis', age: 19, breasts: true, cervix: true, uterus: true };
+  const s2 = C.checkupSheet(sis, R.evaluate(sis));
+  assert.deepEqual(s2.rows.map(r => r.key), ['hpv']);
+  assert.ok(s2.later.includes('Cervical cancer screening at 25'));
+  assert.ok(s2.later.includes('Breast cancer screening at 40'));
+  assert.ok(s2.later.includes('Colon and rectal cancer screening at 45'));
+  assert.equal(s2.smoking, '');
+  // past-range topics are left off; blank or missing input never throws
+  const old = { label: '', age: 90, prostate: true };
+  const s3 = C.checkupSheet(old, R.evaluate(old));
+  assert.ok(!s3.rows.some(r => r.key === 'colorectal'));
+  assert.equal(s3.title, 'Checkup sheet: Family member, age 90');
+  assert.doesNotThrow(() => C.checkupSheet());
+  assert.match(C.checkupSheet({ age: 60, smoking: 'current' }, R.evaluate({ age: 60, smoking: 'current' })).smoking, /not entered/);
+});
+
 test('sanitizePerson cleans bad or old saved data', () => {
   const p = C.sanitizePerson({ label: '  <img src=x onerror=alert(1)> very long nickname here!!', age: '47', smokes: true, ppd: '1', years: '25', progress: 'hacked', fatherBrotherProstateUnder65: true }, R.packYears);
   assert.equal(p.label.length <= 24, true);
