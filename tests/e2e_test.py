@@ -134,6 +134,22 @@ with sync_playwright() as p:
     ics = open(path, encoding='utf-8').read()
     check('reminder .ics downloaded', ics.startswith('BEGIN:VCALENDAR') and 'Check in with Dad' in ics, dl.value.suggested_filename)
 
+    # One-page checkup sheet
+    pg.evaluate("() => { window.__printed = 0; window.print = function () { window.__printed++; }; }")
+    pg.locator('.person').first.locator('button.sheet-btn').click()
+    sheet = pg.evaluate("document.getElementById('checkup-sheet').textContent")
+    check('checkup sheet button prints', pg.evaluate('window.__printed') == 1)
+    check('checkup sheet is for Dad with his topics', 'Checkup sheet: Dad, age 52' in sheet and 'Lung cancer screening' in sheet and 'Prostate cancer testing decision' in sheet)
+    check('checkup sheet has questions, pack-years, and fill-in table', 'PSA' in sheet and '22 pack-years' in sheet and 'Last test (date)' in sheet and pg.locator('#checkup-sheet td.fill').count() >= 9)
+    check('sheet print mode on, sheet hidden on screen', pg.evaluate("document.body.classList.contains('print-sheet')") and not pg.is_visible('#checkup-sheet'))
+    pg.emulate_media(media='print')
+    check('print shows only the sheet', pg.is_visible('#checkup-sheet') and not pg.is_visible('#plan'))
+    pg.emulate_media(media='screen')
+    pg.evaluate("window.dispatchEvent(new Event('afterprint'))")
+    check('afterprint returns to family-plan printing', not pg.evaluate("document.body.classList.contains('print-sheet')"))
+    pg.evaluate("window.dispatchEvent(new Event('beforeprint'))")
+    check('Ctrl+P fills the print date', pg.inner_text('#print-date').strip() != '')
+
     # Game: play all cards by keyboard
     pg.locator('#game').scroll_into_view_if_needed()
     for i in range(12):
