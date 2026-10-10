@@ -204,7 +204,61 @@
     return lines.map(fold).join('\r\n') + '\r\n';
   }
 
-  var api = { CARDS: CARDS, HABITS: HABITS, RESOURCES: RESOURCES, PROGRESS: PROGRESS, starter: starter, joinList: joinList, questions: questions, sanitizePerson: sanitizePerson, buildICS: buildICS };
+
+  // ---------- One-page checkup sheet (printable) ----------
+  var SHEET_STATUS = {
+    'talk-now': 'ACS recommends now',
+    'option': 'A choice to discuss',
+    'info': 'Good to know',
+    'upcoming': 'Coming up',
+    'past': 'Past the ACS age range'
+  };
+  var SHEET_TESTS = {
+    breast: 'Mammogram',
+    colorectal: 'Stool test (FIT) or colonoscopy',
+    cervical: 'HPV test or Pap test',
+    lung: 'Low-dose CT scan',
+    prostate: 'PSA blood test (if chosen)',
+    hpv: 'HPV vaccine doses',
+    endometrial: 'Any unexpected bleeding?'
+  };
+  /**
+   * Data for a one-page sheet to bring to a checkup. Pure data, so it can be tested in Node.
+   * rows   = topics to bring up now (talk-now, option, info), each with a fill-in "last test" row
+   * later  = topics whose ACS window starts later, as "Breast cancer screening at 40"
+   * smoking = a plain line with pack-years, since providers ask for it for lung screening
+   */
+  function checkupSheet(person, result) {
+    person = person || {};
+    result = result || { topics: [], notes: [] };
+    var age = Number(person.age) || 0;
+    var rows = [], later = [];
+    (result.topics || []).forEach(function (t) {
+      if (t.status === 'upcoming') {
+        later.push(t.title + ' at ' + (age + (t.startsIn || 0)));
+      } else if (t.status !== 'past') {
+        rows.push({ key: t.key, title: t.title, status: t.status, statusLabel: SHEET_STATUS[t.status] || '', test: SHEET_TESTS[t.key] || '', summary: t.summary, source: t.source });
+      }
+    });
+    var smoking = '';
+    if (person.smoking === 'former' || person.smoking === 'current') {
+      var py = Number(person.packYears) || 0;
+      smoking = (person.smoking === 'current' ? 'Smokes now' : 'Used to smoke') +
+        (py > 0 ? ' \u00b7 about ' + py + ' pack-years' + (person.ppd && person.years ? ' (' + person.ppd + ' pack' + (Number(person.ppd) === 1 ? '' : 's') + ' a day for ' + person.years + ' years)' : '') : ' \u00b7 pack-years not entered');
+    }
+    return {
+      title: 'Checkup sheet: ' + (String(person.label || '').trim() || 'Family member') + ', age ' + age,
+      rows: rows,
+      later: later,
+      questions: questions(person, result.topics),
+      smoking: smoking,
+      familyHistory: !!person.familyHistory,
+      notes: (result.notes || []).slice(),
+      footer: 'Made with ScreenTalk. General American Cancer Society guidelines for people at average risk with no symptoms. Education only, not medical advice. Anyone with symptoms should see a provider.'
+    };
+  }
+
+  var api = { CARDS: CARDS, HABITS: HABITS, RESOURCES: RESOURCES, PROGRESS: PROGRESS, starter: starter, joinList: joinList, questions: questions, sanitizePerson: sanitizePerson, buildICS: buildICS, checkupSheet: checkupSheet, SHEET_STATUS: SHEET_STATUS };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ScreenTalkContent = api;
 })(typeof window !== 'undefined' ? window : this);
