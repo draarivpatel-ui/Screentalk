@@ -6,7 +6,7 @@ ScreenTalk is a free, private web app that helps teens turn the American Cancer 
 
 Built by Aariv Patel for the [2026 International CodeTheCure Hackathon](https://codethecure-hackathon-26.devpost.com/) · Track: **Prevention & Education**
 
-**Live demo:** https://draarivpatel-ui.github.io/Screentalk/ (after GitHub Pages is turned on)
+**Live demo:** https://aariv.me/Screentalk/
 
 > ⚠️ ScreenTalk is an educational tool. It shares general ACS guidelines for people at average risk with no symptoms. It does **not** diagnose, estimate anyone's cancer risk, or replace a healthcare provider.
 
@@ -30,7 +30,8 @@ Screening tests can find some cancers early, before symptoms, when they are easi
 | **Myth or Fact** | A 12-card game using claims from NCI's Common Cancer Myths page and ACS guidance, with an explanation and source for every answer. |
 | **Habits** | The ACS "Take control of your health" steps as a checklist teens can commit to. |
 | **Get help** | ACS 24/7 helpline, NCI Cancer Information Service, how to get screened without a doctor, NBCCEDP, Vaccines for Children, free quit-tobacco help. |
-| **Print / save as PDF** | A clean printout of the plan and questions to bring to a checkup. |
+| **One-page checkup sheet** | Print a single sheet per person to take to the appointment: the ACS topics to bring up, blanks for last test date, result, and next due, the questions to ask with checkboxes, pack-years for lung screening, a family-history table, and lines for what the provider said. |
+| **Print / save as PDF** | A clean printout of the whole family plan. |
 
 ## Responsible design
 
@@ -60,10 +61,10 @@ ScreenTalk is not affiliated with or endorsed by ACS or NCI. Guidelines are for 
 
 - Plain HTML, CSS, and JavaScript. No framework, no build step, no paid APIs, no dependencies.
 - `js/rules.js`: a pure, testable rules engine that maps a profile to ACS guideline topics and timeline segments (runs in the browser and in Node).
-- `js/content.js`: conversation starters, checkup questions, Myth-or-Fact cards, habits, resources, saved-data cleaning, and the .ics builder.
-- `js/app.js`: UI, `localStorage`, SVG timeline, game, progress tracker.
-- `tests/rules.test.js`: 27 zero-dependency Node tests covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, and calendar files.
-- `tests/e2e_test.py`: 51 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, reminder download, clearing data, broken saved data, mobile layout, zero console errors, zero network requests.
+- `js/content.js`: conversation starters, checkup questions, Myth-or-Fact cards, habits, resources, saved-data cleaning, the .ics builder, and the checkup-sheet data.
+- `js/app.js`: UI, `localStorage`, SVG timeline, game, progress tracker, checkup sheet.
+- `tests/rules.test.js`: 28 zero-dependency Node tests covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
+- `tests/e2e_test.py`: 58 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, reminder download, the printable checkup sheet, clearing data, broken saved data, mobile layout, zero console errors, zero network requests.
 - `docs/quality-log.md`: what each review round found and fixed.
 
 ```
@@ -97,7 +98,7 @@ python3 tests/e2e_test.py
 
 ### Deploy on GitHub Pages
 
-Repo **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)` → Save**. The site will be at `https://draarivpatel-ui.github.io/Screentalk/`.
+Repo **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)` → Save**. The site is served at `https://aariv.me/Screentalk/` (custom domain for `draarivpatel-ui.github.io`).
 
 ## Limits
 
