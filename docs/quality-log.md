@@ -45,6 +45,19 @@ All guideline pages were re-read on **October 10, 2026**.
 
 A fresh review after round 3 found no significant issues. Automated checks at the end: 0 console errors, 0 network requests, 0 contrast failures (WCAG AA), 0 unlabeled controls, no horizontal scroll at 360 px.
 
+## Round 4: live-site check and a checkup sheet
+
+The live site (https://aariv.me/Screentalk/) was loaded in headless Chromium at 1280 px and 375 px: 0 console errors, 0 failed requests, all in-page anchors resolve, all 15 ACS/NCI/Devpost links return 200, no horizontal scroll.
+
+| # | Problem found | Fix |
+|---|---|---|
+| 1 | Printing with Ctrl+P (not the button) left the date blank in the print header ("plan · · Bring this…"). | The date is filled on `beforeprint`, so every print path gets it. |
+| 2 | Each person card refused to split across pages, so page 1 printed nearly empty and the demo family took 9 pages. | Cards can split; single topics, questions, and notes stay whole. Demo family now prints in 7 pages with no blank first page. |
+| 3 | The family printout is long and has no room to write. Not something you hand a nurse. | New **Checkup sheet** button on every person: a one-page sheet with the ACS topics to bring up, blanks for last test date, result, and next due, the questions with checkboxes, pack-years, a family-history table, and lines for what the provider said. Fits one Letter page for each demo person; the longest possible profile (5 topics, 7 questions) runs onto a second page with each section kept whole. |
+| 4 | README still pointed at the old github.io URL "after GitHub Pages is turned on". | Points at the live site. |
+
+Tests: 28 unit tests (new: checkup-sheet data) and 58 browser tests (new: sheet button, print-only-the-sheet, afterprint reset, Ctrl+P date).
+
 ## Known limits
 
 - US guidelines only (ACS). English only.
