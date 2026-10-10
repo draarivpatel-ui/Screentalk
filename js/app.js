@@ -220,6 +220,7 @@
       ]);
       var tracker = el('div', { class: 'tracker' }, [
         el('label', { for: progressId, text: 'Progress' }), progress,
+        btn('\ud83e\ude7a Checkup sheet', 'small ghost sheet-btn', function () { printCheckupSheet(p); }, 'Print a one-page checkup sheet for ' + p.label),
         btn('\ud83d\udcc5 Remind me in 2 weeks', 'small ghost', function () { downloadReminder(p, res.topics); }, 'Download a calendar reminder to check in with ' + p.label)
       ]);
 
@@ -518,9 +519,84 @@
     });
   }
 
+  // ---------- Checkup sheet (one person, one page) ----------
+  function today() { return new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }); }
+  function blankLines(n, cls) {
+    var w = el('div', { class: 'sheet-lines' + (cls ? ' ' + cls : '') });
+    for (var i = 0; i < n; i++) w.appendChild(el('span', { class: 'sheet-line' }));
+    return w;
+  }
+  function renderCheckupSheet(p) {
+    var d = C.checkupSheet(p, R.evaluate(p));
+    var box = $('checkup-sheet');
+    box.innerHTML = '';
+    box.appendChild(el('header', { class: 'sheet-head' }, [
+      el('div', null, [el('p', { class: 'sheet-brand', text: 'ScreenTalk' }), el('h2', { text: d.title })]),
+      el('p', { class: 'sheet-meta' }, ['Printed ' + today(), el('br'), 'Appointment date: ________________'])
+    ]));
+    box.appendChild(el('p', { class: 'sheet-intro', text: 'Bring this to the next checkup. Fill in what you know before the visit, then write down what the provider says.' }));
+
+    box.appendChild(el('h3', { text: 'Screenings to bring up' }));
+    if (d.rows.length) {
+      var table = el('table', { class: 'sheet-table' });
+      table.appendChild(el('thead', null, [el('tr', null, ['Topic', 'ACS guideline', 'Last test (date)', 'Result', 'Next due'].map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
+      var tb = el('tbody');
+      d.rows.forEach(function (r) {
+        tb.appendChild(el('tr', null, [
+          el('td', null, [el('strong', { text: r.title }), el('span', { class: 'sheet-status ' + r.status, text: r.statusLabel }), el('small', { text: r.test })]),
+          el('td', { class: 'sheet-sum', text: r.summary }),
+          el('td', { class: 'fill' }), el('td', { class: 'fill' }), el('td', { class: 'fill' })
+        ]));
+      });
+      table.appendChild(tb);
+      box.appendChild(table);
+    } else {
+      box.appendChild(el('p', { text: 'Nothing in these ACS guidelines lines up right now. A regular checkup is still a great habit.' }));
+    }
+    if (d.later.length) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: 'Coming up later: ' }), d.later.join(' \u00b7 ') + '.']));
+    if (d.smoking) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: 'Smoking history: ' }), d.smoking + '. Providers use pack-years to decide about lung screening.']));
+
+    if (d.questions.length) {
+      box.appendChild(el('h3', { text: 'Questions to ask' }));
+      var ol = el('ol', { class: 'sheet-qs' });
+      d.questions.forEach(function (q) { ol.appendChild(el('li', null, [el('span', { class: 'box', 'aria-hidden': 'true' }), el('span', { text: q }), blankLines(1)])); });
+      box.appendChild(ol);
+    }
+
+    box.appendChild(el('h3', { text: 'Family history to mention' }));
+    var fh = el('table', { class: 'sheet-table sheet-fh' });
+    fh.appendChild(el('thead', null, [el('tr', null, ['Relative', 'Type of cancer', 'Age when diagnosed'].map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
+    var fb = el('tbody');
+    for (var i = 0; i < (d.familyHistory ? 3 : 2); i++) fb.appendChild(el('tr', null, [el('td', { class: 'fill' }), el('td', { class: 'fill' }), el('td', { class: 'fill' })]));
+    fh.appendChild(fb);
+    box.appendChild(fh);
+    d.notes.forEach(function (n) { box.appendChild(el('p', { class: 'sheet-note', text: n })); });
+
+    box.appendChild(el('h3', { text: 'What the provider said' }));
+    box.appendChild(blankLines(3));
+    box.appendChild(el('p', { class: 'sheet-foot', text: d.footer + ' Guidelines: cancer.org/screening' }));
+  }
+  function setPrintMode(mode) {
+    document.body.classList.toggle('print-sheet', mode === 'sheet');
+    $('checkup-sheet').setAttribute('aria-hidden', mode === 'sheet' ? 'false' : 'true');
+  }
+  function printCheckupSheet(p) {
+    renderCheckupSheet(p);
+    setPrintMode('sheet');
+    announce('Opening a one-page checkup sheet for ' + p.label + '.');
+    window.print();
+  }
+  // Ctrl+P or the browser menu prints the family plan with today's date filled in.
+  window.addEventListener('beforeprint', function () {
+    $('print-date').textContent = today();
+    document.querySelectorAll('#people details').forEach(function (d) { d.open = true; });
+  });
+  window.addEventListener('afterprint', function () { setPrintMode('plan'); });
+
   // ---------- Tools ----------
   $('print-btn').addEventListener('click', function () {
-    $('print-date').textContent = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    setPrintMode('plan');
+    $('print-date').textContent = today();
     document.querySelectorAll('#people details').forEach(function (d) { d.open = true; });
     window.print();
   });
