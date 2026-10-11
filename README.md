@@ -25,6 +25,9 @@ Screening tests can find some cancers early, before symptoms, when they are easi
 | Feature | What it does |
 |---|---|
 | **Family screening plan** | Add family members by nickname and age (no names, no accounts). For each person, ScreenTalk shows which ACS guideline topics apply, labeled **Talk now**, **Discuss** (a shared decision), **Coming up** (with years until it starts), or **Good to know**. Covers breast, colorectal, cervical, endometrial awareness, lung, prostate, and the HPV vaccine. |
+| **USPSTF cross-check** | Every screening topic also shows what the U.S. Preventive Services Task Force says, with a *Same as ACS* / *Differs from ACS* chip and a link (breast 2024; colorectal and lung 2021; cervical and prostate 2018, updates in progress). |
+| **What it costs** | Where it applies, a line saying most health plans must cover the screening with no copay or deductible from an in-network provider ($0 not guaranteed), citing HealthCare.gov (CuidadoDeSalud.gov in Spanish). |
+| **Start the talk from a card** | A *Start the talk with Mom* button on each person jumps straight to a written conversation starter for that person. |
 | **Pack-year helper** | Packs per day × years smoked, the measure ACS uses for lung screening (ages 50 to 80, 20+ pack-years, smokes now or used to). |
 | **Questions for the checkup** | Each person gets a short list of questions to ask a provider, based on their topics. |
 | **Progress tracker** | Mark each person *Not talked yet → We talked → Checkup booked → Up to date*. The summary shows how many have moved forward. |
@@ -73,7 +76,7 @@ ScreenTalk is not affiliated with or endorsed by ACS or NCI. Guidelines are for 
 - `js/rehearse-ui.js`: the rehearsal UI.
 - `js/i18n.js`: page language (English/Spanish), the UI strings in both languages, and `data-i18n` attributes in `index.html`. Same pattern as the rehearsal: `STRINGS[lang][key]` with `{placeholders}`. `rules.js` and `content.js` take a language argument (`evaluate(person, 'es')`).
 - `tests/rules.test.js`: 28 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 18 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
-- `tests/e2e_test.py`: 131 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the printable checkup sheet, clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
+- `tests/e2e_test.py`: 145 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the printable checkup sheet, clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
 - `docs/quality-log.md`: what each review round found and fixed.
 
 ```
@@ -101,17 +104,17 @@ Open `index.html` in any modern browser. That's it.
 Unit tests (Node 18+):
 
 ```bash
-node tests/rules.test.js     # 63 tests: 28 rules/content + 17 rehearsal + 18 English/Spanish
+node tests/rules.test.js     # 70 tests: 35 rules/content (incl. USPSTF cross-check and no-copay ranges) + 17 rehearsal + 18 English/Spanish
 ```
 
 Browser tests (optional):
 
 ```bash
 pip install playwright && playwright install chromium
-python3 tests/e2e_test.py    # 131 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
+python3 tests/e2e_test.py    # 145 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
 ```
 
-Last run Oct 10, 2026: **63/63 unit tests passing (re-run Oct 10, 9 PM CT); 131/131 browser checks passed in the last Chromium run (Oct 10, 8:45 PM CT)**.
+Last run Oct 11, 2026: **70/70 unit tests and 145/145 browser checks passing (Chromium, 9 AM CT)**.
 
 ### Deploy on GitHub Pages
 
@@ -120,6 +123,7 @@ Repo **Settings → Pages → Build and deployment → Deploy from a branch → 
 ## Data sources
 
 - **Guidelines:** American Cancer Society screening pages, one per topic, linked with their last-revised dates in the table above.
+- **Cross-check:** USPSTF recommendation pages for breast, colorectal, cervical, lung, and prostate cancer screening; **cost:** HealthCare.gov preventive care for adults and for women (checked Oct 11, 2026).
 - **Myth or Fact:** NCI *Common Cancer Myths and Misconceptions* and ACS guidance. **Rehearsal tips:** ACS, NCI and CDC pages, each cited in the app.
 - **Spanish medical terms:** CDC and NCI Spanish pages ([docs/glossary-es.md](docs/glossary-es.md)).
 - **Statistic on the home page:** CDC (2022 colorectal screening rate, linked in the app).
