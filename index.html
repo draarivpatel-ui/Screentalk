@@ -204,6 +204,16 @@
             </select>
           </label>
         </div>
+        <div class="row two">
+          <label><span data-i18n="lblDocLang">Write it in</span>
+            <select id="doc-lang">
+              <option value="auto" data-i18n="docLangAuto">Same as the app</option>
+              <option value="en" lang="en">English</option>
+              <option value="es" lang="es">Español</option>
+            </select>
+          </label>
+          <p class="hint doc-lang-hint" id="doc-lang-hint" data-i18n="docLangHint">Teens often write for a parent who reads a different language. This sets the language of the message and of the printed checkup sheet; the rest of the app stays as it is.</p>
+        </div>
         <label class="talk-label" for="talk-text" data-i18n-html="talkLabel">Your message <span class="legend-note">(edit it so it sounds like you)</span></label>
         <textarea id="talk-text" class="talk-text" rows="5" disabled>Add someone to your plan first, then pick a style.</textarea>
         <div class="form-actions">
