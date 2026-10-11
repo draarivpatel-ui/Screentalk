@@ -503,6 +503,52 @@ test('years since quitting on the checkup sheet (EN and ES) and in saved-data cl
   assert.equal(C.sanitizePerson({ age: 40, smoking: 'former', quitYears: 0 }).quitYears, '0');
 });
 
+test('every topic has a source URL and a revision or check date (ACS, USPSTF, no-copay), EN and ES', () => {
+  const isUrl = u => typeof u === 'string' && /^https:\/\/[a-z0-9.-]+\.(org|gov)\//.test(u);
+  const isDate = d => typeof d === 'string' && /^\d{4}(-\d{2}-\d{2})?$/.test(d) && (d.length === 4 || !isNaN(Date.parse(d + 'T12:00:00Z')));
+  // Only dates recorded in the source list: ACS pages checked Oct 10, 2026; USPSTF and HealthCare.gov Oct 11, 2026.
+  assert.deepEqual(R.CHECKED, { acs: '2026-10-10', uspstf: '2026-10-11', cost: '2026-10-11' });
+  const seen = new Set();
+  const profiles = [
+    a => F(a, smoker('current', 30)), a => M(a, smoker('former', 25)), a => F(a, { ...smoker('former', 25), quitYears: 5, menopause: true }),
+    a => M(a, { africanAmerican: true, prostateFamily: 'multiple' }), a => ({ label: 'X', age: a, breasts: true })
+  ];
+  for (const l of ['en', 'es']) for (let a = 0; a <= 120; a++) for (const mk of profiles) {
+    R.evaluate(mk(a), l).topics.forEach(t => {
+      seen.add(t.key);
+      const where = `${t.key} at ${a} (${l})`;
+      assert.ok(isUrl(t.source), 'ACS source URL: ' + where);
+      assert.ok(isDate(t.revised) && t.revised <= t.checked, 'ACS revision date: ' + where);
+      assert.equal(t.checked, R.CHECKED.acs, 'ACS check date: ' + where);
+      assert.ok(t.revisedLabel && t.revisedLabel.includes(R.shortDate(t.revised, l)), 'revision label: ' + where);
+      if (t.sourceEs) assert.ok(isUrl(t.sourceEs), 'CDC Spanish URL: ' + where);
+      if (t.uspstf) {
+        assert.ok(isUrl(t.uspstf.source) && t.uspstf.source.includes('uspreventiveservicestaskforce.org'), 'USPSTF URL: ' + where);
+        assert.ok(isDate(t.uspstf.final) && t.uspstf.checked === R.CHECKED.uspstf, 'USPSTF dates: ' + where);
+      }
+      if (t.cost) {
+        assert.ok(isUrl(t.cost.source) && /healthcare\.gov|cuidadodesalud\.gov/.test(t.cost.source), 'cost URL: ' + where);
+        assert.equal(t.cost.checked, R.CHECKED.cost, 'cost check date: ' + where);
+      }
+    });
+  }
+  // every topic the engine can show was reached, and every ACS, USPSTF and cost source has a date
+  assert.deepEqual([...seen].sort(), ['breast', 'cervical', 'colorectal', 'endometrial', 'hpv', 'lung', 'prostate']);
+  Object.keys(R.SOURCES).filter(k => k !== 'quit').forEach(k => assert.ok(isUrl(R.SOURCES[k]) && isDate(R.REVISED[k]), 'ACS ' + k));
+  Object.keys(R.SOURCES_US).forEach(k => assert.ok(isUrl(R.SOURCES_US[k]) && isDate(R.US_FINAL[k]), 'USPSTF ' + k));
+  ['en', 'es'].forEach(l => Object.values(R.SOURCES_COST[l]).forEach(u => assert.ok(isUrl(u), 'cost ' + l)));
+  // the printed sheet carries each row's ACS revision date in both languages
+  const s = C.checkupSheet(F(50), R.evaluate(F(50)));
+  assert.ok(s.rows.length && s.rows.every(r => /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(r.revised)), 'EN sheet rows');
+  assert.ok(s.checked.startsWith('Guidelines last checked: October 2026 (ACS: Oct 10, 2026; each ACS page last revised: ') && s.checked.endsWith('; USPSTF and HealthCare.gov: Oct 11, 2026).'), s.checked);
+  s.rows.forEach(r => assert.ok(s.checked.includes(r.revised), 'EN sheet line has ' + r.key));
+  const e = C.checkupSheet(F(50), R.evaluate(F(50), 'es'), 'es');
+  assert.ok(e.rows.every(r => /^\d{1,2} [a-z]{3,4} \d{4}$/.test(r.revised)), 'ES sheet rows');
+  assert.ok(e.checked.startsWith('Guías verificadas por última vez: octubre de 2026 (ACS: 10 oct 2026; ') && e.checked.endsWith('USPSTF y CuidadoDeSalud.gov: 11 oct 2026).'), e.checked);
+  assert.equal(R.shortDate('2026-07-23', 'en'), 'Jul 23, 2026');
+  assert.equal(R.shortDate('2025-12-04', 'es'), '4 dic 2025');
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
 
 // Also run the "Rehearse the talk" and English/Spanish tests so one command covers all unit tests.
