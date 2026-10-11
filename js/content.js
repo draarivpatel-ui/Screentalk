@@ -352,6 +352,9 @@
       pyMissing: ' \u00b7 pack-years not entered',
       quitLine: ' \u00b7 quit {n} ago', yr1: '1 year', yrN: '{n} years', yr0: 'less than a year',
       costTag: 'No copay*',
+      checked: 'Guidelines last checked: October 2026 (ACS: Oct 10, 2026{revs}; USPSTF and HealthCare.gov: Oct 11, 2026).',
+      revs: '; each ACS page last revised: {list}',
+      short: { breast: 'breast', colorectal: 'colorectal', cervical: 'cervical', lung: 'lung', prostate: 'prostate', hpv: 'HPV vaccine', endometrial: 'endometrial' },
       costNote: '* No copay: most health plans must cover these screenings with no copay or deductible from an in-network provider ($0 is not guaranteed; check the plan).',
       costLungFormer: ' For lung screening in people who used to smoke, this applies if they quit in the past 15 years.',
       costLungQuitIn: ' For lung screening, they quit {n} ago, within 15 years, so this applies.',
@@ -369,6 +372,9 @@
       pyMissing: ' \u00b7 paquetes-año sin escribir',
       quitLine: ' \u00b7 dejó de fumar hace {n}', yr1: '1 año', yrN: '{n} años', yr0: 'menos de un año',
       costTag: 'Sin copago*',
+      checked: 'Guías verificadas por última vez: octubre de 2026 (ACS: 10 oct 2026{revs}; USPSTF y CuidadoDeSalud.gov: 11 oct 2026).',
+      revs: '; revisiones de la ACS: {list}',
+      short: { breast: 'mama', colorectal: 'colorrectal', cervical: 'cuello uterino', lung: 'pulmón', prostate: 'próstata', hpv: 'vacuna contra el VPH', endometrial: 'endometrio' },
       costNote: '* Sin copago: la mayoría de los planes de salud deben cubrir estas pruebas de detección sin copago ni deducible de un proveedor dentro de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
       costLungFormer: ' Para la detección del cáncer de pulmón en quienes fumaron, aplica si dejaron de fumar en los últimos 15 años.',
       costLungQuitIn: ' Para la detección del cáncer de pulmón, dejó de fumar hace {n}, dentro de los últimos 15 años, así que aplica.',
@@ -394,7 +400,7 @@
       if (t.status === 'upcoming') {
         later.push(fmt(S.later, { title: t.title, age: age + (t.startsIn || 0) }));
       } else if (t.status !== 'past') {
-        rows.push({ key: t.key, title: t.title, status: t.status, statusLabel: S.status[t.status] || '', test: S.tests[t.key] || '', summary: t.summary, source: t.source,
+        rows.push({ key: t.key, title: t.title, status: t.status, statusLabel: S.status[t.status] || '', test: S.tests[t.key] || '', summary: t.summary, source: t.source, revised: t.revisedDate || '',
           uspstf: t.uspstf ? { text: t.uspstf.text, differs: !!t.uspstf.differs } : null, cost: t.cost ? t.cost.text : '', costTag: t.cost ? S.costTag : '' });
       }
     });
@@ -418,7 +424,9 @@
       costNote: rows.some(function (r) { return r.cost; }) ? S.costNote + (person.smoking === 'former' && lungCost ? (quitSpan ? fmt(S.costLungQuitIn, { n: quitSpan }) : S.costLungFormer) : '') : '',
       familyHistory: !!person.familyHistory,
       notes: (result.notes || []).slice(),
-      footer: S.footer
+      footer: S.footer,
+      // Guidelines-checked line: the dates come from the rules engine's source list (none are estimated)
+      checked: fmt(S.checked, { revs: rows.some(function (r) { return r.revised; }) ? fmt(S.revs, { list: rows.filter(function (r) { return r.revised; }).map(function (r) { return (S.short[r.key] || r.key) + ' ' + r.revised; }).join(', ') }) : '' })
     };
   }
 
