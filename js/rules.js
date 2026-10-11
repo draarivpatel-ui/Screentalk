@@ -60,6 +60,27 @@
       colorectal: 'https://www.cuidadodesalud.gov/es/preventive-care-adults/', lung: 'https://www.cuidadodesalud.gov/es/preventive-care-adults/' }
   };
 
+  // When each source was last checked, and each ACS topic page's own "last revised" date.
+  // Every date below is copied from the source list at the top of this file; none is estimated.
+  var CHECKED = { acs: '2026-10-10', uspstf: '2026-10-11', cost: '2026-10-11' };
+  var REVISED = {
+    guidelines: '2026-05-27', breast: '2026-07-23', colorectal: '2026-05-27', cervical: '2025-12-04',
+    endometrial: '2025-02-28', lung: '2024-01-29', prostate: '2023-11-22', hpv: '2026-09-03'
+  };
+  // USPSTF final recommendation dates (year only where the source list gives only the year).
+  var US_FINAL = { breast: '2024-04-30', colorectal: '2021', cervical: '2018-08-21', lung: '2021', prostate: '2018-05-08' };
+  var MONTHS = {
+    en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    es: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic']
+  };
+  /** '2026-07-23' -> 'Jul 23, 2026' (en) or '23 jul 2026' (es). */
+  function shortDate(iso, l) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+    if (!m) return String(iso || '');
+    var mon = MONTHS[lang(l)][Number(m[2]) - 1], d = Number(m[3]);
+    return lang(l) === 'es' ? d + ' ' + mon + ' ' + m[1] : mon + ' ' + d + ', ' + m[1];
+  }
+
   // Status values, ordered by how soon a conversation makes sense.
   var STATUS = {
     TALK_NOW: 'talk-now',      // inside an ACS recommended screening window
@@ -118,6 +139,7 @@
   var TEXT = {
     en: {
       ageError: 'Enter an age between 0 and 120.',
+      revised: 'ACS page revised {date}',
       in1: 'in 1 year', inN: 'in {n} years',
       title: {
         breast: 'Breast cancer screening', colorectal: 'Colon and rectal cancer screening', cervical: 'Cervical cancer screening',
@@ -188,6 +210,7 @@
     },
     es: {
       ageError: 'Escribe una edad entre 0 y 120.',
+      revised: 'Página de la ACS revisada el {date}',
       in1: 'dentro de 1 año', inN: 'dentro de {n} años',
       title: {
         breast: 'Detección del cáncer de mama', colorectal: 'Detección del cáncer de colon y recto', cervical: 'Detección del cáncer de cuello uterino',
@@ -312,7 +335,7 @@
       else { differs = true; text += fmt(meets ? T.usLungQuitOver : T.usLungQuitOverOnly, { n: quitSpan(quitYears, T) }); }
     }
     else if (key === 'prostate') differs = age < 55 || age >= 70;
-    return { text: text, differs: differs, source: SRC_US[key] };
+    return { text: text, differs: differs, source: SRC_US[key], final: US_FINAL[key], checked: CHECKED.uspstf };
   }
 
   /** No-copay note when the person's age is inside the range HealthCare.gov lists. */
@@ -327,7 +350,7 @@
     if (!ok) return null;
     var tail = '';
     if (key === 'lung' && smoking === 'former') tail = qr === 'within' ? fmt(T.costLungQuitIn, { n: quitSpan(quitYears, T) }) : T.costLungFormer;
-    return { text: T.cost + tail, source: SRC_COST[lang(l)][key] };
+    return { text: T.cost + tail, source: SRC_COST[lang(l)][key], checked: CHECKED.cost };
   }
 
   /**
@@ -347,7 +370,7 @@
     l = lang(l);
     var T = TEXT[l];
     var inYears = function (n) { return n === 1 ? T.in1 : fmt(T.inN, { n: n }); };
-    var mk = function (key) { return { key: key, title: T.title[key], source: SRC[key], sourceEs: SRC_ES[key] }; };
+    var mk = function (key) { return { key: key, title: T.title[key], source: SRC[key], sourceEs: SRC_ES[key], revised: REVISED[key], checked: CHECKED.acs, revisedLabel: fmt(T.revised, { date: shortDate(REVISED[key], l) }), revisedDate: shortDate(REVISED[key], l) }; };
     var age = Math.floor(num(person.age));
     var topics = [];
     var notes = [];
@@ -511,7 +534,7 @@
   var api = {
     evaluate: evaluate, packYears: packYears, familySummary: familySummary,
     smokingStatus: smokingStatus, prostateFamily: prostateFamily, prostateStartAge: prostateStartAge, hasUterus: hasUterus,
-    STATUS: STATUS, SOURCES: SRC, SOURCES_ES: SRC_ES, SOURCES_US: SRC_US, SOURCES_COST: SRC_COST, usNote: usNote, costNote: costNote, quitRule: quitRule, TEXT: TEXT, LANGS: LANGS
+    STATUS: STATUS, SOURCES: SRC, CHECKED: CHECKED, REVISED: REVISED, US_FINAL: US_FINAL, shortDate: shortDate, SOURCES_ES: SRC_ES, SOURCES_US: SRC_US, SOURCES_COST: SRC_COST, usNote: usNote, costNote: costNote, quitRule: quitRule, TEXT: TEXT, LANGS: LANGS
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ScreenTalkRules = api;
