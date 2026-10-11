@@ -732,7 +732,19 @@
     renderAll(); renderHabits(); renderResources(); renderGame();
     if ($('print-date').textContent) $('print-date').textContent = today();
     announce(S('langChanged'));
+    navCue();
   });
+
+  // Section nav on phones: fade the right edge only while more links sit off-screen.
+  function navCue() {
+    var n = document.querySelector('.topbar nav'); if (!n) return;
+    n.classList.toggle('nav-more', n.scrollLeft + n.clientWidth < n.scrollWidth - 2);
+  }
+  (function () {
+    var n = document.querySelector('.topbar nav');
+    if (n) n.addEventListener('scroll', navCue, { passive: true });
+    window.addEventListener('resize', navCue);
+  })();
 
   // ---------- Init ----------
   $('form-title').textContent = S('formAdd');
@@ -742,6 +754,7 @@
   renderHabits();
   renderResources();
   startGame(false);
+  navCue();
 
   // ---------- Offline ----------
   // After one online visit the app opens with no connection (sw.js: network first, cache fallback).
