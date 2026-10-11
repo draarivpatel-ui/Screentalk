@@ -436,6 +436,40 @@ test('years since quitting: blank field keeps the explain-the-rule wording; igno
   assert.equal(c.quitRule, null); assert.equal(c.uspstf.differs, false); assert.ok(c.cost);
 });
 
+test('demo family: Dad used to smoke and quit 18 years ago, so USPSTF differs and the lung no-copay line is gone (EN and ES)', () => {
+  const fam = C.demoFamily(['Mom', 'Dad', 'Nana', 'Big sis']).map(p => C.sanitizePerson(p, R.packYears));
+  assert.equal(fam.length, 4);
+  assert.deepEqual(fam.map(p => p.label), ['Mom', 'Dad', 'Nana', 'Big sis']);
+  const dad = fam[1];
+  assert.equal(dad.age, 52); assert.equal(dad.smoking, 'former'); assert.equal(dad.packYears, 22); assert.equal(dad.quitYears, '18');
+  assert.ok(fam.every((p, i) => i === 1 || p.quitYears === ''));
+  const lung = topic(dad, 'lung');
+  assert.equal(lung.status, 'talk-now');
+  assert.equal(lung.uspstf.differs, true);
+  assert.match(lung.uspstf.text, /They quit 18 years ago \(more than 15\), so the USPSTF no longer recommends it/);
+  assert.ok(!/year they quit matters/.test(lung.uspstf.text));
+  assert.ok(!lung.cost);
+  assert.equal(topic(dad, 'colorectal').uspstf.differs, false); assert.ok(topic(dad, 'colorectal').cost);
+  assert.equal(topic(dad, 'prostate').uspstf.differs, true);
+  const s = C.checkupSheet(dad, R.evaluate(dad));
+  assert.equal(s.title, 'Checkup sheet: Dad, age 52');
+  assert.deepEqual(s.rows.map(r => r.key).sort(), ['colorectal', 'lung', 'prostate']);
+  assert.match(s.smoking, /22 pack-years \(1 pack a day for 22 years\) · quit 18 years ago$/);
+  assert.equal(s.rows.find(r => r.key === 'lung').costTag, '');
+  assert.equal(s.rows.find(r => r.key === 'colorectal').costTag, 'No copay*');
+  assert.equal(s.rows.filter(r => r.costTag).length, 1);
+  assert.equal(s.rows.filter(r => r.uspstf && r.uspstf.differs).length, 2);
+  assert.ok(!/15 years/.test(s.costNote));
+  const e = C.checkupSheet(dad, R.evaluate(dad, 'es'), 'es');
+  assert.match(e.smoking, /dejó de fumar hace 18 años$/);
+  assert.equal(e.rows.find(r => r.key === 'lung').costTag, '');
+  assert.equal(e.rows.filter(r => r.costTag).length, 1);
+  assert.ok(!/15 años/.test(e.costNote));
+  // demoFamily returns fresh copies, never the shared template
+  const a = C.demoFamily([]); a[1].age = 99;
+  assert.equal(C.DEMO_FAMILY[1].age, 52);
+});
+
 test('years since quitting on the checkup sheet (EN and ES) and in saved-data cleaning', () => {
   const mk = q => C.sanitizePerson({ label: 'Dad', age: 60, prostate: true, smoking: 'former', ppd: '1', years: '30', quitYears: q }, R.packYears);
   const d15 = mk('15'), s15 = C.checkupSheet(d15, R.evaluate(d15));
