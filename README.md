@@ -45,7 +45,7 @@ Screening tests can find some cancers early, before symptoms, when they are easi
 ## Responsible design
 
 - **Education, not diagnosis.** The app never says someone "needs" a test and never calculates risk. Every item is framed as a topic to discuss with a healthcare provider. A unit test scans all generated text for diagnostic or risk-score language.
-- **Every fact is sourced.** Each plan item links to the ACS page it summarizes. Every Myth-or-Fact card links to NCI or ACS. Every rehearsal coaching tip links to the ACS, NCI, or CDC page behind it. All content was re-checked against the live pages on October 10, 2026 (see table below).
+- **Every fact is sourced.** Each plan item links to the ACS page it summarizes. Every Myth-or-Fact card links to NCI or ACS. Every rehearsal coaching tip links to the ACS, NCI, or CDC page behind it. All content was re-checked against the live pages on October 10, 2026 (see table below). The plan and the printed checkup sheet say so in English and Spanish: "Guidelines last checked: October 2026", with each topic's ACS revision date (ACS checked Oct 10, 2026; USPSTF and HealthCare.gov Oct 11, 2026).
 - **Private by design.** No accounts, no server, no analytics, no cookies, no fonts or scripts from other sites. A Content-Security-Policy blocks network connections entirely, and the end-to-end test confirms the page makes zero network requests. Data stays in the browser's `localStorage`; "Clear all data" wipes it.
 - **Inclusive.** Screenings are chosen by body (breast tissue, cervix, uterus, prostate) as well as Female/Male presets, while keeping ACS's own wording.
 - **Accessible.** Keyboard-friendly, visible focus, labeled controls, live announcements, screen-reader text for the chart, WCAG AA color contrast, reduced-motion support, works at 360 px wide.
@@ -75,8 +75,8 @@ ScreenTalk is not affiliated with or endorsed by ACS or NCI. Guidelines are for 
 - `js/rehearse.js`: the rehearsal script (English and Spanish), sources, and a pure engine for branching and scoring (runs in the browser and in Node).
 - `js/rehearse-ui.js`: the rehearsal UI.
 - `js/i18n.js`: page language (English/Spanish), the UI strings in both languages, and `data-i18n` attributes in `index.html`. Same pattern as the rehearsal: `STRINGS[lang][key]` with `{placeholders}`. `rules.js` and `content.js` take a language argument (`evaluate(person, 'es')`).
-- `tests/rules.test.js`: 41 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 21 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years and 15 vs 16 years since quitting, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
-- `tests/e2e_test.py`: 183 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the years-since-quitting field (USPSTF 15-year rule and no-copay line at 15 and 16 years, English and Spanish, validation, saved-data cleaning; the demo family's Dad quit 18 years ago, so his lung card shows "Differs from ACS" with no no-copay line), the printable checkup sheet (USPSTF line and no-copay tag on every row, fits on one Letter page in English and Spanish), clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
+- `tests/rules.test.js`: 42 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 21 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years and 15 vs 16 years since quitting, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
+- `tests/e2e_test.py`: 188 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the years-since-quitting field (USPSTF 15-year rule and no-copay line at 15 and 16 years, English and Spanish, validation, saved-data cleaning; the demo family's Dad quit 18 years ago, so his lung card shows "Differs from ACS" with no no-copay line), the "Guidelines last checked: October 2026" line and per-topic ACS revision dates on the plan and sheet (English and Spanish), the printable checkup sheet (USPSTF line and no-copay tag on every row, fits on one Letter page in English and Spanish), clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
 - `docs/quality-log.md`: what each review round found and fixed.
 
 ```
@@ -104,17 +104,17 @@ Open `index.html` in any modern browser. That's it.
 Unit tests (Node 18+):
 
 ```bash
-node tests/rules.test.js     # 79 tests: 41 rules/content (incl. USPSTF cross-check, no-copay ranges, and the 15-year quit rule) + 17 rehearsal + 21 English/Spanish
+node tests/rules.test.js     # 80 tests: 42 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish
 ```
 
 Browser tests (optional):
 
 ```bash
 pip install playwright && playwright install chromium
-python3 tests/e2e_test.py    # 183 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
+python3 tests/e2e_test.py    # 188 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
 ```
 
-Last run Oct 11, 2026: **79/79 unit tests and 183/183 browser checks passing (Chromium, 12:35 PM CT)**.
+Last run Oct 11, 2026: **80/80 unit tests and 188/188 browser checks passing (Chromium, 2:40 PM CT)**.
 
 ### Deploy on GitHub Pages
 
