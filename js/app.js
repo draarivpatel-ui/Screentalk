@@ -682,12 +682,7 @@
   });
   $('demo-btn').addEventListener('click', function () {
     var names = S('demoNames');
-    state.people = [
-      { id: uid(), label: names[0], age: 46, breasts: true, cervix: true, uterus: true, familyHistory: true, smoking: 'never' },
-      { id: uid(), label: names[1], age: 52, prostate: true, smoking: 'former', ppd: '1', years: '22', progress: 'talked' },
-      { id: uid(), label: names[2], age: 71, breasts: true, cervix: true, uterus: true, menopause: true, smoking: 'never' },
-      { id: uid(), label: names[3], age: 19, breasts: true, cervix: true, uterus: true, smoking: 'never' }
-    ].map(function (p) { return C.sanitizePerson(p, R.packYears); });
+    state.people = C.demoFamily(names).map(function (p) { p.id = uid(); return C.sanitizePerson(p, R.packYears); });
     save(); renderAll();
     announce(S('demoLoaded'));
     $('summary').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
