@@ -275,4 +275,31 @@ test('page has a no-JavaScript fallback in both languages with the ACS helpline 
   assert.doesNotMatch(ns[1], /style=/, 'no inline style (CSP style-src self)');
 });
 
+test('EN and ES i18n key sets are identical (UI, rules, sheet), including the USPSTF chips, no-copay, quit field, and sheet keys', () => {
+  const keyPaths = (o, pre = '', out = []) => {
+    if (o && typeof o === 'object' && !Array.isArray(o)) Object.keys(o).forEach(k => keyPaths(o[k], pre + '.' + k, out));
+    else out.push(pre);
+    return out.sort();
+  };
+  [[I.STRINGS, 'i18n'], [R.TEXT, 'rules'], [C.SHEET, 'sheet']].forEach(([tbl, name]) =>
+    assert.deepEqual(keyPaths(tbl.es), keyPaths(tbl.en), name + ': English and Spanish key sets differ'));
+  ['usSame', 'usDiff', 'usLink', 'costLink', 'lblQuit', 'hintQuit', 'errQuit', 'sheetPrinted', 'sheetAppt', 'sheetIntro', 'sheetTopics', 'sheetTh',
+    'sheetNothing', 'sheetLater', 'sheetSmoke', 'sheetSmokeTail', 'sheetQs', 'sheetFh', 'sheetFhTh', 'sheetSaid', 'sheetGuides', 'sheetOpening']
+    .forEach(k => { assert.ok(I.STRINGS.en[k] && I.STRINGS.es[k], 'missing ' + k); assert.notEqual(I.STRINGS.es[k], I.STRINGS.en[k], k + ' not translated'); });
+  ['cost', 'costLungFormer', 'costLungQuitIn', 'usLungFormer', 'usLungQuitIn', 'usLungQuitInOnly', 'usLungQuitOver', 'usLungQuitOverOnly']
+    .forEach(k => assert.ok(R.TEXT.en[k] && R.TEXT.es[k], 'missing rules.' + k));
+});
+
+test('Spanish USPSTF and no-copay wording is consistent and follows CDC / CuidadoDeSalud.gov', () => {
+  const all = spanishTexts().join(' ');
+  // CDC Spanish lung page: "Grupo de Trabajo sobre Servicios Preventivos de los Estados Unidos"; one name only.
+  const names = all.match(/Grupo de Trabajo[^(,.;]*/g) || [];
+  names.forEach(n => assert.equal(n.trim(), 'Grupo de Trabajo sobre Servicios Preventivos de los Estados Unidos'));
+  // CuidadoDeSalud.gov: "un proveedor médico dentro de la red"; plan card and printed sheet say it the same way.
+  assert.match(R.TEXT.es.cost, /sin copago ni deducible de un proveedor dentro de la red/);
+  assert.match(C.SHEET.es.costNote, /sin copago ni deducible de un proveedor dentro de la red/);
+  assert.doesNotMatch(all, /proveedor de la red|en la red\b/);
+  assert.equal(I.STRINGS.es.usSame, 'Igual que la ACS'); assert.equal(I.STRINGS.es.usDiff, 'Distinto de la ACS');
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
