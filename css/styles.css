@@ -120,6 +120,8 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .plan-out { display: grid; gap: 16px; }
 .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 16px; }
 .summary .soonest { grid-column: 1 / -1; margin: 4px 0 0; text-align: center; color: var(--muted); font-size: .9rem; border-top: 1px dashed var(--line); padding-top: 10px; }
+.plan-checked { margin: -6px 0 0; font-size: .85rem; color: var(--muted); }
+.src-rev { white-space: nowrap; }
 .plan-note { margin: 0; font-size: .92rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 10px 14px; }
 .summary .stat { text-align: center; }
 .summary .stat b { display: block; font-size: 1.8rem; color: var(--brand); }
@@ -310,7 +312,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 /* Checkup sheet layout (only shown when printing one person) */
 .checkup-sheet { color: #111; font-size: 9.5pt; line-height: 1.28; }
 .checkup-sheet h2 { margin: 0; font-size: 17pt; }
-.checkup-sheet h3 { margin: 6px 0 3px; font-size: 10.5pt; text-transform: uppercase; letter-spacing: .04em; color: #0f766e; border-bottom: 1.5px solid #0f766e; padding-bottom: 2px; }
+.checkup-sheet h3 { margin: 4px 0 3px; font-size: 10.5pt; text-transform: uppercase; letter-spacing: .04em; color: #0f766e; border-bottom: 1.5px solid #0f766e; padding-bottom: 2px; }
 .sheet-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; border-bottom: 2px solid #111; padding-bottom: 6px; }
 .sheet-brand { margin: 0 0 2px; font-weight: 800; color: #0f766e; }
 .sheet-meta { margin: 0; text-align: right; font-size: 9.5pt; line-height: 1.6; white-space: nowrap; }
@@ -332,14 +334,15 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .sheet-table td.fill { height: 20px; }
 .sheet-status { display: inline-block; margin: 2px 0; font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #0f766e; }
 .sheet-status.option { color: #6d28d9; } .sheet-status.info { color: #b45309; }
-.sheet-later { margin: 4px 0 0; font-size: 9pt; }
+.sheet-later { margin: 3px 0 0; font-size: 9pt; }
 .sheet-qs { margin: 0; padding-left: 20px; }
-.sheet-qs li { margin: 0 0 2px; break-inside: avoid; }
+.sheet-qs li { margin: 0 0 1px; break-inside: avoid; }
 .sheet-qs .box { display: inline-block; width: 10px; height: 10px; border: 1.3px solid #111; margin-right: 6px; vertical-align: -1px; }
 .sheet-lines { display: block; }
-.sheet-line { display: block; height: 16px; border-bottom: 1px solid #999; }
-.sheet-note { margin: 4px 0 0; font-size: 8.5pt; color: #333; }
-.sheet-foot { margin: 6px 0 0; padding-top: 4px; border-top: 1px solid #ccc; font-size: 7.5pt; line-height: 1.2; color: #444; }
+.sheet-line { display: block; height: 14px; border-bottom: 1px solid #999; }
+.sheet-note { margin: 3px 0 0; font-size: 8.5pt; color: #333; }
+.sheet-checked { font-weight: 600; }
+.sheet-foot { margin: 4px 0 0; padding-top: 3px; border-top: 1px solid #ccc; font-size: 7.2pt; line-height: 1.15; color: #444; }
 
 /* ---------- Language switch + Spanish review note ---------- */
 .topbar .lang-switch { gap: 6px; flex-wrap: nowrap; }
