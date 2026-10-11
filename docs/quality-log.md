@@ -58,8 +58,25 @@ The live site (https://aariv.me/Screentalk/) was loaded in headless Chromium at 
 
 Tests: 28 unit tests (new: checkup-sheet data) and 58 browser tests (new: sheet button, print-only-the-sheet, afterprint reset, Ctrl+P date).
 
+## Round 5: rehearse the talk (October 10, 2026)
+
+Judging for this track rewards behavioural impact and engagement. A message template helps a teen start, but most talks stall at the first "I feel fine." New feature: **Rehearse the talk**.
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Five scripted pushbacks (feel fine, no family history, scared of a colonoscopy, too expensive, no time), three replies each (strong, okay, weak). | These are the objections the prompt named; scripted lines keep every medical statement checkable. No AI, no network. |
+| 2 | Real branching: an openness meter (starts at 50; strong +20, okay 0, weak -15). Below 50 the next pushback opens guarded ("I don't need this"). The ending depends on openness: agrees to a next step, "let me think," or "drop this." | So choices have consequences beyond a score. |
+| 3 | Every tip cites the page it comes from: CDC (symptoms, colorectal screening, breast screening and NBCCEDP), ACS (risk factors, screening tests, insurance coverage, how to get screened), NCI (common myths). Each was re-read live on Oct 10, 2026. A unit test fails if any tip lacks an ACS/NCI/CDC https source. | Factual Accuracy is scored. |
+| 4 | Checked wording against sources: "polyps and colorectal cancer don't always cause symptoms" (CDC); "most colorectal cancers are found in people without a family history" (ACS); "only about 5 to 10% of cancers" inherited (NCI); "the most important thing is to get screened, no matter which test" and sedation is usually used for colonoscopy (ACS); ACA requires no co-pays or deductibles for recommended colorectal tests, ask the insurer about follow-up costs (ACS); colorectal tests covered by most insurance without a deductible or co-pay, free or low-cost mammograms via NBCCEDP (CDC); some facilities allow self-referral for mammograms (ACS). | No claim goes further than its source. Lines spoken to a parent avoid "you need" and risk numbers. |
+| 5 | English and Spanish, switchable mid-rehearsal without losing progress; the card gets `lang="es"`. Spanish replies avoid gendered words where the parent could be Mom or Dad. Sources are marked "(en inglés)" because the linked pages are in English. | Many teens translate health information for their parents. |
+| 6 | Keyboard: Tab/Enter or keys 1 to 3; focus moves to Next after each answer and to the result heading at the end; the verdict, the parent's reaction, and the tip are announced in the live region. Mobile: answer buttons at least 44 px tall, no horizontal scroll at 390 px. | Accessibility is part of the design score. |
+| 7 | Feedback at the end: score out of 10 (9 to 10 ready, 6 to 8 almost, 0 to 5 keep practicing), the parent's final line, and for each round either what worked or a better line to try, with its tip and sources. Links to "Start the talk" to write the real message. | Turns practice into the real conversation. |
+
+Tests: 17 new unit tests (`tests/rehearse.test.js`, also run by `tests/rules.test.js`) and 22 new browser checks (80 total). Visual check at 1280 px and 390 px.
+
 ## Known limits
 
-- US guidelines only (ACS). English only.
+- US guidelines only (ACS). The rehearsal is in English and Spanish; the rest of the app is English only. The Spanish text has not yet been reviewed by a native speaker.
+- Rehearsal replies are scripted. Real parents will say other things; the tips are about how to respond, not a script to recite.
 - People at higher than average risk are pointed to a provider, not given a plan.
 - The content has not yet been reviewed by a clinician or health educator.
