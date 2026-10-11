@@ -33,6 +33,7 @@ Screening tests can find some cancers early, before symptoms, when they are easi
 | **Get help** | ACS 24/7 helpline, NCI Cancer Information Service, how to get screened without a doctor, NBCCEDP, Vaccines for Children, free quit-tobacco help. |
 | **One-page checkup sheet** | Print a single sheet per person to take to the appointment: the ACS topics to bring up, blanks for last test date, result, and next due, the questions to ask with checkboxes, pack-years for lung screening, a family-history table, and lines for what the provider said. |
 | **Print / save as PDF** | A clean printout of the whole family plan. |
+| **English and Spanish** | One switch (top of the page, or `?lang=es` in the link) turns the whole app into neutral Latin American Spanish: the plan, the guideline text, the timeline, the message builder, the printed checkup sheet, the game, habits, help, and sources. Medical terms follow the CDC and NCI Spanish pages ([docs/glossary-es.md](docs/glossary-es.md)); each topic also links a CDC Spanish page. A native-speaker review is still pending, and the app says so. |
 
 ## Responsible design
 
@@ -66,8 +67,9 @@ ScreenTalk is not affiliated with or endorsed by ACS or NCI. Guidelines are for 
 - `js/app.js`: UI, `localStorage`, SVG timeline, game, progress tracker, checkup sheet.
 - `js/rehearse.js`: the rehearsal script (English and Spanish), sources, and a pure engine for branching and scoring (runs in the browser and in Node).
 - `js/rehearse-ui.js`: the rehearsal UI.
-- `tests/rules.test.js`: 28 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
-- `tests/e2e_test.py`: 80 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the printable checkup sheet, clearing data, broken saved data, mobile layout, zero console errors, zero network requests.
+- `js/i18n.js`: page language (English/Spanish), the UI strings in both languages, and `data-i18n` attributes in `index.html`. Same pattern as the rehearsal: `STRINGS[lang][key]` with `{placeholders}`. `rules.js` and `content.js` take a language argument (`evaluate(person, 'es')`).
+- `tests/rules.test.js`: 28 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 17 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
+- `tests/e2e_test.py`: 121 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the printable checkup sheet, clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
 - `docs/quality-log.md`: what each review round found and fixed.
 
 ```
@@ -79,9 +81,12 @@ screentalk/
 ├── js/app.js        # UI
 ├── js/rehearse.js   # rehearsal script + engine (EN/ES)
 ├── js/rehearse-ui.js
+├── js/i18n.js       # page language + UI strings (EN/ES)
 ├── tests/rules.test.js
 ├── tests/rehearse.test.js
+├── tests/i18n.test.js
 ├── tests/e2e_test.py
+├── docs/glossary-es.md
 └── docs/quality-log.md
 ```
 
@@ -109,12 +114,12 @@ Repo **Settings → Pages → Build and deployment → Deploy from a branch → 
 ## Limits
 
 - Covers the ACS average-risk guidelines in the US. People at higher risk are pointed to a provider rather than given a plan.
-- English only.
+- English and Spanish. The Spanish has not yet been reviewed by a native speaker.
 - Not yet reviewed by a clinician or health educator.
 
 ## What's next
 
-- Spanish and other languages, reviewed by native speakers (ACS publishes materials in many languages).
+- A native-speaker review of the Spanish, then more languages (ACS publishes materials in many languages).
 - Review of the content by a health educator or clinician.
 - Running "ScreenTalk nights" with school health classes, libraries, and youth groups, and measuring how many families report a conversation or a booked checkup.
 
