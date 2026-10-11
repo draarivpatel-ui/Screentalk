@@ -98,3 +98,14 @@ Tests: 17 new unit tests (`tests/i18n.test.js`: same keys, placeholders, and arr
 - Rehearsal replies are scripted. Real parents will say other things; the tips are about how to respond, not a script to recite.
 - People at higher than average risk are pointed to a provider, not given a plan.
 - The content has not yet been reviewed by a clinician or health educator.
+
+## Round 7: message and checkup sheet in the parent's language (October 10, 2026, evening)
+
+Strict-judge review of the live app (desktop and 390 px, English and Spanish, demo family): ACS content re-read against cancer.org "Screening Guidelines by Age" (last revised Dec 4, 2025): breast 40-44 choice / 45-54 yearly / 55+ every 2 years or yearly, colorectal 45-75 and 76-85 discuss, cervical 25-65 with the HPV-first options and the 65+ exit rule, lung 50-80 and 20 pack-years, prostate 40/45/50 tiers and the 10-year life expectancy note all still match. No contrast, overflow, or console problems. The one real gap: the app has a single language, but in many families the teen and the parent read different languages, so the paper that goes to the parent was in the wrong one.
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | New "Write it in" control in Start the talk: Same as the app / English / Español. It sets the language of the conversation starter and of the printed checkup sheet (title, topics, questions, table headings, dates, `lang` attribute). The rest of the app keeps the app language. Remembered on the device; "Clear my data" resets it. | A teen who uses the app in English can hand a Spanish-reading parent a Spanish sheet, without flipping the whole UI. |
+| 2 | Same guideline logic in both languages (the sheet is built from `evaluate(person, lang)`), so wording stays checked by the existing English/Spanish parity tests. | No new medical text; no new claim. |
+
+Tests: 131 browser checks (10 new: default follows the app, English app with Spanish message and sheet, plan stays English, remembered after reload, back to "Same as the app", Spanish app with English message, contrast, reset on clear, 390 px) and all 63 unit tests pass.
