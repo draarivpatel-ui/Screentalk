@@ -312,6 +312,38 @@ test('checkup sheet: rows for now/discuss/info, later list, pack-years, question
   assert.match(C.checkupSheet({ age: 60, smoking: 'current' }, R.evaluate({ age: 60, smoking: 'current' })).smoking, /not entered/);
 });
 
+test('checkup sheet rows carry the USPSTF cross-check and the no-copay line', () => {
+  const dad = { label: 'Dad', age: 52, prostate: true, smoking: 'former', ppd: '1', years: '22', packYears: 22 };
+  const res = R.evaluate(dad);
+  const d = C.checkupSheet(dad, res);
+  const row = k => d.rows.find(r => r.key === k);
+  d.rows.forEach(r => {
+    const t = res.topics.find(x => x.key === r.key);
+    assert.deepEqual(r.uspstf, t.uspstf ? { text: t.uspstf.text, differs: t.uspstf.differs } : null);
+    assert.equal(r.cost, t.cost ? t.cost.text : '');
+  });
+  assert.equal(row('colorectal').uspstf.differs, false);
+  assert.match(row('colorectal').uspstf.text, /^USPSTF: screening for adults 45 to 75/);
+  assert.match(row('colorectal').cost, /no copay/);
+  assert.equal(row('lung').uspstf.differs, true);
+  assert.match(row('lung').cost, /no copay/);
+  assert.equal(row('prostate').uspstf.differs, true);
+  assert.equal(row('prostate').cost, '');
+  assert.equal(row('lung').costTag, 'No copay*');
+  assert.equal(row('prostate').costTag, '');
+  // one cost note under the table, with the quit-within-15-years tail for a former smoker's lung row
+  assert.match(d.costNote, /^\* No copay: most health plans must cover these screenings with no copay or deductible/);
+  assert.match(d.costNote, /quit in the past 15 years\.$/);
+  const never = { label: 'Mom', age: 50, breasts: true, cervix: true, uterus: true };
+  assert.ok(!/15 years/.test(C.checkupSheet(never, R.evaluate(never)).costNote));
+  // HPV vaccine has no USPSTF screening note and no cost line
+  const sis = { label: 'Sis', age: 19, breasts: true, cervix: true, uterus: true };
+  const h = C.checkupSheet(sis, R.evaluate(sis)).rows.find(r => r.key === 'hpv');
+  assert.equal(h.uspstf, null);
+  assert.equal(h.cost, '');
+  assert.equal(C.checkupSheet(sis, R.evaluate(sis)).costNote, '');
+});
+
 test('sanitizePerson cleans bad or old saved data', () => {
   const p = C.sanitizePerson({ label: '  <img src=x onerror=alert(1)> very long nickname here!!', age: '47', smokes: true, ppd: '1', years: '25', progress: 'hacked', fatherBrotherProstateUnder65: true }, R.packYears);
   assert.equal(p.label.length <= 24, true);
