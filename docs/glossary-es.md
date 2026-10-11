@@ -31,6 +31,8 @@ ScreenTalk's Spanish is neutral Latin American Spanish. Medical terms follow the
 | healthcare provider | proveedor de atención médica | CDC breast page |
 | American Cancer Society | Sociedad Americana Contra el Cáncer (ACS) | Same name the rehearsal already used |
 | National Cancer Institute | Instituto Nacional del Cáncer (NCI) | NCI, [Mitos comunes e ideas falsas acerca del cáncer](https://www.cancer.gov/espanol/cancer/causas-prevencion/riesgo/mitos) |
+| U.S. Preventive Services Task Force (USPSTF) | Grupo de Trabajo sobre Servicios Preventivos de los Estados Unidos (USPSTF); "el USPSTF" after the first mention | CDC, [Pruebas de detección del cáncer de pulmón](https://www.cdc.gov/lung-cancer/es/screening/index.html) |
+| no copay / deductible / in-network provider | sin copago / deducible / proveedor dentro de la red | CuidadoDeSalud.gov, [Beneficios de cuidado preventivo para adultos](https://www.cuidadodesalud.gov/es/preventive-care-adults/) (read Oct 11, 2026) |
 
 ## Which links change in Spanish
 
