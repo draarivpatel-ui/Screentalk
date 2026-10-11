@@ -3,20 +3,19 @@
   'use strict';
   var R = window.ScreenTalkRules;
   var C = window.ScreenTalkContent;
+  var I = window.ScreenTalkI18n;
   var STORE_KEY = 'screentalk.v1';
 
-  var STATUS_LABEL = {
-    'talk-now': 'Talk now',
-    'option': 'Discuss',
-    'upcoming': 'Coming up',
-    'info': 'Good to know',
-    'past': 'Past range'
-  };
+  // Language helpers: L() is 'en' or 'es'; S(key) is the UI string; F(key, vars) fills {placeholders}.
+  function L() { return I.getLang(); }
+  function S(key) { return I.s(key); }
+  function F(key, vars) { return I.fmt(I.s(key), vars); }
+  function evaluate(p) { return R.evaluate(p, L()); }
+
   var BAND_COLORS = {
     breast: '#be185d', colorectal: '#0f766e', cervical: '#6d28d9',
     lung: '#475569', prostate: '#1d4ed8'
   };
-  var BAND_NAMES = { breast: 'Breast', colorectal: 'Colorectal', cervical: 'Cervical', lung: 'Lung', prostate: 'Prostate talk' };
 
   // ---------- State ----------
   var state = load();
@@ -138,8 +137,8 @@
 
   function resetForm() {
     form.reset(); $('edit-id').value = '';
-    $('form-title').textContent = 'Add a family member';
-    $('save-btn').textContent = 'Add to plan';
+    $('form-title').textContent = S('formAdd');
+    $('save-btn').textContent = S('saveAdd');
     $('cancel-edit').classList.add('hidden');
     showError('', null);
     setPresetUI(null);
@@ -153,13 +152,13 @@
   }
 
   function validate(p) {
-    if (!p.label) return ['Add a nickname (like \u201cDad\u201d).', fields.label];
-    if (!(p.age >= 0 && p.age <= 120) || Math.floor(p.age) !== p.age) return ['Enter a whole-number age from 0 to 120.', fields.age];
-    if (!p.breasts && !p.cervix && !p.uterus && !p.prostate) return ['Pick Female, Male, or check the body parts that apply, so we know which screenings to show.', $('f-breasts')];
+    if (!p.label) return [S('errNick'), fields.label];
+    if (!(p.age >= 0 && p.age <= 120) || Math.floor(p.age) !== p.age) return [S('errAge'), fields.age];
+    if (!p.breasts && !p.cervix && !p.uterus && !p.prostate) return [S('errBody'), $('f-breasts')];
     if (p.smoking !== 'never') {
       var ppd = p.ppd === '' ? 0 : Number(p.ppd), yrs = p.years === '' ? 0 : Number(p.years);
-      if (!(ppd >= 0 && ppd <= 10)) return ['Packs per day should be between 0 and 10.', fields.ppd];
-      if (!(yrs >= 0) || yrs > p.age) return ['Years smoked can\u2019t be more than their age.', fields.years];
+      if (!(ppd >= 0 && ppd <= 10)) return [S('errPpd'), fields.ppd];
+      if (!(yrs >= 0) || yrs > p.age) return [S('errYears'), fields.years];
     }
     return null;
   }
@@ -177,7 +176,7 @@
     if (existing) state.people = state.people.map(function (x) { return x.id === editId ? p : x; });
     else state.people.push(p);
     save(); resetForm(); renderAll();
-    announce((existing ? 'Updated ' : 'Added ') + p.label + '.');
+    announce(F(existing ? 'updated' : 'added', { name: p.label }));
     var card = document.querySelector('[data-person="' + p.id + '"]');
     if (card) { card.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'nearest' }); card.focus({ preventScroll: true }); }
   });
@@ -195,33 +194,33 @@
     $('plan-note').classList.toggle('hidden', !has);
     $('print-btn').disabled = !has;
     state.people.forEach(function (p) {
-      var res = R.evaluate(p);
+      var res = evaluate(p);
       var progressId = 'prog-' + p.id;
       var progress = el('select', { id: progressId, class: 'progress-select' });
-      C.PROGRESS.forEach(function (o) { progress.appendChild(el('option', { value: o.value, text: o.label })); });
+      C.PROGRESS.forEach(function (o) { progress.appendChild(el('option', { value: o.value, text: C.progressLabel(o, L()) })); });
       progress.value = p.progress || 'not-started';
       progress.addEventListener('change', function () {
         p.progress = progress.value; save(); renderSummary();
         card.dataset.progress = p.progress;
-        announce(p.label + ': ' + progress.options[progress.selectedIndex].text + '.');
+        announce(F('progressChanged', { name: p.label, status: progress.options[progress.selectedIndex].text }));
       });
 
       var head = el('div', { class: 'person-head' }, [
-        el('h3', null, [p.label + ' ', el('span', { class: 'age', text: '\u00b7 age ' + p.age })]),
+        el('h3', null, [p.label + ' ', el('span', { class: 'age', text: F('ageLine', { age: p.age }) })]),
         el('div', { class: 'person-actions' }, [
-          btn('Edit', 'small ghost', function () { startEdit(p); }, 'Edit ' + p.label),
-          btn('Remove', 'small ghost danger', function () {
-            if (!confirm('Remove ' + p.label + ' from your plan?')) return;
+          btn(S('edit'), 'small ghost', function () { startEdit(p); }, F('editAria', { name: p.label })),
+          btn(S('remove'), 'small ghost danger', function () {
+            if (!confirm(F('removeConfirm', { name: p.label }))) return;
             state.people = state.people.filter(function (x) { return x.id !== p.id; });
             if ($('edit-id').value === p.id) resetForm();
-            save(); renderAll(); announce('Removed ' + p.label + '.');
-          }, 'Remove ' + p.label)
+            save(); renderAll(); announce(F('removed', { name: p.label }));
+          }, F('removeAria', { name: p.label }))
         ])
       ]);
       var tracker = el('div', { class: 'tracker' }, [
-        el('label', { for: progressId, text: 'Progress' }), progress,
-        btn('\ud83e\ude7a Checkup sheet', 'small ghost sheet-btn', function () { printCheckupSheet(p); }, 'Print a one-page checkup sheet for ' + p.label),
-        btn('\ud83d\udcc5 Remind me in 2 weeks', 'small ghost', function () { downloadReminder(p, res.topics); }, 'Download a calendar reminder to check in with ' + p.label)
+        el('label', { for: progressId, text: S('progress') }), progress,
+        btn(S('sheetBtn'), 'small ghost sheet-btn', function () { printCheckupSheet(p); }, F('sheetAria', { name: p.label })),
+        btn(S('remindBtn'), 'small ghost', function () { downloadReminder(p, res.topics); }, F('remindAria', { name: p.label }))
       ]);
 
       var list = el('ul', { class: 'topics' });
@@ -229,25 +228,29 @@
         var more = null;
         if (t.detail || t.extra) {
           more = el('details', { class: 'more' }, [
-            el('summary', { text: 'More from ACS' }),
+            el('summary', { text: S('moreAcs') }),
             t.detail ? el('p', { class: 'detail', text: t.detail }) : null,
-            t.extra ? el('p', { class: 'detail' }, [t.extra + ' ', el('a', { href: t.extraLink, target: '_blank', rel: 'noopener noreferrer', text: 'Free quit help' })]) : null
+            t.extra ? el('p', { class: 'detail' }, [t.extra + ' ', el('a', { href: t.extraLink, target: '_blank', rel: 'noopener noreferrer', text: S('quitHelp') })]) : null
           ]);
         }
         var body = el('div', null, [
           el('h4', { text: t.title }),
           el('p', { text: t.summary }),
           more,
-          el('p', { class: 'src' }, [el('a', { href: t.source, target: '_blank', rel: 'noopener noreferrer', text: 'Read the ACS guideline \u2197' })])
+          el('p', { class: 'src' }, [
+            el('a', { href: t.source, target: '_blank', rel: 'noopener noreferrer', text: S('readAcs') }),
+            (L() === 'es' && t.sourceEs) ? ' \u00b7 ' : null,
+            (L() === 'es' && t.sourceEs) ? el('a', { href: t.sourceEs, target: '_blank', rel: 'noopener noreferrer', hreflang: 'es', class: 'src-es', text: S('readEs') }) : null
+          ])
         ]);
         list.appendChild(el('li', { class: 'topic' }, [
-          el('span', { class: 'badge ' + t.status, text: STATUS_LABEL[t.status] }), body
+          el('span', { class: 'badge ' + t.status, text: S('status')[t.status] }), body
         ]));
       });
 
-      var qs = C.questions(p, res.topics);
+      var qs = C.questions(p, res.topics, L());
       var qBox = qs.length ? el('details', { class: 'questions' }, [
-        el('summary', { text: 'Questions to bring to the next checkup (' + qs.length + ')' }),
+        el('summary', { text: F('questionsSummary', { n: qs.length }) }),
         el('ol', null, qs.map(function (q) { return el('li', { text: q }); }))
       ]) : null;
 
@@ -256,15 +259,15 @@
         notes = el('ul', { class: 'notes' });
         res.notes.forEach(function (n) { notes.appendChild(el('li', { text: n })); });
       }
-      var card = el('article', { class: 'card person', 'data-person': p.id, 'data-progress': p.progress, tabindex: '-1', 'aria-label': p.label + ', age ' + p.age }, [head, tracker, list, qBox, notes]);
+      var card = el('article', { class: 'card person', 'data-person': p.id, 'data-progress': p.progress, tabindex: '-1', 'aria-label': F('cardAria', { name: p.label, age: p.age }) }, [head, tracker, list, qBox, notes]);
       wrap.appendChild(card);
     });
   }
 
   function startEdit(p) {
     fillForm(p); $('edit-id').value = p.id;
-    $('form-title').textContent = 'Edit ' + p.label;
-    $('save-btn').textContent = 'Save changes';
+    $('form-title').textContent = F('formEdit', { name: p.label });
+    $('save-btn').textContent = S('saveEdit');
     $('cancel-edit').classList.remove('hidden');
     showError('', null);
     form.scrollIntoView({ behavior: 'smooth' });
@@ -275,40 +278,40 @@
     var now = new Date();
     var day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14);
     var ask = topics.filter(function (t) { return t.status === 'talk-now' || t.status === 'option'; }).map(function (t) { return t.title; });
-    var desc = 'Check in with ' + p.label + ' about cancer screening.' + (ask.length ? ' Topics from the American Cancer Society guidelines: ' + ask.join('; ') + '.' : '') + ' Made with ScreenTalk. Education only, not medical advice.';
-    var ics = C.buildICS({ title: 'Check in with ' + p.label + ' about cancer screening', description: desc, date: day, now: now, uid: p.id + '-' + now.getTime() });
+    var desc = F('icsDesc', { name: p.label }) + (ask.length ? F('icsTopics', { list: ask.join('; ') }) : '') + S('icsTail');
+    var ics = C.buildICS({ title: F('icsTitle', { name: p.label }), description: desc, date: day, now: now, uid: p.id + '-' + now.getTime() });
     var url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
-    var a = el('a', { href: url, download: 'screentalk-' + p.label.replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '-reminder.ics' });
+    var a = el('a', { href: url, download: 'screentalk-' + p.label.replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '-' + S('icsFile') + '.ics' });
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-    announce('Calendar reminder downloaded. Open it to add it to your calendar.');
+    announce(S('icsDone'));
   }
 
   function renderSummary() {
-    var s = R.familySummary(state.people);
+    var s = R.familySummary(state.people, L());
     var box = $('summary');
     box.innerHTML = '';
     box.classList.toggle('hidden', state.people.length === 0);
     if (!state.people.length) return;
     var moving = state.people.filter(function (p) { return p.progress && p.progress !== 'not-started'; }).length;
     [
-      [state.people.length, state.people.length === 1 ? 'person in your plan' : 'people in your plan'],
-      [s.talkCount, s.talkCount === 1 ? 'topic to talk about now' : 'topics to talk about now'],
-      [moving + ' of ' + state.people.length, 'have talked, booked, or are up to date']
+      [state.people.length, S(state.people.length === 1 ? 'statPeople1' : 'statPeopleN')],
+      [s.talkCount, S(s.talkCount === 1 ? 'statTalk1' : 'statTalkN')],
+      [F('statOf', { a: moving, b: state.people.length }), S('statMoving')]
     ].forEach(function (pair) {
       box.appendChild(el('div', { class: 'stat' }, [el('b', { text: String(pair[0]) }), el('span', { text: pair[1] })]));
     });
     if (s.soonest) {
-      box.appendChild(el('p', { class: 'soonest', text: 'Next one coming up: ' + s.soonest.topic.toLowerCase() + ' for ' + s.soonest.who + ' in ' + s.soonest.years + (s.soonest.years === 1 ? ' year.' : ' years.') }));
+      box.appendChild(el('p', { class: 'soonest', text: F(s.soonest.years === 1 ? 'soonest1' : 'soonestN', { topic: s.soonest.topic.toLowerCase(), who: s.soonest.who, n: s.soonest.years }) }));
     }
   }
 
   // ---------- Timeline (SVG) ----------
   function describeBand(b) {
-    var name = BAND_NAMES[b.key] || b.label;
+    var name = S('band')[b.key] || b.label;
     var parts = (b.segments || [{ start: b.start, end: b.end }]).map(function (sg) {
       var range = sg.ages || (sg.start + '\u2013' + sg.end);
-      return range + (sg.soft ? ' (a choice to discuss)' : ' (recommended)');
+      return range + (sg.soft ? S('tlSoft') : S('tlSolid'));
     });
     return name + ': ' + parts.join(', ');
   }
@@ -325,7 +328,7 @@
     var narrow = W < 600;
     var left = narrow ? 96 : 170, right = narrow ? 16 : 24, rowH = 24, headH = 26, gap = 14, top = 34;
     var maxAge = 90;
-    var rows = people.map(function (p) { return { person: p, bands: R.evaluate(p).timeline }; });
+    var rows = people.map(function (p) { return { person: p, bands: evaluate(p).timeline }; });
     var height = top + rows.reduce(function (h, r) { return h + headH + r.bands.length * rowH + gap; }, 0);
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', '0 0 ' + W + ' ' + height);
@@ -341,7 +344,7 @@
       add('line', { x1: x(a), x2: x(a), y1: top - 10, y2: height - 4, stroke: '#ece7de', 'stroke-width': 1 });
       add('text', { x: x(a), y: 18, 'text-anchor': 'middle', 'font-size': 13, fill: '#4b5565' }, a === maxAge ? '90+' : String(a));
     }
-    add('text', { x: 8, y: 18, 'font-size': 13, fill: '#4b5565' }, narrow ? 'Age' : 'Age \u2192');
+    add('text', { x: 8, y: 18, 'font-size': 13, fill: '#4b5565' }, narrow ? S('tlAge') : S('tlAgeArrow'));
     var y = top;
     rows.forEach(function (r) {
       var maxLen = narrow ? 9 : 18;
@@ -352,7 +355,7 @@
       r.bands.forEach(function (b, i) {
         var yy = blockTop + i * rowH;
         var color = BAND_COLORS[b.key] || '#0f766e';
-        add('text', { x: narrow ? 12 : 20, y: yy + 16, 'font-size': narrow ? 12 : 13, fill: '#374151' }, (narrow && b.key === 'prostate') ? 'Prostate' : (BAND_NAMES[b.key] || b.label));
+        add('text', { x: narrow ? 12 : 20, y: yy + 16, 'font-size': narrow ? 12 : 13, fill: '#374151' }, (narrow && b.key === 'prostate') ? S('bandShortProstate') : (S('band')[b.key] || b.label));
         var g = add('g', {});
         (b.segments || [{ start: b.start, end: b.end }]).forEach(function (sg) {
           add('rect', {
@@ -362,12 +365,12 @@
         });
         add('title', {}, describeBand(b), g);
       });
-      if (!r.bands.length) add('text', { x: 20, y: blockTop + 4, 'font-size': 12, fill: '#4b5565' }, 'No screening windows yet');
+      if (!r.bands.length) add('text', { x: 20, y: blockTop + 4, 'font-size': 12, fill: '#4b5565' }, S('tlEmpty'));
       var ax = x(r.person.age);
       add('line', { x1: ax, x2: ax, y1: blockTop, y2: blockTop + Math.max(blockH, rowH), stroke: '#1d2433', 'stroke-width': 2, 'stroke-dasharray': '4 3' });
       add('polygon', { points: (ax - 7) + ',' + (blockTop - 9) + ' ' + (ax + 7) + ',' + (blockTop - 9) + ' ' + ax + ',' + (blockTop - 1), fill: '#f59e0b', stroke: '#1d2433', 'stroke-width': 1.5 });
       var words = r.bands.map(describeBand);
-      txt.appendChild(el('li', { text: r.person.label + ', age ' + r.person.age + ': ' + (words.length ? words.join('; ') : 'no screening windows shown') + '.' }));
+      txt.appendChild(el('li', { text: F('tlLine', { name: r.person.label, age: r.person.age, list: words.length ? words.join('; ') : S('tlNoneWords') }) }));
       y = blockTop + blockH + gap;
     });
     host.appendChild(svg);
@@ -377,12 +380,12 @@
     rows.forEach(function (r) { r.bands.forEach(function (b) { used[b.key] = true; }); });
     Object.keys(BAND_COLORS).filter(function (k) { return used[k]; }).forEach(function (k) {
       var sw = el('i'); sw.style.background = BAND_COLORS[k];
-      legend.appendChild(el('span', null, [sw, BAND_NAMES[k]]));
+      legend.appendChild(el('span', null, [sw, S('band')[k]]));
     });
     var soft = el('i', { class: 'soft' });
-    legend.appendChild(el('span', null, [soft, 'Lighter = a choice to discuss with a provider']));
+    legend.appendChild(el('span', null, [soft, S('legendSoft')]));
     var tri = el('i', { class: 'tri' });
-    legend.appendChild(el('span', null, [tri, 'Age today']));
+    legend.appendChild(el('span', null, [tri, S('legendAge')]));
   }
 
   // ---------- Talk ----------
@@ -393,7 +396,7 @@
     var has = state.people.length > 0;
     sel.disabled = !has; $('copy-btn').disabled = !has; $('share-btn').disabled = !has;
     if (!has) {
-      sel.appendChild(el('option', { text: 'Add someone to your plan first' }));
+      sel.appendChild(el('option', { text: S('talkEmptyOpt') }));
     } else {
       state.people.forEach(function (p) { sel.appendChild(el('option', { value: p.id, text: p.label })); });
       if (prev && state.people.some(function (p) { return p.id === prev; })) sel.value = prev;
@@ -403,7 +406,8 @@
   function renderTalk() {
     var p = state.people.filter(function (x) { return x.id === $('talk-who').value; })[0];
     var box = $('talk-text');
-    box.value = p ? C.starter(p.label, R.evaluate(p).topics, $('talk-tone').value) : 'Add someone to your plan first, then pick a style.';
+    box.value = p ? C.starter(p.label, evaluate(p).topics, $('talk-tone').value, L()) : S('talkEmpty');
+    box.setAttribute('lang', L());
     box.disabled = !p;
     box.style.height = 'auto';
     box.style.height = Math.max(110, box.scrollHeight + 4) + 'px';
@@ -413,7 +417,7 @@
   $('talk-tone').addEventListener('change', renderTalk);
   $('copy-btn').addEventListener('click', function () {
     var text = $('talk-text').value;
-    var done = function () { $('copy-status').textContent = 'Copied!'; };
+    var done = function () { $('copy-status').textContent = S('copied'); };
     function fallback() {
       var ta = el('textarea'); ta.value = text; ta.setAttribute('readonly', '');
       ta.className = 'offscreen';
@@ -421,7 +425,7 @@
       var ok = false;
       try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
       document.body.removeChild(ta);
-      if (ok) done(); else $('copy-status').textContent = 'Couldn\u2019t copy automatically. Select the text and copy it.';
+      if (ok) done(); else $('copy-status').textContent = S('copyFail');
     }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
     else fallback();
@@ -432,58 +436,77 @@
   $('share-btn').addEventListener('click', function () {
     var text = $('talk-text').value;
     if (navigator.share) navigator.share({ text: text }).catch(function () {});
-    else $('copy-status').textContent = 'Sharing isn\u2019t supported in this browser. Use Copy instead.';
+    else $('copy-status').textContent = S('shareFail');
   });
 
   // ---------- Game ----------
-  var game = { order: [], i: 0, score: 0, answered: false };
+  // game.order holds indexes into C.CARDS so a language switch can redraw the same card.
+  var game = { order: [], i: 0, score: 0, answered: false, lastRight: false, done: false };
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function curCard() { return C.card(C.CARDS[game.order[game.i]], L()); }
   function startGame(focus) {
-    game.order = shuffle(C.CARDS); game.i = 0; game.score = 0;
+    game.order = shuffle(C.CARDS.map(function (c, i) { return i; })); game.i = 0; game.score = 0; game.done = false;
     $('game-done').classList.add('hidden');
     $('game-claim').classList.remove('hidden');
     showCard();
     if (focus) $('game-claim').focus();
   }
   function showCard() {
-    var c = game.order[game.i];
+    var c = curCard();
     game.answered = false;
-    $('game-progress').textContent = 'Card ' + (game.i + 1) + ' of ' + game.order.length;
-    $('game-score').textContent = 'Score: ' + game.score;
+    $('game-progress').textContent = F('gameCard', { n: game.i + 1, t: game.order.length });
+    $('game-score').textContent = F('gameScore', { s: game.score });
     $('game-bar').style.width = (game.i / game.order.length * 100) + '%';
     $('game-claim').textContent = '\u201c' + c.claim + '\u201d';
     $('game-reveal').classList.add('hidden');
     $('game-buttons').classList.remove('hidden');
   }
+  function showReveal() {
+    var c = curCard();
+    var right = game.lastRight;
+    $('game-score').textContent = F('gameScore', { s: game.score });
+    var v = $('game-verdict');
+    v.textContent = S(right ? 'correct' : 'notQuite') + S(c.answer === 'myth' ? 'itsMyth' : 'itsFact');
+    v.className = 'verdict ' + (right ? 'right' : 'wrong');
+    $('game-why').textContent = c.why;
+    $('game-src').textContent = c.srcName; $('game-src').href = c.src;
+    if (/\/espanol\/|\/es\//.test(c.src)) $('game-src').setAttribute('hreflang', 'es'); else $('game-src').removeAttribute('hreflang');
+    $('game-buttons').classList.add('hidden');
+    $('game-reveal').classList.remove('hidden');
+    $('game-next').textContent = S(game.i === game.order.length - 1 ? 'gameSeeScore' : 'gameNext');
+  }
+  function showFinal() {
+    $('game-bar').style.width = '100%';
+    $('game-reveal').classList.add('hidden');
+    $('game-claim').classList.add('hidden');
+    $('game-done').classList.remove('hidden');
+    var pct = game.score / game.order.length;
+    $('game-final').textContent = F('gameFinal', { s: game.score, t: game.order.length }) + S(pct === 1 ? 'gamePerfect' : pct >= 0.75 ? 'gameNice' : 'gameKnow');
+    $('game-progress').textContent = S('gameDone');
+    $('game-score').textContent = F('gameScore', { s: game.score });
+  }
+  // Redraw the game in the new language without losing the card, score, or answer.
+  function renderGame() {
+    if (game.done) { showFinal(); return; }
+    var answered = game.answered;
+    showCard();
+    if (answered) { game.answered = true; showReveal(); }
+  }
   document.querySelectorAll('#game-buttons button').forEach(function (b) {
     b.addEventListener('click', function () {
       if (game.answered) return;
       game.answered = true;
-      var c = game.order[game.i];
-      var right = b.dataset.answer === c.answer;
-      if (right) game.score++;
-      $('game-score').textContent = 'Score: ' + game.score;
-      var v = $('game-verdict');
-      v.textContent = (right ? 'Correct! ' : 'Not quite. ') + 'It\u2019s a ' + c.answer + '.';
-      v.className = 'verdict ' + (right ? 'right' : 'wrong');
-      $('game-why').textContent = c.why;
-      $('game-src').textContent = c.srcName; $('game-src').href = c.src;
-      $('game-buttons').classList.add('hidden');
-      $('game-reveal').classList.remove('hidden');
-      $('game-next').textContent = game.i === game.order.length - 1 ? 'See my score \u2192' : 'Next card \u2192';
+      game.lastRight = b.dataset.answer === curCard().answer;
+      if (game.lastRight) game.score++;
+      showReveal();
       $('game-next').focus();
     });
   });
   $('game-next').addEventListener('click', function () {
     game.i++;
     if (game.i >= game.order.length) {
-      $('game-bar').style.width = '100%';
-      $('game-reveal').classList.add('hidden');
-      $('game-claim').classList.add('hidden');
-      $('game-done').classList.remove('hidden');
-      var pct = game.score / game.order.length;
-      $('game-final').textContent = 'You got ' + game.score + ' of ' + game.order.length + ' right' + (pct === 1 ? '. Perfect score!' : pct >= 0.75 ? '. Nice work!' : '. Now you know the facts.');
-      $('game-progress').textContent = 'Done!';
+      game.done = true;
+      showFinal();
       $('game-final').focus();
     } else {
       showCard();
@@ -495,7 +518,7 @@
   // ---------- Habits ----------
   function renderHabits() {
     var ul = $('habit-list'); ul.innerHTML = '';
-    C.HABITS.forEach(function (h, i) {
+    C.habits(L()).forEach(function (h, i) {
       var cb = el('input', { type: 'checkbox', id: 'h' + i });
       cb.checked = !!state.habits[i];
       cb.addEventListener('change', function () { state.habits[i] = cb.checked; save(); renderHabitCount(); });
@@ -505,41 +528,46 @@
   }
   function renderHabitCount() {
     var n = C.HABITS.filter(function (h, i) { return state.habits[i]; }).length;
-    $('habit-count').textContent = n ? 'You\u2019ve committed to ' + n + ' of ' + C.HABITS.length + ' habits.' : '';
+    $('habit-count').textContent = n ? F('habitCount', { n: n, t: C.HABITS.length }) : '';
   }
 
   // ---------- Resources ----------
   function renderResources() {
     var box = $('resources'); box.innerHTML = '';
-    C.RESOURCES.forEach(function (r) {
+    C.resources(L()).forEach(function (r) {
       var ext = /^https?:/.test(r.href);
       var attrs = { class: 'card', href: r.href };
       if (ext) { attrs.target = '_blank'; attrs.rel = 'noopener noreferrer'; }
+      if (/\/espanol\/|\/es\//.test(r.href)) attrs.hreflang = 'es';
       box.appendChild(el('a', attrs, [el('h3', { text: r.name }), el('p', { text: r.detail })]));
     });
   }
 
   // ---------- Checkup sheet (one person, one page) ----------
-  function today() { return new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }); }
+  function today() {
+    try { return new Date().toLocaleDateString(I.locale(), { year: 'numeric', month: 'long', day: 'numeric' }); }
+    catch (e) { return new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }); }
+  }
   function blankLines(n, cls) {
     var w = el('div', { class: 'sheet-lines' + (cls ? ' ' + cls : '') });
     for (var i = 0; i < n; i++) w.appendChild(el('span', { class: 'sheet-line' }));
     return w;
   }
   function renderCheckupSheet(p) {
-    var d = C.checkupSheet(p, R.evaluate(p));
+    var d = C.checkupSheet(p, evaluate(p), L());
     var box = $('checkup-sheet');
     box.innerHTML = '';
+    box.setAttribute('lang', L());
     box.appendChild(el('header', { class: 'sheet-head' }, [
       el('div', null, [el('p', { class: 'sheet-brand', text: 'ScreenTalk' }), el('h2', { text: d.title })]),
-      el('p', { class: 'sheet-meta' }, ['Printed ' + today(), el('br'), 'Appointment date: ________________'])
+      el('p', { class: 'sheet-meta' }, [F('sheetPrinted', { date: today() }), el('br'), S('sheetAppt')])
     ]));
-    box.appendChild(el('p', { class: 'sheet-intro', text: 'Bring this to the next checkup. Fill in what you know before the visit, then write down what the provider says.' }));
+    box.appendChild(el('p', { class: 'sheet-intro', text: S('sheetIntro') }));
 
-    box.appendChild(el('h3', { text: 'Screenings to bring up' }));
+    box.appendChild(el('h3', { text: S('sheetTopics') }));
     if (d.rows.length) {
       var table = el('table', { class: 'sheet-table' });
-      table.appendChild(el('thead', null, [el('tr', null, ['Topic', 'ACS guideline', 'Last test (date)', 'Result', 'Next due'].map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
+      table.appendChild(el('thead', null, [el('tr', null, S('sheetTh').map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
       var tb = el('tbody');
       d.rows.forEach(function (r) {
         tb.appendChild(el('tr', null, [
@@ -551,30 +579,30 @@
       table.appendChild(tb);
       box.appendChild(table);
     } else {
-      box.appendChild(el('p', { text: 'Nothing in these ACS guidelines lines up right now. A regular checkup is still a great habit.' }));
+      box.appendChild(el('p', { text: S('sheetNothing') }));
     }
-    if (d.later.length) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: 'Coming up later: ' }), d.later.join(' \u00b7 ') + '.']));
-    if (d.smoking) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: 'Smoking history: ' }), d.smoking + '. Providers use pack-years to decide about lung screening.']));
+    if (d.later.length) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: S('sheetLater') }), d.later.join(' \u00b7 ') + '.']));
+    if (d.smoking) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: S('sheetSmoke') }), d.smoking + S('sheetSmokeTail')]));
 
     if (d.questions.length) {
-      box.appendChild(el('h3', { text: 'Questions to ask' }));
+      box.appendChild(el('h3', { text: S('sheetQs') }));
       var ol = el('ol', { class: 'sheet-qs' });
       d.questions.forEach(function (q) { ol.appendChild(el('li', null, [el('span', { class: 'box', 'aria-hidden': 'true' }), el('span', { text: q }), blankLines(1)])); });
       box.appendChild(ol);
     }
 
-    box.appendChild(el('h3', { text: 'Family history to mention' }));
+    box.appendChild(el('h3', { text: S('sheetFh') }));
     var fh = el('table', { class: 'sheet-table sheet-fh' });
-    fh.appendChild(el('thead', null, [el('tr', null, ['Relative', 'Type of cancer', 'Age when diagnosed'].map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
+    fh.appendChild(el('thead', null, [el('tr', null, S('sheetFhTh').map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
     var fb = el('tbody');
     for (var i = 0; i < (d.familyHistory ? 3 : 2); i++) fb.appendChild(el('tr', null, [el('td', { class: 'fill' }), el('td', { class: 'fill' }), el('td', { class: 'fill' })]));
     fh.appendChild(fb);
     box.appendChild(fh);
     d.notes.forEach(function (n) { box.appendChild(el('p', { class: 'sheet-note', text: n })); });
 
-    box.appendChild(el('h3', { text: 'What the provider said' }));
+    box.appendChild(el('h3', { text: S('sheetSaid') }));
     box.appendChild(blankLines(3));
-    box.appendChild(el('p', { class: 'sheet-foot', text: d.footer + ' Guidelines: cancer.org/screening' }));
+    box.appendChild(el('p', { class: 'sheet-foot', text: d.footer + S('sheetGuides') }));
   }
   function setPrintMode(mode) {
     document.body.classList.toggle('print-sheet', mode === 'sheet');
@@ -583,7 +611,7 @@
   function printCheckupSheet(p) {
     renderCheckupSheet(p);
     setPrintMode('sheet');
-    announce('Opening a one-page checkup sheet for ' + p.label + '.');
+    announce(F('sheetOpening', { name: p.label }));
     window.print();
   }
   // Ctrl+P or the browser menu prints the family plan with today's date filled in.
@@ -601,21 +629,22 @@
     window.print();
   });
   $('clear-btn').addEventListener('click', function () {
-    if (!confirm('Delete your whole plan and habit checks from this browser?')) return;
+    if (!confirm(S('clearConfirm'))) return;
     state = { people: [], habits: {} };
-    try { localStorage.removeItem(STORE_KEY); localStorage.removeItem('screentalk.rehearse.v1'); } catch (e) { /* ignore */ }
+    try { localStorage.removeItem(STORE_KEY); localStorage.removeItem('screentalk.rehearse.v1'); localStorage.removeItem(I.KEY); } catch (e) { /* ignore */ }
     resetForm(); renderAll(); renderHabits();
-    announce('All ScreenTalk data was deleted from this browser.');
+    announce(S('cleared'));
   });
   $('demo-btn').addEventListener('click', function () {
+    var names = S('demoNames');
     state.people = [
-      { id: uid(), label: 'Mom', age: 46, breasts: true, cervix: true, uterus: true, familyHistory: true, smoking: 'never' },
-      { id: uid(), label: 'Dad', age: 52, prostate: true, smoking: 'former', ppd: '1', years: '22', progress: 'talked' },
-      { id: uid(), label: 'Nana', age: 71, breasts: true, cervix: true, uterus: true, menopause: true, smoking: 'never' },
-      { id: uid(), label: 'Big sis', age: 19, breasts: true, cervix: true, uterus: true, smoking: 'never' }
+      { id: uid(), label: names[0], age: 46, breasts: true, cervix: true, uterus: true, familyHistory: true, smoking: 'never' },
+      { id: uid(), label: names[1], age: 52, prostate: true, smoking: 'former', ppd: '1', years: '22', progress: 'talked' },
+      { id: uid(), label: names[2], age: 71, breasts: true, cervix: true, uterus: true, menopause: true, smoking: 'never' },
+      { id: uid(), label: names[3], age: 19, breasts: true, cervix: true, uterus: true, smoking: 'never' }
     ].map(function (p) { return C.sanitizePerson(p, R.packYears); });
     save(); renderAll();
-    announce('Loaded a made-up demo family of 4.');
+    announce(S('demoLoaded'));
     $('summary').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 
@@ -631,7 +660,27 @@
     renderSummary(); renderPeople(); renderTimeline(); renderTalkOptions();
   }
 
+  // ---------- Language switch ----------
+  // Everything re-renders in the new language; people, progress, habits, and the game keep their state.
+  // The message box is rebuilt in the new language (any edits to it are replaced).
+  I.onChange(function () {
+    if ($('edit-id').value) {
+      var editing = state.people.filter(function (x) { return x.id === $('edit-id').value; })[0];
+      $('form-title').textContent = editing ? F('formEdit', { name: editing.label }) : S('formAdd');
+      $('save-btn').textContent = S('saveEdit');
+    } else {
+      $('form-title').textContent = S('formAdd');
+      $('save-btn').textContent = S('saveAdd');
+    }
+    showError('', null);
+    renderAll(); renderHabits(); renderResources(); renderGame();
+    if ($('print-date').textContent) $('print-date').textContent = today();
+    announce(S('langChanged'));
+  });
+
   // ---------- Init ----------
+  $('form-title').textContent = S('formAdd');
+  $('save-btn').textContent = S('saveAdd');
   syncDeps();
   renderAll();
   renderHabits();
