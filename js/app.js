@@ -10,7 +10,16 @@
   function L() { return I.getLang(); }
   function S(key) { return I.s(key); }
   function F(key, vars) { return I.fmt(I.s(key), vars); }
-  function evaluate(p) { return R.evaluate(p, L()); }
+  function evaluate(p, l) { return R.evaluate(p, l || L()); }
+
+  // Document language: the message and the printed checkup sheet can be written in a different language
+  // than the app ('auto' follows the app). A teen may use English while a parent reads Spanish.
+  var DOC_KEY = 'screentalk.doclang.v1';
+  var docPref = 'auto';
+  try { var dp = localStorage.getItem(DOC_KEY); if (dp === 'en' || dp === 'es') docPref = dp; } catch (e) { /* ignore */ }
+  function DL() { return docPref === 'auto' ? L() : docPref; }
+  function SD(key) { return I.t(DL(), key); }
+  function FD(key, vars) { return I.fmt(I.t(DL(), key), vars); }
 
   var BAND_COLORS = {
     breast: '#be185d', colorectal: '#0f766e', cervical: '#6d28d9',
@@ -406,13 +415,20 @@
   function renderTalk() {
     var p = state.people.filter(function (x) { return x.id === $('talk-who').value; })[0];
     var box = $('talk-text');
-    box.value = p ? C.starter(p.label, evaluate(p).topics, $('talk-tone').value, L()) : S('talkEmpty');
-    box.setAttribute('lang', L());
+    box.value = p ? C.starter(p.label, evaluate(p, DL()).topics, $('talk-tone').value, DL()) : S('talkEmpty');
+    box.setAttribute('lang', p ? DL() : L());
     box.disabled = !p;
     box.style.height = 'auto';
     box.style.height = Math.max(110, box.scrollHeight + 4) + 'px';
     $('copy-status').textContent = '';
   }
+  $('doc-lang').value = docPref;
+  $('doc-lang').addEventListener('change', function () {
+    var v = $('doc-lang').value; docPref = (v === 'en' || v === 'es') ? v : 'auto';
+    try { if (docPref === 'auto') localStorage.removeItem(DOC_KEY); else localStorage.setItem(DOC_KEY, docPref); } catch (e) { /* ignore */ }
+    renderTalk();
+    announce(docPref === 'auto' ? S('docLangAuto') : SD('docLangSet'));
+  });
   $('talk-who').addEventListener('change', renderTalk);
   $('talk-tone').addEventListener('change', renderTalk);
   $('copy-btn').addEventListener('click', function () {
@@ -545,7 +561,7 @@
 
   // ---------- Checkup sheet (one person, one page) ----------
   function today() {
-    try { return new Date().toLocaleDateString(I.locale(), { year: 'numeric', month: 'long', day: 'numeric' }); }
+    try { return new Date().toLocaleDateString(I.LOCALE[DL()], { year: 'numeric', month: 'long', day: 'numeric' }); }
     catch (e) { return new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }); }
   }
   function blankLines(n, cls) {
@@ -554,20 +570,20 @@
     return w;
   }
   function renderCheckupSheet(p) {
-    var d = C.checkupSheet(p, evaluate(p), L());
+    var d = C.checkupSheet(p, evaluate(p, DL()), DL());
     var box = $('checkup-sheet');
     box.innerHTML = '';
-    box.setAttribute('lang', L());
+    box.setAttribute('lang', DL());
     box.appendChild(el('header', { class: 'sheet-head' }, [
       el('div', null, [el('p', { class: 'sheet-brand', text: 'ScreenTalk' }), el('h2', { text: d.title })]),
-      el('p', { class: 'sheet-meta' }, [F('sheetPrinted', { date: today() }), el('br'), S('sheetAppt')])
+      el('p', { class: 'sheet-meta' }, [FD('sheetPrinted', { date: today() }), el('br'), SD('sheetAppt')])
     ]));
-    box.appendChild(el('p', { class: 'sheet-intro', text: S('sheetIntro') }));
+    box.appendChild(el('p', { class: 'sheet-intro', text: SD('sheetIntro') }));
 
-    box.appendChild(el('h3', { text: S('sheetTopics') }));
+    box.appendChild(el('h3', { text: SD('sheetTopics') }));
     if (d.rows.length) {
       var table = el('table', { class: 'sheet-table' });
-      table.appendChild(el('thead', null, [el('tr', null, S('sheetTh').map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
+      table.appendChild(el('thead', null, [el('tr', null, SD('sheetTh').map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
       var tb = el('tbody');
       d.rows.forEach(function (r) {
         tb.appendChild(el('tr', null, [
@@ -579,30 +595,30 @@
       table.appendChild(tb);
       box.appendChild(table);
     } else {
-      box.appendChild(el('p', { text: S('sheetNothing') }));
+      box.appendChild(el('p', { text: SD('sheetNothing') }));
     }
-    if (d.later.length) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: S('sheetLater') }), d.later.join(' \u00b7 ') + '.']));
-    if (d.smoking) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: S('sheetSmoke') }), d.smoking + S('sheetSmokeTail')]));
+    if (d.later.length) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: SD('sheetLater') }), d.later.join(' \u00b7 ') + '.']));
+    if (d.smoking) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: SD('sheetSmoke') }), d.smoking + SD('sheetSmokeTail')]));
 
     if (d.questions.length) {
-      box.appendChild(el('h3', { text: S('sheetQs') }));
+      box.appendChild(el('h3', { text: SD('sheetQs') }));
       var ol = el('ol', { class: 'sheet-qs' });
       d.questions.forEach(function (q) { ol.appendChild(el('li', null, [el('span', { class: 'box', 'aria-hidden': 'true' }), el('span', { text: q }), blankLines(1)])); });
       box.appendChild(ol);
     }
 
-    box.appendChild(el('h3', { text: S('sheetFh') }));
+    box.appendChild(el('h3', { text: SD('sheetFh') }));
     var fh = el('table', { class: 'sheet-table sheet-fh' });
-    fh.appendChild(el('thead', null, [el('tr', null, S('sheetFhTh').map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
+    fh.appendChild(el('thead', null, [el('tr', null, SD('sheetFhTh').map(function (h) { return el('th', { scope: 'col', text: h }); }))]));
     var fb = el('tbody');
     for (var i = 0; i < (d.familyHistory ? 3 : 2); i++) fb.appendChild(el('tr', null, [el('td', { class: 'fill' }), el('td', { class: 'fill' }), el('td', { class: 'fill' })]));
     fh.appendChild(fb);
     box.appendChild(fh);
     d.notes.forEach(function (n) { box.appendChild(el('p', { class: 'sheet-note', text: n })); });
 
-    box.appendChild(el('h3', { text: S('sheetSaid') }));
+    box.appendChild(el('h3', { text: SD('sheetSaid') }));
     box.appendChild(blankLines(3));
-    box.appendChild(el('p', { class: 'sheet-foot', text: d.footer + S('sheetGuides') }));
+    box.appendChild(el('p', { class: 'sheet-foot', text: d.footer + SD('sheetGuides') }));
   }
   function setPrintMode(mode) {
     document.body.classList.toggle('print-sheet', mode === 'sheet');
@@ -630,8 +646,8 @@
   });
   $('clear-btn').addEventListener('click', function () {
     if (!confirm(S('clearConfirm'))) return;
-    state = { people: [], habits: {} };
-    try { localStorage.removeItem(STORE_KEY); localStorage.removeItem('screentalk.rehearse.v1'); localStorage.removeItem(I.KEY); } catch (e) { /* ignore */ }
+    state = { people: [], habits: {} }; docPref = 'auto'; $('doc-lang').value = 'auto';
+    try { localStorage.removeItem(STORE_KEY); localStorage.removeItem('screentalk.rehearse.v1'); localStorage.removeItem(I.KEY); localStorage.removeItem(DOC_KEY); } catch (e) { /* ignore */ }
     resetForm(); renderAll(); renderHabits();
     announce(S('cleared'));
   });
