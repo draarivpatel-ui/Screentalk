@@ -123,3 +123,15 @@ Medical accuracy: every ACS age in the app was re-read against cancer.org on Oct
 | 3 | "Start the talk with {name}" button on each person card: picks that person in Start the talk, jumps there instantly, and focuses the message (44 px tall). | On a phone the talk section was about 4,000 to 9,000 px below a card; the next step should be one tap from the plan. |
 
 Tests: 70 unit tests (7 new: USPSTF flags at every boundary, the lung quit rule, no USPSTF for endometrial/HPV, no-copay ranges, English/Spanish parity of flags at ages 0 to 100) and 145 browser checks (14 new: notes, chips, links, contrast, the card button at 360 px, Spanish wording and links) pass.
+
+## Round 9: years since quitting (October 11, 2026, midday)
+
+The lung card only explained the USPSTF rule ("stops once someone has not smoked for 15 years") for people who used to smoke. ACS lung page re-read on cancer.org (last revised Jan 29, 2024): "smoke or used to smoke" and 20+ pack-years, with no years-since-quit cutoff, so the ACS wording stays as is. USPSTF (2021): "currently smoke or have quit within the past 15 years"; HealthCare.gov lists lung screening for people who "have quit in the past 15 years".
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Optional "Years since quitting" field, enabled only for "Used to smoke" (EN and ES), with a hint that USPSTF stops at 15 years and ACS has no such limit. Validation: years since quitting plus years smoked can't be more than their age. | The card can now answer the question instead of telling the teen to ask. |
+| 2 | Quit 15 years or fewer: USPSTF line says it still recommends screening (chip "Same as ACS") and the no-copay line says it applies. More than 15: chip "Differs from ACS", the USPSTF line says it no longer recommends it and the no-copay rule does not apply, and the no-copay line and sheet tag are removed. Blank: the old explanation stays. ACS summary unchanged in every case. | Honest about both guidelines and about cost. |
+| 3 | Printed sheet adds "quit N years ago" to the smoking line and the right no-copay tail; still one Letter page in English and Spanish. Saved-data cleaning keeps the value only for former smokers, as a number from 0 to 120 that fits within their age. | Same answer on paper as on screen; old or bad saved data can't break it. |
+
+Tests: 76 unit tests (4 new: 15 years, 16 years, blank or ignored, sheet and cleaning) and 176 browser checks (20 new) pass.
