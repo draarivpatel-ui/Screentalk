@@ -252,7 +252,7 @@
       usLungQuitOver: ' Dejó de fumar hace {n} (más de 15), así que el USPSTF ya no la recomienda y la regla de cero copago (dejar de fumar en los últimos 15 años) no aplica. La ACS no tiene límite de años desde que dejó de fumar.',
       usLungQuitOverOnly: ' Dejó de fumar hace {n} (más de 15), fuera del límite de 15 años del USPSTF. La ACS no tiene límite de años desde que dejó de fumar.',
       yr1: '1 año', yrN: '{n} años', yr0: 'menos de un año',
-      cost: 'Costo: la mayoría de los planes de salud deben cubrir esta prueba de detección sin copago ni deducible con un proveedor de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
+      cost: 'Costo: la mayoría de los planes de salud deben cubrir esta prueba de detección sin copago ni deducible de un proveedor dentro de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
       costLungFormer: ' Para quienes fumaron, aplica si dejaron de fumar en los últimos 15 años.',
       costLungQuitIn: ' Dejó de fumar hace {n}, dentro de los últimos 15 años, así que aplica.'
     }
