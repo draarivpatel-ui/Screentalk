@@ -1,4 +1,4 @@
-/* ScreenTalk "Rehearse the talk" UI. Keyboard-first, English/Spanish, no network calls. */
+/* ScreenTalk "Rehearse the talk" UI. Keyboard-first, English/Spanish (follows the page language), no network calls. */
 (function () {
   'use strict';
   var X = window.ScreenTalkRehearse;
@@ -12,6 +12,9 @@
     if (X.LANGS.indexOf(saved.lang) >= 0) ui.lang = saved.lang;
     if (X.PARENTS.indexOf(saved.parent) >= 0) ui.parent = saved.parent;
   } catch (e) { /* ignore broken prefs */ }
+  // One language for the whole page: follow ScreenTalkI18n when it is loaded.
+  var I18N = window.ScreenTalkI18n;
+  if (I18N) ui.lang = I18N.getLang();
   function savePrefs() { try { localStorage.setItem(PREF_KEY, JSON.stringify({ lang: ui.lang, parent: ui.parent })); } catch (e) {} }
 
   function $(id) { return document.getElementById(id); }
@@ -52,7 +55,11 @@
     sel.disabled = !!(ui.state && !X.isDone(ui.state) && ui.state.round > 0);
   }
   document.querySelectorAll('#rh-lang button').forEach(function (b) {
-    b.addEventListener('click', function () { ui.lang = b.dataset.lang; savePrefs(); render(); b.focus(); });
+    b.addEventListener('click', function () {
+      if (I18N) { I18N.setLang(b.dataset.lang); } // the onChange listener below re-renders
+      if (ui.lang !== b.dataset.lang) { ui.lang = b.dataset.lang; savePrefs(); render(); }
+      b.focus();
+    });
   });
   $('rh-parent').addEventListener('change', function (e) {
     ui.parent = e.target.value; savePrefs();
@@ -191,6 +198,8 @@
     var b = btns[Number(e.key) - 1];
     if (b) { e.preventDefault(); b.click(); }
   });
+
+  if (I18N) I18N.onChange(function (l) { if (l !== ui.lang) { ui.lang = l; savePrefs(); render(); } });
 
   render();
 })();
