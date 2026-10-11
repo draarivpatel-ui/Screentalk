@@ -527,7 +527,12 @@ with sync_playwright() as p:
     qp.click('.lang-switch button[data-setlang="es"]')
     tes = lung('Detección del cáncer de pulmón').inner_text()
     check('Spanish: label, hint, and USPSTF/cost lines', 'Años desde que dejó de fumar' in qp.inner_text('.quit-row label') and '15 años sin fumar' in qp.inner_text('#hint-quit') and 'Dejó de fumar hace 15 años (15 o menos)' in tes and 'así que aplica' in tes)
+    # The reload above dropped the window.print stub; a real print() fires afterprint, which resets the page to the
+    # full plan before the PDF is taken (5 pages, flaky by timing). Stub it again and settle the print mode.
+    qp.evaluate("() => { window.print = function () {}; }")
+    qp.emulate_media(media='screen')
     qp.locator('.person').first.locator('button.sheet-btn').click()
+    check('Spanish sheet: page is in sheet print mode before printing', qp.evaluate("document.body.classList.contains('print-sheet')"))
     shes = qp.evaluate("document.getElementById('checkup-sheet').textContent")
     check('Spanish sheet: quit line and no-copay tail, no English left', 'dejó de fumar hace 15 años' in shes and 'dentro de los últimos 15 años, así que aplica' in shes and not any(x in shes for x in ['quit ', 'Checkup sheet', 'pack-years']), shes[:200])
     qp.emulate_media(media='print')
