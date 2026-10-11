@@ -27,6 +27,7 @@ Screening tests can find some cancers early, before symptoms, when they are easi
 | **Calendar reminder** | One tap downloads a 2-week "check in with Mom" reminder (.ics), made on the device. |
 | **Family timeline** | An SVG chart of each person's screening windows. Solid = ACS recommends it; lighter = a choice to discuss. ▼ marks their age today. Includes a text version for screen readers. |
 | **Conversation starters** | A casual, heartfelt, or text-message opener naming the exact topics. Edit it so it sounds like you, then copy or share. Tips for awkward talks. |
+| **Rehearse the talk** | A practice conversation with a parent (Mom, Dad, Grandma, or Grandpa) who pushes back five times: "I feel fine," "no family history," "scared of a colonoscopy," "too expensive," and "no time." Pick one of three replies; the parent reacts with a scripted line, an openness meter moves, and the next pushback opens warmer or more guarded depending on how it went. Every reply gets a coaching tip citing ACS, NCI, or CDC. Ends with a score out of 10, how the parent responds, and a round-by-round review with a better line to try. English and Spanish, keyboard-friendly (Tab/Enter or keys 1 to 3), works on phones. |
 | **Myth or Fact** | A 12-card game using claims from NCI's Common Cancer Myths page and ACS guidance, with an explanation and source for every answer. |
 | **Habits** | The ACS "Take control of your health" steps as a checklist teens can commit to. |
 | **Get help** | ACS 24/7 helpline, NCI Cancer Information Service, how to get screened without a doctor, NBCCEDP, Vaccines for Children, free quit-tobacco help. |
@@ -36,7 +37,7 @@ Screening tests can find some cancers early, before symptoms, when they are easi
 ## Responsible design
 
 - **Education, not diagnosis.** The app never says someone "needs" a test and never calculates risk. Every item is framed as a topic to discuss with a healthcare provider. A unit test scans all generated text for diagnostic or risk-score language.
-- **Every fact is sourced.** Each plan item links to the ACS page it summarizes. Every Myth-or-Fact card links to NCI or ACS. All content was re-checked against the live pages on October 10, 2026 (see table below).
+- **Every fact is sourced.** Each plan item links to the ACS page it summarizes. Every Myth-or-Fact card links to NCI or ACS. Every rehearsal coaching tip links to the ACS, NCI, or CDC page behind it. All content was re-checked against the live pages on October 10, 2026 (see table below).
 - **Private by design.** No accounts, no server, no analytics, no cookies, no fonts or scripts from other sites. A Content-Security-Policy blocks network connections entirely, and the end-to-end test confirms the page makes zero network requests. Data stays in the browser's `localStorage`; "Clear all data" wipes it.
 - **Inclusive.** Screenings are chosen by body (breast tissue, cervix, uterus, prostate) as well as Female/Male presets, while keeping ACS's own wording.
 - **Accessible.** Keyboard-friendly, visible focus, labeled controls, live announcements, screen-reader text for the chart, WCAG AA color contrast, reduced-motion support, works at 360 px wide.
@@ -63,8 +64,10 @@ ScreenTalk is not affiliated with or endorsed by ACS or NCI. Guidelines are for 
 - `js/rules.js`: a pure, testable rules engine that maps a profile to ACS guideline topics and timeline segments (runs in the browser and in Node).
 - `js/content.js`: conversation starters, checkup questions, Myth-or-Fact cards, habits, resources, saved-data cleaning, the .ics builder, and the checkup-sheet data.
 - `js/app.js`: UI, `localStorage`, SVG timeline, game, progress tracker, checkup sheet.
-- `tests/rules.test.js`: 28 zero-dependency Node tests covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
-- `tests/e2e_test.py`: 58 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, reminder download, the printable checkup sheet, clearing data, broken saved data, mobile layout, zero console errors, zero network requests.
+- `js/rehearse.js`: the rehearsal script (English and Spanish), sources, and a pure engine for branching and scoring (runs in the browser and in Node).
+- `js/rehearse-ui.js`: the rehearsal UI.
+- `tests/rules.test.js`: 28 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
+- `tests/e2e_test.py`: 80 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the printable checkup sheet, clearing data, broken saved data, mobile layout, zero console errors, zero network requests.
 - `docs/quality-log.md`: what each review round found and fixed.
 
 ```
@@ -74,7 +77,10 @@ screentalk/
 ├── js/rules.js      # guideline engine
 ├── js/content.js    # starters, questions, myths, resources, helpers
 ├── js/app.js        # UI
+├── js/rehearse.js   # rehearsal script + engine (EN/ES)
+├── js/rehearse-ui.js
 ├── tests/rules.test.js
+├── tests/rehearse.test.js
 ├── tests/e2e_test.py
 └── docs/quality-log.md
 ```
