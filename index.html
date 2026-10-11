@@ -23,6 +23,7 @@
     <nav aria-label="Sections">
       <a href="#plan">Family plan</a>
       <a href="#talk">Start the talk</a>
+      <a href="#rehearse">Rehearse</a>
       <a href="#game">Myth or Fact</a>
       <a href="#habits">Habits</a>
       <a href="#help">Get help</a>
@@ -42,7 +43,7 @@
         </div>
         <ul class="trust">
           <li><span aria-hidden="true">🔒</span> Nothing leaves your device</li>
-          <li><span aria-hidden="true">📚</span> Every fact links to ACS or NCI</li>
+          <li><span aria-hidden="true">📚</span> Every fact links to ACS, NCI, or CDC</li>
           <li><span aria-hidden="true">🩺</span> Education, not a diagnosis</li>
         </ul>
       </div>
@@ -208,6 +209,27 @@
       </div>
     </section>
 
+    <!-- ============ REHEARSE ============ -->
+    <section id="rehearse" class="section">
+      <div class="section-head">
+        <h2>Rehearse the talk</h2>
+        <p>Practice with a parent who pushes back: “I feel fine,” “too expensive,” “scared of a colonoscopy,” “no family history,” “no time.” Every coaching tip is backed by ACS, NCI, or CDC. In English or Spanish.</p>
+      </div>
+      <div class="card rehearse-card" id="rh-card" lang="en">
+        <div class="rh-toolbar">
+          <div class="rh-lang-wrap">
+            <span id="rh-lang-label" class="rh-tool-label">Language</span>
+            <div class="chips" id="rh-lang" role="group" aria-labelledby="rh-lang-label">
+              <button type="button" class="chip" data-lang="en" lang="en" aria-pressed="true">English</button>
+              <button type="button" class="chip" data-lang="es" lang="es" aria-pressed="false">Español</button>
+            </div>
+          </div>
+          <label id="rh-parent-label" class="rh-tool-label">Practice with <select id="rh-parent"></select></label>
+        </div>
+        <div id="rh-stage"></div>
+      </div>
+    </section>
+
     <!-- ============ GAME ============ -->
     <section id="game" class="section">
       <div class="section-head">
@@ -266,11 +288,13 @@
   <section id="checkup-sheet" class="checkup-sheet" aria-hidden="true"></section>
 
   <footer class="footer">
-    <p><strong>ScreenTalk</strong> is an educational project for the 2026 International CodeTheCure Hackathon (Prevention &amp; Education). Content summarizes the <a href="https://www.cancer.org/cancer/screening/american-cancer-society-guidelines-for-the-early-detection-of-cancer.html" target="_blank" rel="noopener noreferrer">ACS Guidelines for the Early Detection of Cancer</a> (revised May 27, 2026), <a href="https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html" target="_blank" rel="noopener noreferrer">ACS HPV Vaccines</a> (revised Sep 3, 2026), and <a href="https://www.cancer.gov/about-cancer/causes-prevention/risk/myths" target="_blank" rel="noopener noreferrer">NCI Common Cancer Myths</a>. Every guideline was checked against the live ACS and NCI pages on October 10, 2026. Not affiliated with or endorsed by ACS or NCI. Not medical advice. Guidelines are for the United States.</p>
+    <p><strong>ScreenTalk</strong> is an educational project for the 2026 International CodeTheCure Hackathon (Prevention &amp; Education). Content summarizes the <a href="https://www.cancer.org/cancer/screening/american-cancer-society-guidelines-for-the-early-detection-of-cancer.html" target="_blank" rel="noopener noreferrer">ACS Guidelines for the Early Detection of Cancer</a> (revised May 27, 2026), <a href="https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html" target="_blank" rel="noopener noreferrer">ACS HPV Vaccines</a> (revised Sep 3, 2026), <a href="https://www.cancer.gov/about-cancer/causes-prevention/risk/myths" target="_blank" rel="noopener noreferrer">NCI Common Cancer Myths</a>, and, for the rehearsal coaching tips, CDC pages on <a href="https://www.cdc.gov/colorectal-cancer/screening/index.html" target="_blank" rel="noopener noreferrer">colorectal screening</a>, <a href="https://www.cdc.gov/colorectal-cancer/symptoms/index.html" target="_blank" rel="noopener noreferrer">colorectal symptoms</a>, and <a href="https://www.cdc.gov/breast-cancer/screening/index.html" target="_blank" rel="noopener noreferrer">breast screening</a>. Every guideline and tip was checked against the live ACS, NCI, and CDC pages on October 10, 2026. Not affiliated with or endorsed by ACS, NCI, or CDC. Not medical advice. Guidelines are for the United States.</p>
   </footer>
 
   <script src="js/rules.js"></script>
   <script src="js/content.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/rehearse.js"></script>
+  <script src="js/rehearse-ui.js"></script>
 </body>
 </html>
