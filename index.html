@@ -15,57 +15,63 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
 </head>
 <body>
-  <a class="skip" href="#main">Skip to content</a>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
   <p class="sr-only" id="status-live" role="status" aria-live="polite"></p>
 
   <header class="topbar">
     <a class="brand" href="#top"><span aria-hidden="true">💬</span> ScreenTalk</a>
-    <nav aria-label="Sections">
-      <a href="#plan">Family plan</a>
-      <a href="#talk">Start the talk</a>
-      <a href="#rehearse">Rehearse</a>
-      <a href="#game">Myth or Fact</a>
-      <a href="#habits">Habits</a>
-      <a href="#help">Get help</a>
+    <nav aria-label="Sections" data-i18n-attr="aria-label:navLabel">
+      <a href="#plan" data-i18n="navPlan">Family plan</a>
+      <a href="#talk" data-i18n="navTalk">Start the talk</a>
+      <a href="#rehearse" data-i18n="navRehearse">Rehearse</a>
+      <a href="#game" data-i18n="navGame">Myth or Fact</a>
+      <a href="#habits" data-i18n="navHabits">Habits</a>
+      <a href="#help" data-i18n="navHelp">Get help</a>
     </nav>
+    <div class="lang-switch chips" role="group" aria-label="Language · Idioma">
+      <button type="button" class="chip" data-setlang="en" lang="en" aria-pressed="true">English</button>
+      <button type="button" class="chip" data-setlang="es" lang="es" aria-pressed="false">Español</button>
+    </div>
   </header>
 
   <main id="main">
-    <p class="print-only print-head">ScreenTalk family screening plan · <span id="print-date"></span> · Bring this to a checkup. Based on American Cancer Society guidelines for people at average risk. Not medical advice.</p>
+    <p class="print-only print-head"><span data-i18n="printHeadA">ScreenTalk family screening plan</span> · <span id="print-date"></span> · <span data-i18n="printHeadB">Bring this to a checkup. Based on American Cancer Society guidelines for people at average risk. Not medical advice.</span></p>
     <section class="hero" id="top">
       <div class="hero-text">
-        <p class="eyebrow">Prevention &amp; Education · built by a teen, for teens</p>
-        <h1>You can't order your parents a colonoscopy.<br /><span>But you can start the conversation.</span></h1>
-        <p class="lead">Screening tests can find some cancers early, before symptoms, when they are easier to treat. ScreenTalk turns the American Cancer Society (ACS) guidelines into a simple plan for the people you love, then helps you bring it up.</p>
+        <p class="eyebrow" data-i18n-html="heroEyebrow">Prevention &amp; Education · built by a teen, for teens</p>
+        <h1 data-i18n-html="heroH1">You can't order your parents a colonoscopy.<br /><span>But you can start the conversation.</span></h1>
+        <p class="lead" data-i18n="heroLead">Screening tests can find some cancers early, before symptoms, when they are easier to treat. ScreenTalk turns the American Cancer Society (ACS) guidelines into a simple plan for the people you love, then helps you bring it up.</p>
+        <p class="hero-stat" data-i18n-html="heroStat">In 2022, only 61% of U.S. adults ages 45 to 75 were up to date with colorectal cancer screening, so about 4 in 10 were behind (<a href="https://www.cdc.gov/nccdphp/priorities/colorectal-cancer.html" target="_blank" rel="noopener noreferrer">CDC</a>).</p>
         <div class="hero-actions">
-          <a class="btn primary" href="#plan">Build my family plan</a>
-          <a class="btn ghost" href="#game">Play Myth or Fact</a>
+          <a class="btn primary" href="#plan" data-i18n="heroBtnPlan">Build my family plan</a>
+          <a class="btn ghost" href="#game" data-i18n="heroBtnGame">Play Myth or Fact</a>
         </div>
         <ul class="trust">
-          <li><span aria-hidden="true">🔒</span> Nothing leaves your device</li>
-          <li><span aria-hidden="true">📚</span> Every fact links to ACS, NCI, or CDC</li>
-          <li><span aria-hidden="true">🩺</span> Education, not a diagnosis</li>
+          <li><span aria-hidden="true">🔒</span> <span data-i18n="trust1">Nothing leaves your device</span></li>
+          <li><span aria-hidden="true">📚</span> <span data-i18n="trust2">Every fact links to ACS, NCI, or CDC</span></li>
+          <li><span aria-hidden="true">🩺</span> <span data-i18n="trust3">Education, not a diagnosis</span></li>
         </ul>
       </div>
-      <aside class="hero-card" aria-label="How it works">
+      <aside class="hero-card" aria-label="How it works" data-i18n-attr="aria-label:howAria">
         <ol>
-          <li><strong>Add family members</strong> by nickname and age. No names, no accounts.</li>
-          <li><strong>See what ACS recommends</strong> for each person: talk now, a choice to discuss, or coming up later.</li>
-          <li><strong>Get a conversation starter</strong> you can say at dinner or send as a text.</li>
-          <li><strong>Print a one-page checkup sheet</strong> for each person, with questions and blanks to fill in at the appointment.</li>
+          <li data-i18n-html="how1"><strong>Add family members</strong> by nickname and age. No names, no accounts.</li>
+          <li data-i18n-html="how2"><strong>See what ACS recommends</strong> for each person: talk now, a choice to discuss, or coming up later.</li>
+          <li data-i18n-html="how3"><strong>Get a conversation starter</strong> you can say at dinner or send as a text.</li>
+          <li data-i18n-html="how4"><strong>Print a one-page checkup sheet</strong> for each person, with questions and blanks to fill in at the appointment.</li>
         </ol>
       </aside>
     </section>
 
     <div class="disclaimer" role="note">
-      <strong>Important:</strong> ScreenTalk shares general ACS guidelines for people at <em>average risk</em> with <em>no symptoms</em>. It does not diagnose, estimate anyone's risk, or replace a healthcare provider. Anyone with symptoms or a strong family history should talk with a provider.
+      <p data-i18n-html="disclaimer"><strong>Important:</strong> ScreenTalk shares general ACS guidelines for people at <em>average risk</em> with <em>no symptoms</em>. It does not diagnose, estimate anyone's risk, or replace a healthcare provider. Anyone with symptoms or a strong family history should talk with a provider.</p>
+      <p class="review-note" id="review-note" data-i18n="reviewNote">Also in Spanish (Español, top of the page). The Spanish version is waiting for review by a native speaker; its medical terms follow the CDC and NCI Spanish pages.</p>
     </div>
 
     <!-- ============ FAMILY PLAN ============ -->
     <section id="plan" class="section">
       <div class="section-head">
-        <h2>1 · Your family screening plan</h2>
-        <p>Add the adults in your life. Use nicknames like “Mom” or “Nana”. Everything is saved only in this browser.</p>
+        <h2 data-i18n="planH2">1 · Your family screening plan</h2>
+        <p data-i18n="planP">Add the adults in your life. Use nicknames like “Mom” or “Nana”. Everything is saved only in this browser.</p>
       </div>
 
       <div class="plan-grid">
@@ -73,86 +79,86 @@
           <h3 id="form-title">Add a family member</h3>
           <input type="hidden" id="edit-id" />
           <div class="row two">
-            <label>Nickname
-              <input id="f-label" type="text" maxlength="24" placeholder="Mom" required />
+            <label><span data-i18n="lblNickname">Nickname</span>
+              <input id="f-label" type="text" maxlength="24" placeholder="Mom" data-i18n-attr="placeholder:phNickname" required />
             </label>
-            <label>Age
+            <label><span data-i18n="lblAge">Age</span>
               <input id="f-age" type="number" min="0" max="120" placeholder="47" required />
             </label>
           </div>
 
           <fieldset>
-            <legend>Body <span class="legend-note">(decides which screenings apply)</span></legend>
-            <div class="chips" role="group" aria-label="Quick choices">
-              <button type="button" class="chip preset" data-preset="female" aria-pressed="false">Female</button>
-              <button type="button" class="chip preset" data-preset="male" aria-pressed="false">Male</button>
-              <button type="button" class="chip preset" data-preset="custom" aria-pressed="false">Choose myself</button>
+            <legend data-i18n-html="legendBody">Body <span class="legend-note">(decides which screenings apply)</span></legend>
+            <div class="chips" role="group" aria-label="Quick choices" data-i18n-attr="aria-label:quickAria">
+              <button type="button" class="chip preset" data-preset="female" aria-pressed="false" data-i18n="presetFemale">Female</button>
+              <button type="button" class="chip preset" data-preset="male" aria-pressed="false" data-i18n="presetMale">Male</button>
+              <button type="button" class="chip preset" data-preset="custom" aria-pressed="false" data-i18n="presetCustom">Choose myself</button>
             </div>
             <div class="checks">
-              <label><input type="checkbox" id="f-breasts" /> Has breast tissue</label>
-              <label><input type="checkbox" id="f-cervix" /> Has a cervix</label>
-              <label><input type="checkbox" id="f-uterus" /> Has a uterus</label>
-              <label><input type="checkbox" id="f-prostate" /> Has a prostate</label>
-              <label class="dep" data-dep="f-uterus f-cervix"><input type="checkbox" id="f-menopause" /> Has reached menopause</label>
+              <label><input type="checkbox" id="f-breasts" /> <span data-i18n="chkBreasts">Has breast tissue</span></label>
+              <label><input type="checkbox" id="f-cervix" /> <span data-i18n="chkCervix">Has a cervix</span></label>
+              <label><input type="checkbox" id="f-uterus" /> <span data-i18n="chkUterus">Has a uterus</span></label>
+              <label><input type="checkbox" id="f-prostate" /> <span data-i18n="chkProstate">Has a prostate</span></label>
+              <label class="dep" data-dep="f-uterus f-cervix"><input type="checkbox" id="f-menopause" /> <span data-i18n="chkMeno">Has reached menopause</span></label>
             </div>
-            <p class="hint">Total hysterectomy (uterus and cervix removed, not for cancer)? ACS says cervical screening stops, so uncheck both. After a partial hysterectomy the cervix stays.</p>
+            <p class="hint" data-i18n="hintHyst">Total hysterectomy (uterus and cervix removed, not for cancer)? ACS says cervical screening stops, so uncheck both. After a partial hysterectomy the cervix stays.</p>
           </fieldset>
 
           <fieldset>
-            <legend>Smoking</legend>
-            <div class="radios" role="radiogroup" aria-label="Smoking">
-              <label><input type="radio" name="smoking" value="never" id="f-smoke-never" checked /> Never smoked</label>
-              <label><input type="radio" name="smoking" value="former" id="f-smoke-former" /> Used to smoke</label>
-              <label><input type="radio" name="smoking" value="current" id="f-smoke-current" /> Smokes now</label>
+            <legend data-i18n="legendSmoking">Smoking</legend>
+            <div class="radios" role="radiogroup" aria-label="Smoking" data-i18n-attr="aria-label:legendSmoking">
+              <label><input type="radio" name="smoking" value="never" id="f-smoke-never" checked /> <span data-i18n="smokeNever">Never smoked</span></label>
+              <label><input type="radio" name="smoking" value="former" id="f-smoke-former" /> <span data-i18n="smokeFormer">Used to smoke</span></label>
+              <label><input type="radio" name="smoking" value="current" id="f-smoke-current" /> <span data-i18n="smokeCurrent">Smokes now</span></label>
             </div>
             <div class="smoke-calc dep" data-dep="f-smoke-former f-smoke-current">
               <div class="row three">
-                <label>Packs per day
+                <label><span data-i18n="lblPpd">Packs per day</span>
                   <input id="f-ppd" type="number" min="0" max="10" step="0.25" inputmode="decimal" placeholder="1" />
                 </label>
-                <label>Years smoked
+                <label><span data-i18n="lblYears">Years smoked</span>
                   <input id="f-years" type="number" min="0" max="120" inputmode="numeric" placeholder="20" />
                 </label>
-                <div class="py-out" aria-live="polite"><span id="py-value">0</span><small>pack-years</small></div>
+                <div class="py-out" aria-live="polite"><span id="py-value">0</span><small data-i18n="pyUnit">pack-years</small></div>
               </div>
-              <p class="hint">A pack-year is 1 pack (about 20 cigarettes) a day for a year (ACS). Rough numbers are fine.</p>
+              <p class="hint" data-i18n="hintPy">A pack-year is 1 pack (about 20 cigarettes) a day for a year (ACS). Rough numbers are fine.</p>
             </div>
           </fieldset>
 
           <fieldset>
-            <legend>Family history <span class="legend-note">(optional)</span></legend>
+            <legend data-i18n-html="legendFh">Family history <span class="legend-note">(optional)</span></legend>
             <div class="checks">
-              <label><input type="checkbox" id="f-fh" /> Family history of cancer or a known inherited condition</label>
-              <label class="dep" data-dep="f-prostate"><input type="checkbox" id="f-aa" /> Is African American</label>
-              <label class="dep select-row" data-dep="f-prostate">Father or brother with prostate cancer before 65
+              <label><input type="checkbox" id="f-fh" /> <span data-i18n="chkFh">Family history of cancer or a known inherited condition</span></label>
+              <label class="dep" data-dep="f-prostate"><input type="checkbox" id="f-aa" /> <span data-i18n="chkAa">Is African American</span></label>
+              <label class="dep select-row" data-dep="f-prostate"><span data-i18n="lblPfam">Father or brother with prostate cancer before 65</span>
                 <select id="f-pfam">
-                  <option value="none">No / not sure</option>
-                  <option value="one">One</option>
-                  <option value="multiple">More than one</option>
+                  <option value="none" data-i18n="optNone">No / not sure</option>
+                  <option value="one" data-i18n="optOne">One</option>
+                  <option value="multiple" data-i18n="optMulti">More than one</option>
                 </select>
               </label>
             </div>
-            <p class="hint">These only change which ACS guideline note we show. We never calculate risk.</p>
+            <p class="hint" data-i18n="hintFh">These only change which ACS guideline note we show. We never calculate risk.</p>
           </fieldset>
 
           <div class="form-actions">
             <button type="submit" class="btn primary" id="save-btn">Add to plan</button>
-            <button type="button" class="btn ghost hidden" id="cancel-edit">Cancel</button>
+            <button type="button" class="btn ghost hidden" id="cancel-edit" data-i18n="cancel">Cancel</button>
           </div>
           <p class="form-error" id="form-error" role="alert"></p>
         </form>
 
         <div class="plan-out">
           <div class="summary card" id="summary" aria-live="polite"></div>
-          <p class="plan-note hidden" id="plan-note">These are general ACS guidelines for people at <strong>average risk</strong> with <strong>no symptoms</strong>. Anyone with symptoms should see a provider, whatever their age.</p>
+          <p class="plan-note hidden" id="plan-note" data-i18n-html="planNote">These are general ACS guidelines for people at <strong>average risk</strong> with <strong>no symptoms</strong>. Anyone with symptoms should see a provider, whatever their age.</p>
           <div id="people"></div>
           <div class="empty card" id="empty">
-            <p><strong>No one added yet.</strong> Add someone with the form, or load a made-up demo family to see how it works.</p>
-            <button class="btn ghost" id="demo-btn" type="button">Load demo family</button>
+            <p data-i18n-html="empty"><strong>No one added yet.</strong> Add someone with the form, or load a made-up demo family to see how it works.</p>
+            <button class="btn ghost" id="demo-btn" type="button" data-i18n="demoBtn">Load demo family</button>
           </div>
           <div class="plan-tools">
-            <button class="btn ghost" id="print-btn" type="button" disabled><span aria-hidden="true">🖨️</span> Print / save as PDF</button>
-            <button class="btn ghost danger" id="clear-btn" type="button">Clear all data</button>
+            <button class="btn ghost" id="print-btn" type="button" disabled><span aria-hidden="true">🖨️</span> <span data-i18n="printBtn">Print / save as PDF</span></button>
+            <button class="btn ghost danger" id="clear-btn" type="button" data-i18n="clearBtn">Clear all data</button>
           </div>
         </div>
       </div>
@@ -161,12 +167,12 @@
     <!-- ============ TIMELINE ============ -->
     <section id="timeline-section" class="section">
       <div class="section-head">
-        <h2>Family timeline</h2>
-        <p>When each ACS guideline applies. <strong>Solid</strong> = ACS recommends it. <strong>Lighter</strong> = a choice to discuss with a provider. ▼ = age today. “90+” bars continue while ACS says screening still makes sense for that person’s health.</p>
+        <h2 data-i18n="tlH2">Family timeline</h2>
+        <p data-i18n-html="tlP">When each ACS guideline applies. <strong>Solid</strong> = ACS recommends it. <strong>Lighter</strong> = a choice to discuss with a provider. ▼ = age today. “90+” bars continue while ACS says screening still makes sense for that person’s health.</p>
       </div>
       <div class="card timeline-card">
         <div id="timeline" aria-hidden="true"></div>
-        <ul class="sr-only" id="timeline-text" aria-label="Timeline in words"></ul>
+        <ul class="sr-only" id="timeline-text" aria-label="Timeline in words" data-i18n-attr="aria-label:tlTextAria"></ul>
         <div class="legend" id="legend"></div>
       </div>
     </section>
@@ -174,36 +180,36 @@
     <!-- ============ TALK ============ -->
     <section id="talk" class="section">
       <div class="section-head">
-        <h2>2 · Start the talk</h2>
-        <p>Health talks are awkward. Pick a person and a style, then say it out loud or send it.</p>
+        <h2 data-i18n="talkH2">2 · Start the talk</h2>
+        <p data-i18n="talkP">Health talks are awkward. Pick a person and a style, then say it out loud or send it.</p>
       </div>
       <div class="card talk-card">
         <div class="row two">
-          <label>Who
+          <label><span data-i18n="lblWho">Who</span>
             <select id="talk-who" disabled><option>Add someone to your plan first</option></select>
           </label>
-          <label>Style
+          <label><span data-i18n="lblStyle">Style</span>
             <select id="talk-tone">
-              <option value="casual">Casual (at dinner)</option>
-              <option value="heartfelt">Heartfelt</option>
-              <option value="text">Text message</option>
+              <option value="casual" data-i18n="toneCasual">Casual (at dinner)</option>
+              <option value="heartfelt" data-i18n="toneHeart">Heartfelt</option>
+              <option value="text" data-i18n="toneText">Text message</option>
             </select>
           </label>
         </div>
-        <label class="talk-label" for="talk-text">Your message <span class="legend-note">(edit it so it sounds like you)</span></label>
+        <label class="talk-label" for="talk-text" data-i18n-html="talkLabel">Your message <span class="legend-note">(edit it so it sounds like you)</span></label>
         <textarea id="talk-text" class="talk-text" rows="5" disabled>Add someone to your plan first, then pick a style.</textarea>
         <div class="form-actions">
-          <button class="btn primary" id="copy-btn" type="button" disabled>Copy</button>
-          <button class="btn ghost" id="share-btn" type="button" disabled>Share…</button>
+          <button class="btn primary" id="copy-btn" type="button" disabled data-i18n="copy">Copy</button>
+          <button class="btn ghost" id="share-btn" type="button" disabled data-i18n="share">Share…</button>
           <span id="copy-status" class="hint" aria-live="polite"></span>
         </div>
         <details class="tips">
-          <summary>Tips that make it easier</summary>
+          <summary data-i18n="tipsSummary">Tips that make it easier</summary>
           <ul>
-            <li>Pick a calm moment, not right after bad news or during an argument.</li>
-            <li>Lead with care: “I want you around for a long time.”</li>
-            <li>Offer one concrete thing: find the clinic number, sit with them while they call, or set a reminder.</li>
-            <li>If they say no, that is okay. You planted the idea. Try again in a few weeks.</li>
+            <li data-i18n="tip1">Pick a calm moment, not right after bad news or during an argument.</li>
+            <li data-i18n="tip2">Lead with care: “I want you around for a long time.”</li>
+            <li data-i18n="tip3">Offer one concrete thing: find the clinic number, sit with them while they call, or set a reminder.</li>
+            <li data-i18n="tip4">If they say no, that is okay. You planted the idea. Try again in a few weeks.</li>
           </ul>
         </details>
       </div>
@@ -212,8 +218,8 @@
     <!-- ============ REHEARSE ============ -->
     <section id="rehearse" class="section">
       <div class="section-head">
-        <h2>Rehearse the talk</h2>
-        <p>Practice with a parent who pushes back: “I feel fine,” “too expensive,” “scared of a colonoscopy,” “no family history,” “no time.” Every coaching tip is backed by ACS, NCI, or CDC. In English or Spanish.</p>
+        <h2 data-i18n="rhH2">Rehearse the talk</h2>
+        <p data-i18n="rhP">Practice with a parent who pushes back: “I feel fine,” “too expensive,” “scared of a colonoscopy,” “no family history,” “no time.” Every coaching tip is backed by ACS, NCI, or CDC. In English or Spanish.</p>
       </div>
       <div class="card rehearse-card" id="rh-card" lang="en">
         <div class="rh-toolbar">
@@ -233,8 +239,8 @@
     <!-- ============ GAME ============ -->
     <section id="game" class="section">
       <div class="section-head">
-        <h2>3 · Myth or Fact?</h2>
-        <p>Twelve claims you have probably heard. Each answer links to the source.</p>
+        <h2 data-i18n="gameH2">3 · Myth or Fact?</h2>
+        <p data-i18n="gameP">Twelve claims you have probably heard. Each answer links to the source.</p>
       </div>
       <div class="card game-card">
         <div class="game-top">
@@ -244,19 +250,19 @@
         <div class="progress"><div id="game-bar"></div></div>
         <p class="claim" id="game-claim" tabindex="-1"></p>
         <div class="game-buttons" id="game-buttons">
-          <button class="btn big myth" data-answer="myth" type="button"><span aria-hidden="true">❌</span> Myth</button>
-          <button class="btn big fact" data-answer="fact" type="button"><span aria-hidden="true">✅</span> Fact</button>
+          <button class="btn big myth" data-answer="myth" type="button"><span aria-hidden="true">❌</span> <span data-i18n="btnMyth">Myth</span></button>
+          <button class="btn big fact" data-answer="fact" type="button"><span aria-hidden="true">✅</span> <span data-i18n="btnFact">Fact</span></button>
         </div>
         <div class="reveal hidden" id="game-reveal" aria-live="polite">
           <p class="verdict" id="game-verdict"></p>
           <p id="game-why"></p>
-          <p class="src">Source: <a id="game-src" target="_blank" rel="noopener noreferrer"></a></p>
+          <p class="src"><span data-i18n="srcLabel">Source:</span> <a id="game-src" target="_blank" rel="noopener noreferrer"></a></p>
           <button class="btn primary" id="game-next" type="button">Next card →</button>
         </div>
         <div class="done hidden" id="game-done">
           <p class="verdict" id="game-final" tabindex="-1"></p>
-          <p>Share the one that surprised you most with someone at home.</p>
-          <button class="btn primary" id="game-restart" type="button">Play again</button>
+          <p data-i18n="gameShare">Share the one that surprised you most with someone at home.</p>
+          <button class="btn primary" id="game-restart" type="button" data-i18n="gameRestart">Play again</button>
         </div>
       </div>
     </section>
@@ -264,21 +270,21 @@
     <!-- ============ HABITS ============ -->
     <section id="habits" class="section">
       <div class="section-head">
-        <h2>4 · Habits for you, starting now</h2>
-        <p>Screening is for adults, but prevention starts in your teens. These are the ACS steps to help reduce cancer risk. Check the ones you'll commit to.</p>
+        <h2 data-i18n="habitsH2">4 · Habits for you, starting now</h2>
+        <p data-i18n="habitsP">Screening is for adults, but prevention starts in your teens. These are the ACS steps to help reduce cancer risk. Check the ones you'll commit to.</p>
       </div>
       <div class="card">
         <ul class="habits" id="habit-list"></ul>
         <p class="habit-count" id="habit-count" aria-live="polite"></p>
-        <p class="hint">Source: “Take control of your health” in the <a href="https://www.cancer.org/cancer/screening/american-cancer-society-guidelines-for-the-early-detection-of-cancer.html" target="_blank" rel="noopener noreferrer">ACS screening guidelines</a>. One more for teens: ACS says anyone 13 through 26 who hasn’t finished the HPV vaccine should get it as soon as possible (<a href="https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html" target="_blank" rel="noopener noreferrer">ACS HPV vaccines</a>).</p>
+        <p class="hint" data-i18n-html="habitsSrc">Source: “Take control of your health” in the <a href="https://www.cancer.org/cancer/screening/american-cancer-society-guidelines-for-the-early-detection-of-cancer.html" target="_blank" rel="noopener noreferrer">ACS screening guidelines</a>. One more for teens: ACS says anyone 13 through 26 who hasn’t finished the HPV vaccine should get it as soon as possible (<a href="https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html" target="_blank" rel="noopener noreferrer">ACS HPV vaccines</a>).</p>
       </div>
     </section>
 
     <!-- ============ HELP ============ -->
     <section id="help" class="section">
       <div class="section-head">
-        <h2>Get help and get screened</h2>
-        <p>Free, trusted places to call or visit, including options without insurance or a doctor.</p>
+        <h2 data-i18n="helpH2">Get help and get screened</h2>
+        <p data-i18n="helpP">Free, trusted places to call or visit, including options without insurance or a doctor.</p>
       </div>
       <div class="resources" id="resources"></div>
     </section>
@@ -288,9 +294,10 @@
   <section id="checkup-sheet" class="checkup-sheet" aria-hidden="true"></section>
 
   <footer class="footer">
-    <p><strong>ScreenTalk</strong> is an educational project for the 2026 International CodeTheCure Hackathon (Prevention &amp; Education). Content summarizes the <a href="https://www.cancer.org/cancer/screening/american-cancer-society-guidelines-for-the-early-detection-of-cancer.html" target="_blank" rel="noopener noreferrer">ACS Guidelines for the Early Detection of Cancer</a> (revised May 27, 2026), <a href="https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html" target="_blank" rel="noopener noreferrer">ACS HPV Vaccines</a> (revised Sep 3, 2026), <a href="https://www.cancer.gov/about-cancer/causes-prevention/risk/myths" target="_blank" rel="noopener noreferrer">NCI Common Cancer Myths</a>, and, for the rehearsal coaching tips, CDC pages on <a href="https://www.cdc.gov/colorectal-cancer/screening/index.html" target="_blank" rel="noopener noreferrer">colorectal screening</a>, <a href="https://www.cdc.gov/colorectal-cancer/symptoms/index.html" target="_blank" rel="noopener noreferrer">colorectal symptoms</a>, and <a href="https://www.cdc.gov/breast-cancer/screening/index.html" target="_blank" rel="noopener noreferrer">breast screening</a>. Every guideline and tip was checked against the live ACS, NCI, and CDC pages on October 10, 2026. Not affiliated with or endorsed by ACS, NCI, or CDC. Not medical advice. Guidelines are for the United States.</p>
+    <p data-i18n-html="footer"><strong>ScreenTalk</strong> is an educational project for the 2026 International CodeTheCure Hackathon (Prevention &amp; Education). Content summarizes the <a href="https://www.cancer.org/cancer/screening/american-cancer-society-guidelines-for-the-early-detection-of-cancer.html" target="_blank" rel="noopener noreferrer">ACS Guidelines for the Early Detection of Cancer</a> (revised May 27, 2026), <a href="https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html" target="_blank" rel="noopener noreferrer">ACS HPV Vaccines</a> (revised Sep 3, 2026), <a href="https://www.cancer.gov/about-cancer/causes-prevention/risk/myths" target="_blank" rel="noopener noreferrer">NCI Common Cancer Myths</a>, and, for the rehearsal coaching tips, CDC pages on <a href="https://www.cdc.gov/colorectal-cancer/screening/index.html" target="_blank" rel="noopener noreferrer">colorectal screening</a>, <a href="https://www.cdc.gov/colorectal-cancer/symptoms/index.html" target="_blank" rel="noopener noreferrer">colorectal symptoms</a>, and <a href="https://www.cdc.gov/breast-cancer/screening/index.html" target="_blank" rel="noopener noreferrer">breast screening</a>. Every guideline and tip was checked against the live ACS, NCI, and CDC pages on October 10, 2026. The Spanish version uses the medical terms of the CDC and NCI Spanish pages and is waiting for review by a native speaker. Not affiliated with or endorsed by ACS, NCI, or CDC. Not medical advice. Guidelines are for the United States.</p>
   </footer>
 
+  <script src="js/i18n.js"></script>
   <script src="js/rules.js"></script>
   <script src="js/content.js"></script>
   <script src="js/app.js"></script>
