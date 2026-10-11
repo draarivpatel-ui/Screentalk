@@ -294,3 +294,6 @@ test('resources use https or tel links only', () => {
 });
 
 console.log(`\n${passed} passed, ${failed} failed`);
+
+// Also run the "Rehearse the talk" tests so one command covers all unit tests.
+require('./rehearse.test.js');
