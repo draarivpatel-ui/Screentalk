@@ -297,11 +297,13 @@
       prostate: !!raw.prostate, menopause: !!raw.menopause,
       smoking: smoking,
       ppd: numStr(raw.ppd, 0, 10), years: numStr(raw.years, 0, 120),
+      quitYears: smoking === 'former' ? numStr(raw.quitYears, 0, 120) : '',
       africanAmerican: !!raw.africanAmerican, prostateFamily: fam,
       familyHistory: !!raw.familyHistory,
       progress: PROGRESS.some(function (x) { return x.value === raw.progress; }) ? raw.progress : 'not-started'
     };
     if (!p.uterus && !p.cervix) p.menopause = false;
+    if (p.quitYears !== '' && Number(p.quitYears) > p.age) p.quitYears = '';
     var py = packYearsFn ? packYearsFn(p.ppd, p.years) : 0;
     p.packYears = smoking === 'never' ? 0 : (py || (Number(raw.packYears) >= 0 && Number(raw.packYears) <= 400 ? Number(raw.packYears) : 0));
     return p;
@@ -348,9 +350,11 @@
       current: 'Smokes now', former: 'Used to smoke',
       pyLine: ' \u00b7 about {py} pack-years', pyDetail1: ' ({ppd} pack a day for {years} years)', pyDetailN: ' ({ppd} packs a day for {years} years)',
       pyMissing: ' \u00b7 pack-years not entered',
+      quitLine: ' \u00b7 quit {n} ago', yr1: '1 year', yrN: '{n} years', yr0: 'less than a year',
       costTag: 'No copay*',
       costNote: '* No copay: most health plans must cover these screenings with no copay or deductible from an in-network provider ($0 is not guaranteed; check the plan).',
       costLungFormer: ' For lung screening in people who used to smoke, this applies if they quit in the past 15 years.',
+      costLungQuitIn: ' For lung screening, they quit {n} ago, within 15 years, so this applies.',
       footer: 'Made with ScreenTalk. General American Cancer Society guidelines for people at average risk with no symptoms. Education only, not medical advice. Anyone with symptoms should see a provider.'
     },
     es: {
@@ -363,9 +367,11 @@
       current: 'Fuma actualmente', former: 'Fumaba antes',
       pyLine: ' \u00b7 unos {py} paquetes-año', pyDetail1: ' ({ppd} paquete al día durante {years} años)', pyDetailN: ' ({ppd} paquetes al día durante {years} años)',
       pyMissing: ' \u00b7 paquetes-año sin escribir',
+      quitLine: ' \u00b7 dejó de fumar hace {n}', yr1: '1 año', yrN: '{n} años', yr0: 'menos de un año',
       costTag: 'Sin copago*',
       costNote: '* Sin copago: la mayoría de los planes de salud deben cubrir estas pruebas de detección sin copago ni deducible con un proveedor de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
       costLungFormer: ' Para la detección del cáncer de pulmón en quienes fumaron, aplica si dejaron de fumar en los últimos 15 años.',
+      costLungQuitIn: ' Para la detección del cáncer de pulmón, dejó de fumar hace {n}, dentro de los últimos 15 años, así que aplica.',
       footer: 'Hecho con ScreenTalk. Guías generales de la Sociedad Americana Contra el Cáncer para personas con riesgo promedio y sin síntomas. Solo para educación, no es consejo médico. Cualquier persona con síntomas debe consultar a un proveedor de atención médica.'
     }
   };
@@ -393,11 +399,15 @@
       }
     });
     var smoking = '';
+    var q = person.smoking === 'former' && person.quitYears !== '' && person.quitYears != null ? Number(person.quitYears) : NaN;
+    var quitSpan = q >= 0 ? (q < 1 ? S.yr0 : q === 1 ? S.yr1 : fmt(S.yrN, { n: q })) : '';
     if (person.smoking === 'former' || person.smoking === 'current') {
       var py = Number(person.packYears) || 0;
       smoking = (person.smoking === 'current' ? S.current : S.former) +
-        (py > 0 ? fmt(S.pyLine, { py: py }) + (person.ppd && person.years ? fmt(Number(person.ppd) === 1 ? S.pyDetail1 : S.pyDetailN, { ppd: person.ppd, years: person.years }) : '') : S.pyMissing);
+        (py > 0 ? fmt(S.pyLine, { py: py }) + (person.ppd && person.years ? fmt(Number(person.ppd) === 1 ? S.pyDetail1 : S.pyDetailN, { ppd: person.ppd, years: person.years }) : '') : S.pyMissing) +
+        (quitSpan ? fmt(S.quitLine, { n: quitSpan }) : '');
     }
+    var lungCost = rows.some(function (r) { return r.key === 'lung' && r.cost; });
     return {
       title: fmt(S.title, { name: String(person.label || '').trim() || S.blankName, age: age }),
       rows: rows,
@@ -405,7 +415,7 @@
       questions: questions(person, result.topics, l),
       smoking: smoking,
       // One no-copay note under the table (rows only carry a short tag) so the sheet stays on one page
-      costNote: rows.some(function (r) { return r.cost; }) ? S.costNote + (person.smoking === 'former' && rows.some(function (r) { return r.key === 'lung' && r.cost; }) ? S.costLungFormer : '') : '',
+      costNote: rows.some(function (r) { return r.cost; }) ? S.costNote + (person.smoking === 'former' && lungCost ? (quitSpan ? fmt(S.costLungQuitIn, { n: quitSpan }) : S.costLungFormer) : '') : '',
       familyHistory: !!person.familyHistory,
       notes: (result.notes || []).slice(),
       footer: S.footer
