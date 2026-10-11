@@ -274,6 +274,34 @@ with sync_playwright() as p:
     overflow = pg.evaluate("document.documentElement.scrollWidth - window.innerWidth")
     check('no horizontal scroll at 360px', overflow <= 0, overflow)
     check('nav still available on mobile', pg.is_visible('.topbar nav'))
+    # USPSTF cross-check and no-copay note on the cards (phone width)
+    mom = pg.locator('.person').first
+    mom_breast = mom.locator('.topic', has_text='Breast cancer screening')
+    check('Mom 46: USPSTF line says every 2 years, 40 to 74, flagged as differing from ACS',
+          'every 2 years for women 40 to 74' in mom_breast.inner_text() and mom_breast.locator('.us-chip.diff').inner_text() == 'Differs from ACS')
+    check('USPSTF link goes to the USPSTF recommendation page',
+          mom_breast.locator('.us-note a').get_attribute('href') == 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-screening')
+    check('no-copay note links HealthCare.gov', 'no copay' in mom_breast.inner_text() and mom_breast.locator('.cost-note a').get_attribute('href') == 'https://www.healthcare.gov/preventive-care-women/')
+    check('colorectal USPSTF line is marked the same as ACS', mom.locator('.topic', has_text='Colon and rectal').locator('.us-chip.same').count() == 1)
+    dad = pg.locator('.person').nth(1)
+    check('Dad (former smoker): USPSTF lung line explains the 15-years-since-quitting rule', 'quit within the past 15 years' in dad.locator('.topic', has_text='Lung cancer screening').inner_text())
+    check('every screening topic in the demo family has a USPSTF line', pg.locator('#people .us-note').count() >= 10, pg.locator('#people .us-note').count())
+    usLow = pg.evaluate(CONTRAST_JS, '.us-note *, .cost-note, .us-chip')
+    check('USPSTF and cost notes keep WCAG AA contrast', not usLow, usLow[:3])
+    # Start the talk from a person's card
+    dad.locator('button.talk-with').click()
+    try:
+        pg.wait_for_function("(() => { const r = document.getElementById('talk-text').getBoundingClientRect(); return r.top >= 0 && r.top < window.innerHeight; })()", timeout=5000)
+    except Exception:
+        pass
+    dad_id = dad.get_attribute('data-person')
+    check('card button picks that person in Start the talk', pg.input_value('#talk-who') == dad_id and 'Dad' in pg.input_value('#talk-text'))
+    check('card button scrolls to the talk section and focuses the message',
+          pg.evaluate("document.activeElement.id") == 'talk-text' and pg.evaluate("(() => { const r = document.getElementById('talk-text').getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0; })()"),
+          pg.evaluate("document.activeElement.id + ' ' + JSON.stringify(document.getElementById('talk-text').getBoundingClientRect()) + ' ' + scrollY + ' ' + innerHeight"))
+    check('card button is tappable on a phone (>=44px tall)', dad.locator('button.talk-with').bounding_box()['height'] >= 44)
+    overflow = pg.evaluate("document.documentElement.scrollWidth - window.innerWidth")
+    check('still no horizontal scroll at 360px with the new notes', overflow <= 0, overflow)
 
     # ---------- Spanish across the whole app (fresh browser profile) ----------
     print('Spanish')
@@ -307,6 +335,9 @@ with sync_playwright() as p:
     check('timeline legend + text alternative in Spanish', 'Edad actual' in es.inner_text('#legend') and 'Papá, 52 años' in es.inner_text('#timeline-text'))
     es.locator('.person').nth(1).locator('details.questions summary').click()
     check('questions list in Spanish', 'prueba del PSA' in es.locator('.person').nth(1).locator('details.questions').inner_text())
+    check('USPSTF and cost notes in Spanish', es.locator('#people .us-chip.diff', has_text='Distinto de la ACS').count() >= 1 and 'cada 2 años' in plan and 'sin copago' in plan and 'USPSTF (en inglés)' in plan)
+    check('Spanish cost link goes to CuidadoDeSalud.gov', es.locator('#people .cost-note a').first.get_attribute('href').startswith('https://www.cuidadodesalud.gov/es/'))
+    check('Start-the-talk card button in Spanish', es.locator('.person').nth(1).locator('button.talk-with').inner_text() == 'Empezar la conversación con Papá')
     # Start the talk in Spanish
     es.select_option('#talk-who', index=1)
     msg = es.input_value('#talk-text')
