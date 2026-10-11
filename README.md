@@ -118,7 +118,7 @@ pip install playwright && playwright install chromium
 python3 tests/e2e_test.py    # 239 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
 ```
 
-Last run Oct 11, 2026: **89/89 unit tests and 238/239 browser checks passing (Chromium, 6:15 PM CT)**.
+Last run Oct 11, 2026: **89/89 unit tests and 238/239 browser checks passing (Chromium, 6:15 PM CT)**. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push to `main`.
 
 ### Deploy on GitHub Pages
 
