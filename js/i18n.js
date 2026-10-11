@@ -66,6 +66,7 @@
       errPpd: 'Packs per day should be between 0 and 10.', errYears: 'Years smoked can\u2019t be more than their age.',
       added: 'Added {name}.', updated: 'Updated {name}.', removed: 'Removed {name}.', removeConfirm: 'Remove {name} from your plan?',
       // ---- plan output
+      checkedLine: 'Guidelines last checked: October 2026 (ACS pages on Oct 10, 2026, with each page\u2019s own revision date on its topic; USPSTF and HealthCare.gov on Oct 11, 2026).',
       planNote: 'These are general ACS guidelines for people at <strong>average risk</strong> with <strong>no symptoms</strong>. Anyone with symptoms should see a provider, whatever their age. Each topic also shows what the U.S. Preventive Services Task Force (USPSTF), which many doctors and insurance plans follow, says, and whether it differs from ACS.',
       empty: '<strong>No one added yet.</strong> Add someone with the form, or load a made-up demo family to see how it works.',
       demoBtn: 'Load demo family', printBtn: 'Print / save as PDF', clearBtn: 'Clear all data',
@@ -177,6 +178,7 @@
       errBody: 'Elige Mujer u Hombre, o marca las partes del cuerpo que apliquen, para saber qué pruebas mostrar.',
       errPpd: 'Los paquetes por día deben estar entre 0 y 10.', errYears: 'Los años fumando no pueden ser más que la edad.',
       added: 'Se agregó a {name}.', updated: 'Se actualizó a {name}.', removed: 'Se quitó a {name}.', removeConfirm: '¿Quitar a {name} de tu plan?',
+      checkedLine: 'Guías verificadas por última vez: octubre de 2026 (páginas de la ACS el 10 de octubre de 2026, con la fecha de revisión de cada página en su tema; USPSTF y CuidadoDeSalud.gov el 11 de octubre de 2026).',
       planNote: 'Estas son guías generales de la ACS para personas con <strong>riesgo promedio</strong> y <strong>sin síntomas</strong>. Cualquier persona con síntomas debe consultar a un proveedor, sin importar su edad. Los enlaces \u201cEn español\u201d llevan a páginas de los CDC, que siguen las recomendaciones del Grupo de Trabajo sobre Servicios Preventivos de los Estados Unidos (USPSTF), así que algunas edades pueden variar un poco. Cada tema también muestra lo que dice el USPSTF, que siguen muchos médicos y planes de salud, y si es distinto de la ACS.',
       empty: '<strong>Todavía no has agregado a nadie.</strong> Agrega a alguien con el formulario o carga una familia de ejemplo inventada para ver cómo funciona.',
       demoBtn: 'Cargar familia de ejemplo', printBtn: 'Imprimir / guardar como PDF', clearBtn: 'Borrar todos los datos',
