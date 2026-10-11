@@ -74,6 +74,8 @@ Judging for this track rewards behavioural impact and engagement. A message temp
 
 Tests: 17 new unit tests (`tests/rehearse.test.js`, also run by `tests/rules.test.js`) and 22 new browser checks (80 total). Visual check at 1280 px and 390 px.
 
+Live check after deploy (https://aariv.me/Screentalk/, headless Chromium at 1280 px and 390 px): deployed files match the repo byte for byte; full rehearsal played by keyboard, switched to Spanish mid-run, reached the score screen; 0 console errors, 0 failed requests, no horizontal scroll. All five ACS/NCI rehearsal source links return 200; the three CDC links were read live the same day (CDC blocks scripted link checkers, so they return 403 to curl).
+
 ## Known limits
 
 - US guidelines only (ACS). The rehearsal is in English and Spanish; the rest of the app is English only. The Spanish text has not yet been reviewed by a native speaker.
