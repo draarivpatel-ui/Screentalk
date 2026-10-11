@@ -58,7 +58,7 @@ Screening tests can find some cancers early, before symptoms, when they are easi
 | Colorectal | Average risk: start at 45, through 75; 76–85 discuss; over 85 stop. Stool, visual, and (not preferred) blood-based options with intervals | [Colorectal screening recommendations](https://www.cancer.org/cancer/types/colon-rectal-cancer/detection-diagnosis-staging/acs-recommendations.html) (May 27, 2026) |
 | Cervical | Cervix: 25 to at least 65; primary HPV test every 5 years preferred; exit rules after 65 | [Cervical screening guidelines](https://www.cancer.org/cancer/types/cervical-cancer/detection-diagnosis-staging/cervical-cancer-screening-guidelines.html) (Dec 4, 2025) |
 | Endometrial | Uterus + menopause: know the risks and symptoms; report unexpected bleeding | [Endometrial cancer early detection](https://www.cancer.org/cancer/types/endometrial-cancer/detection-diagnosis-staging/detection.html) (Feb 28, 2025) |
-| Lung | 50–80, smokes now or used to, 20+ pack-years: yearly low-dose CT after a talk about benefits and harms; quit help for current smokers | [Lung cancer early detection](https://www.cancer.org/cancer/types/lung-cancer/detection-diagnosis-staging/detection.html) (Jan 29, 2024) |
+| Lung | 50–80, smokes now or used to, 20+ pack-years: yearly low-dose CT after a talk about benefits and harms; quit help for current smokers. ACS has no years-since-quitting limit; an optional "years since quitting" field shows whether the USPSTF 15-year rule (and the no-copay line) applies | [Lung cancer early detection](https://www.cancer.org/cancer/types/lung-cancer/detection-diagnosis-staging/detection.html) (Jan 29, 2024) |
 | Prostate | Informed-decision talk at 50; 45 if African American or one father/brother diagnosed before 65; 40 if more than one | [Prostate early detection recommendations](https://www.cancer.org/cancer/types/prostate-cancer/detection-diagnosis-staging/acs-recommendations.html) (Nov 22, 2023) |
 | HPV vaccine | 2 doses at 9–12; 13 through 26 not fully vaccinated: as soon as possible | [HPV vaccines](https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html) (Sep 3, 2026) |
 
@@ -75,8 +75,8 @@ ScreenTalk is not affiliated with or endorsed by ACS or NCI. Guidelines are for 
 - `js/rehearse.js`: the rehearsal script (English and Spanish), sources, and a pure engine for branching and scoring (runs in the browser and in Node).
 - `js/rehearse-ui.js`: the rehearsal UI.
 - `js/i18n.js`: page language (English/Spanish), the UI strings in both languages, and `data-i18n` attributes in `index.html`. Same pattern as the rehearsal: `STRINGS[lang][key]` with `{placeholders}`. `rules.js` and `content.js` take a language argument (`evaluate(person, 'es')`).
-- `tests/rules.test.js`: 36 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 19 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
-- `tests/e2e_test.py`: 156 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the printable checkup sheet (USPSTF line and no-copay tag on every row, fits on one Letter page in English and Spanish), clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
+- `tests/rules.test.js`: 40 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 19 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years and 15 vs 16 years since quitting, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
+- `tests/e2e_test.py`: 176 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the years-since-quitting field (USPSTF 15-year rule and no-copay line at 15 and 16 years, English and Spanish, validation, saved-data cleaning), the printable checkup sheet (USPSTF line and no-copay tag on every row, fits on one Letter page in English and Spanish), clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
 - `docs/quality-log.md`: what each review round found and fixed.
 
 ```
@@ -104,17 +104,17 @@ Open `index.html` in any modern browser. That's it.
 Unit tests (Node 18+):
 
 ```bash
-node tests/rules.test.js     # 72 tests: 36 rules/content (incl. USPSTF cross-check and no-copay ranges) + 17 rehearsal + 19 English/Spanish
+node tests/rules.test.js     # 76 tests: 40 rules/content (incl. USPSTF cross-check, no-copay ranges, and the 15-year quit rule) + 17 rehearsal + 19 English/Spanish
 ```
 
 Browser tests (optional):
 
 ```bash
 pip install playwright && playwright install chromium
-python3 tests/e2e_test.py    # 156 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
+python3 tests/e2e_test.py    # 176 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
 ```
 
-Last run Oct 11, 2026: **72/72 unit tests and 156/156 browser checks passing (Chromium, 10 AM CT)**.
+Last run Oct 11, 2026: **76/76 unit tests and 176/176 browser checks passing (Chromium, 12 PM CT)**.
 
 ### Deploy on GitHub Pages
 
