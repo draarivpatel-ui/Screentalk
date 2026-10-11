@@ -91,7 +91,7 @@
       legendSoft: 'Lighter = a choice to discuss with a provider', legendAge: 'Age today',
       // ---- talk
       talkH2: '2 · Start the talk', talkP: 'Health talks are awkward. Pick a person and a style, then say it out loud or send it.',
-      lblWho: 'Who', lblStyle: 'Style', toneCasual: 'Casual (at dinner)', toneHeart: 'Heartfelt', toneText: 'Text message',
+      lblWho: 'Who', lblStyle: 'Style', lblDocLang: 'Write it in', docLangAuto: 'Same as the app', docLangHint: 'Teens often write for a parent who reads a different language. This sets the language of the message and of the printed checkup sheet; the rest of the app stays as it is.', docLangSet: 'Message and checkup sheet will be in English.', toneCasual: 'Casual (at dinner)', toneHeart: 'Heartfelt', toneText: 'Text message',
       talkLabel: 'Your message <span class="legend-note">(edit it so it sounds like you)</span>',
       talkEmptyOpt: 'Add someone to your plan first', talkEmpty: 'Add someone to your plan first, then pick a style.',
       copy: 'Copy', share: 'Share\u2026', copied: 'Copied!', copyFail: 'Couldn\u2019t copy automatically. Select the text and copy it.',
@@ -195,7 +195,7 @@
       tlLine: '{name}, {age} años: {list}.', tlNoneWords: 'no se muestran pruebas',
       legendSoft: 'Color claro = una opción para conversar con un proveedor', legendAge: 'Edad actual',
       talkH2: '2 · Inicia la conversación', talkP: 'Hablar de salud da pena. Elige a una persona y un estilo, y luego dilo en voz alta o envíalo.',
-      lblWho: 'Quién', lblStyle: 'Estilo', toneCasual: 'Casual (en la cena)', toneHeart: 'Del corazón', toneText: 'Mensaje de texto',
+      lblWho: 'Quién', lblStyle: 'Estilo', lblDocLang: 'Escribirlo en', docLangAuto: 'El mismo que la app', docLangHint: 'Muchos jóvenes escriben para un padre o una madre que lee en otro idioma. Esto cambia el idioma del mensaje y de la hoja impresa para el chequeo; el resto de la app no cambia.', docLangSet: 'El mensaje y la hoja para el chequeo estarán en español.', toneCasual: 'Casual (en la cena)', toneHeart: 'Del corazón', toneText: 'Mensaje de texto',
       talkLabel: 'Tu mensaje <span class="legend-note">(edítalo para que suene como tú)</span>',
       talkEmptyOpt: 'Primero agrega a alguien a tu plan', talkEmpty: 'Primero agrega a alguien a tu plan y luego elige un estilo.',
       copy: 'Copiar', share: 'Compartir\u2026', copied: '¡Copiado!', copyFail: 'No se pudo copiar automáticamente. Selecciona el texto y cópialo.',
