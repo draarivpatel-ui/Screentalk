@@ -180,6 +180,22 @@ test('Spanish conversation starters name the person and the topics for every ton
   assert.ok(!/lung|pulmón/i.test(C.starter('Papá', R.evaluate(M(60, { smoking: 'former', packYears: 5 }), 'es').topics, 'casual', 'es')));
 });
 
+test('Spanish checkup sheet rows carry the USPSTF and no-copay lines in Spanish', () => {
+  const dad = { label: 'Papá', age: 52, prostate: true, smoking: 'former', ppd: '1', years: '22', packYears: 22 };
+  const d = C.checkupSheet(dad, R.evaluate(dad, 'es'), 'es');
+  const en = C.checkupSheet(dad, R.evaluate(dad, 'en'), 'en');
+  const row = (x, k) => x.rows.find(r => r.key === k);
+  ['colorectal', 'lung', 'prostate'].forEach(k => {
+    assert.equal(row(d, k).uspstf.differs, row(en, k).uspstf.differs);
+    assert.equal(!!row(d, k).cost, !!row(en, k).cost);
+    assert.notEqual(row(d, k).uspstf.text, row(en, k).uspstf.text);
+  });
+  assert.match(row(d, 'colorectal').uspstf.text, /^USPSTF: pruebas de detección para adultos de 45 a 75/);
+  assert.ok(row(d, 'lung').cost.length > 0 && !/copay\b|health plans/.test(row(d, 'lung').cost));
+  assert.equal(row(d, 'lung').costTag, 'Sin copago*');
+  assert.match(d.costNote, /^\* Sin copago: .*sin copago ni deducible.*últimos 15 años\.$/);
+});
+
 test('Spanish checkup sheet: title, rows, statuses, tests, pack-years, questions, footer', () => {
   const dad = { label: 'Papá', age: 52, prostate: true, smoking: 'former', ppd: '1', years: '22', packYears: 22 };
   const d = C.checkupSheet(dad, R.evaluate(dad, 'es'), 'es');
