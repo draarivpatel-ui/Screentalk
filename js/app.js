@@ -603,7 +603,7 @@
   $('clear-btn').addEventListener('click', function () {
     if (!confirm('Delete your whole plan and habit checks from this browser?')) return;
     state = { people: [], habits: {} };
-    try { localStorage.removeItem(STORE_KEY); } catch (e) { /* ignore */ }
+    try { localStorage.removeItem(STORE_KEY); localStorage.removeItem('screentalk.rehearse.v1'); } catch (e) { /* ignore */ }
     resetForm(); renderAll(); renderHabits();
     announce('All ScreenTalk data was deleted from this browser.');
   });
