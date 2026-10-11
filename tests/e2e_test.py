@@ -15,6 +15,12 @@ APP = (ROOT / 'index.html').as_uri()
 passed, failed = 0, 0
 
 
+def pdf_pages(data):
+    import re
+    m = re.search(rb'/Type\s*/Pages\s*/Count\s+(\d+)', data)
+    return int(m.group(1)) if m else -1
+
+
 # WCAG contrast of every visible text element (opacity of ancestors included), like axe color-contrast.
 CONTRAST_JS = r"""
 (sel) => {
@@ -171,8 +177,17 @@ with sync_playwright() as p:
     check('checkup sheet is for Dad with his topics', 'Checkup sheet: Dad, age 52' in sheet and 'Lung cancer screening' in sheet and 'Prostate cancer testing decision' in sheet)
     check('checkup sheet has questions, pack-years, and fill-in table', 'PSA' in sheet and '22 pack-years' in sheet and 'Last test (date)' in sheet and pg.locator('#checkup-sheet td.fill').count() >= 9)
     check('sheet print mode on, sheet hidden on screen', pg.evaluate("document.body.classList.contains('print-sheet')") and not pg.is_visible('#checkup-sheet'))
+    us_rows = pg.evaluate("[...document.querySelectorAll('#checkup-sheet .sheet-table:not(.sheet-fh) tbody tr')].map(r => ({us: (r.querySelector('.sheet-us') || {}).textContent || '', cost: (r.querySelector('.sheet-cost') || {}).textContent || ''}))")
+    check('sheet: USPSTF line on every screening row (Dad: 3)', len(us_rows) == 3 and all(r['us'].startswith(('Same as ACS. USPSTF:', 'Differs from ACS. USPSTF:')) for r in us_rows), us_rows)
+    check('sheet: USPSTF Same/Differs labels match Dad (colorectal same; lung + prostate differ)', 'Same as ACS. USPSTF: screening for adults 45 to 75' in sheet and sheet.count('Differs from ACS.') == 2)
+    check('sheet: No-copay tag on colorectal + lung, not on prostate', pg.locator('#checkup-sheet .sheet-cost').count() == 2 and [bool(r['cost']) for r in us_rows].count(True) == 2 and all(r['cost'] == 'No copay*' for r in us_rows if r['cost']))
+    check('sheet: one no-copay note under the table, with the quit-within-15-years tail', pg.locator('#checkup-sheet .sheet-cost-note').count() == 1 and 'no copay or deductible from an in-network provider' in pg.inner_text('#checkup-sheet .sheet-cost-note') and 'quit in the past 15 years' in sheet)
+    check('sheet footer names USPSTF and HealthCare.gov', 'uspreventiveservicestaskforce.org' in sheet and 'Cost: healthcare.gov' in sheet)
     pg.emulate_media(media='print')
     check('print shows only the sheet', pg.is_visible('#checkup-sheet') and not pg.is_visible('#plan'))
+    check('sheet USPSTF + cost lines visible in print', pg.is_visible('#checkup-sheet .sheet-us >> nth=0') and pg.is_visible('#checkup-sheet .sheet-cost >> nth=0'))
+    pdf = pg.pdf(format='Letter', print_background=True, margin={'top': '0.4in', 'bottom': '0.4in', 'left': '0.4in', 'right': '0.4in'})
+    check('checkup sheet still fits on one Letter page', pdf_pages(pdf) == 1, pdf_pages(pdf))
     pg.emulate_media(media='screen')
     pg.evaluate("window.dispatchEvent(new Event('afterprint'))")
     check('afterprint returns to family-plan printing', not pg.evaluate("document.body.classList.contains('print-sheet')"))
@@ -355,8 +370,13 @@ with sync_playwright() as p:
     check('printed sheet: pack-years, questions, family history, footer in Spanish', all(x in sheet for x in ['unos 22 paquetes-año (1 paquete al día durante 22 años)', 'Preguntas para hacer', 'Antecedentes familiares para mencionar', 'Lo que dijo el proveedor', 'no es consejo médico']))
     check('printed sheet has no English left', not any(x in sheet for x in ['Checkup sheet', 'Last test', 'Screenings to bring up', 'Questions to ask', 'pack-years', 'Printed ']), sheet[:200])
     check('printed date uses Spanish month names', any(m in sheet for m in ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']))
+    check('Spanish sheet: USPSTF line on every row with Spanish labels', es.locator('#checkup-sheet .sheet-us').count() == 3 and 'Igual que la ACS. USPSTF: pruebas de detección para adultos de 45 a 75' in sheet and sheet.count('Distinto de la ACS.') == 2)
+    check('Spanish sheet: no-copay tags + note in Spanish', es.locator('#checkup-sheet .sheet-cost').count() == 2 and sheet.count('Sin copago*') == 2 and 'sin copago ni deducible' in sheet and 'no copay' not in sheet.lower() and 'Same as ACS' not in sheet)
+    check('Spanish sheet footer names USPSTF and CuidadoDeSalud.gov', 'uspreventiveservicestaskforce.org' in sheet and 'cuidadodesalud.gov' in sheet)
     es.emulate_media(media='print')
     check('Spanish print shows only the sheet', es.is_visible('#checkup-sheet') and not es.is_visible('#plan'))
+    pdf = es.pdf(format='Letter', print_background=True, margin={'top': '0.4in', 'bottom': '0.4in', 'left': '0.4in', 'right': '0.4in'})
+    check('Spanish checkup sheet still fits on one Letter page', pdf_pages(pdf) == 1, pdf_pages(pdf))
     es.emulate_media(media='screen')
     es.evaluate("window.dispatchEvent(new Event('afterprint'))")
     es.evaluate("window.dispatchEvent(new Event('beforeprint'))")
