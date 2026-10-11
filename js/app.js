@@ -207,6 +207,7 @@
     var has = state.people.length > 0;
     $('empty').classList.toggle('hidden', has);
     $('plan-note').classList.toggle('hidden', !has);
+    $('plan-checked').classList.toggle('hidden', !has);
     $('print-btn').disabled = !has;
     state.people.forEach(function (p) {
       var res = evaluate(p);
@@ -265,7 +266,9 @@
           el('p', { class: 'src' }, [
             el('a', { href: t.source, target: '_blank', rel: 'noopener noreferrer', text: S('readAcs') }),
             (L() === 'es' && t.sourceEs) ? ' \u00b7 ' : null,
-            (L() === 'es' && t.sourceEs) ? el('a', { href: t.sourceEs, target: '_blank', rel: 'noopener noreferrer', hreflang: 'es', class: 'src-es', text: S('readEs') }) : null
+            (L() === 'es' && t.sourceEs) ? el('a', { href: t.sourceEs, target: '_blank', rel: 'noopener noreferrer', hreflang: 'es', class: 'src-es', text: S('readEs') }) : null,
+            t.revisedLabel ? ' \u00b7 ' : null,
+            t.revisedLabel ? el('span', { class: 'src-rev', text: t.revisedLabel }) : null
           ])
         ]);
         list.appendChild(el('li', { class: 'topic' }, [
@@ -647,7 +650,7 @@
 
     box.appendChild(el('h3', { text: SD('sheetSaid') }));
     box.appendChild(blankLines(3));
-    box.appendChild(el('p', { class: 'sheet-foot', text: d.footer + SD('sheetGuides') }));
+    box.appendChild(el('p', { class: 'sheet-foot', text: d.footer + SD('sheetGuides') }, [' ', el('span', { class: 'sheet-checked', text: d.checked })]));
   }
   function setPrintMode(mode) {
     document.body.classList.toggle('print-sheet', mode === 'sheet');
