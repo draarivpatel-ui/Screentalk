@@ -107,6 +107,8 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .dep.disabled input, .dep.disabled select { opacity: .55; }
 .dep.disabled .hint, .dep.disabled .py-out small { color: #4b5565; }
 .smoke-calc { margin-top: 8px; }
+.quit-row { margin-top: 10px; }
+.quit-row label { max-width: 260px; }
 .py-out { text-align: center; background: #f0fdfa; border-radius: 10px; padding: 6px 10px; min-width: 84px; }
 .py-out span { display: block; font-size: 1.3rem; font-weight: 800; color: var(--brand); }
 .py-out small { color: var(--muted); font-size: .72rem; }
