@@ -22,6 +22,7 @@
  *  - USPSTF Colorectal Cancer: Screening (final, 2021): 45 to 75; selectively 76 to 85
  *  - USPSTF Cervical Cancer: Screening (final, Aug 21, 2018; update in progress, draft Dec 2024)
  *  - USPSTF Lung Cancer: Screening (final, 2021): 50 to 80, 20 pack-years, smokes now or quit within 15 years
+ *    (optional years-since-quitting field decides it; ACS has no such cutoff, checked Oct 11, 2026)
  *  - USPSTF Prostate Cancer: Screening (final, May 8, 2018; update in progress)
  * and the no-copay rule for these screenings from HealthCare.gov (preventive care for adults and women).
  *
@@ -175,9 +176,15 @@
         lung: 'USPSTF: yearly low-dose CT from 50 to 80 with a 20 pack-year history, for people who smoke now or quit within the past 15 years. It stops once someone has not smoked for 15 years.',
         prostate: 'USPSTF: for men 55 to 69, PSA testing is an individual choice made with a provider; it recommends against routine PSA screening at 70 and older. Its update is in progress.'
       },
-      usLungFormer: ' So the year they quit matters; ask a provider.',
+      usLungFormer: ' So the year they quit matters; add years since quitting, or ask a provider.',
+      usLungQuitIn: ' They quit {n} ago (15 or fewer), so the USPSTF still recommends it.',
+      usLungQuitInOnly: ' They quit {n} ago, inside the 15-year limit.',
+      usLungQuitOver: ' They quit {n} ago (more than 15), so the USPSTF no longer recommends it, and the no-copay rule (quit in the past 15 years) does not apply. ACS has no years-since-quitting limit.',
+      usLungQuitOverOnly: ' They quit {n} ago (more than 15), past the USPSTF 15-year limit. ACS has no years-since-quitting limit.',
+      yr1: '1 year', yrN: '{n} years', yr0: 'less than a year',
       cost: 'Cost: most health plans must cover this screening with no copay or deductible from an in-network provider ($0 is not guaranteed; check the plan).',
-      costLungFormer: ' For people who used to smoke, this applies if they quit in the past 15 years.'
+      costLungFormer: ' For people who used to smoke, this applies if they quit in the past 15 years.',
+      costLungQuitIn: ' They quit {n} ago, within 15 years, so this applies.'
     },
     es: {
       ageError: 'Escribe una edad entre 0 y 120.',
@@ -239,9 +246,15 @@
         lung: 'USPSTF: una tomografía computarizada de baja dosis cada año de los 50 a los 80 años con un historial de 20 paquetes-año, para quienes fuman o dejaron de fumar en los últimos 15 años. Se suspende cuando la persona lleva 15 años sin fumar.',
         prostate: 'USPSTF: para hombres de 55 a 69 años, la prueba del PSA es una decisión personal con un proveedor; recomienda no hacer pruebas de PSA de rutina a partir de los 70. Su actualización está en curso.'
       },
-      usLungFormer: ' Por eso importa el año en que dejó de fumar; conviene preguntar a un proveedor.',
+      usLungFormer: ' Por eso importa el año en que dejó de fumar; agrega los años desde que dejó de fumar o pregunta a un proveedor.',
+      usLungQuitIn: ' Dejó de fumar hace {n} (15 o menos), así que el USPSTF todavía la recomienda.',
+      usLungQuitInOnly: ' Dejó de fumar hace {n}, dentro del límite de 15 años.',
+      usLungQuitOver: ' Dejó de fumar hace {n} (más de 15), así que el USPSTF ya no la recomienda y la regla de cero copago (dejar de fumar en los últimos 15 años) no aplica. La ACS no tiene límite de años desde que dejó de fumar.',
+      usLungQuitOverOnly: ' Dejó de fumar hace {n} (más de 15), fuera del límite de 15 años del USPSTF. La ACS no tiene límite de años desde que dejó de fumar.',
+      yr1: '1 año', yrN: '{n} años', yr0: 'menos de un año',
       cost: 'Costo: la mayoría de los planes de salud deben cubrir esta prueba de detección sin copago ni deducible con un proveedor de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
-      costLungFormer: ' Para quienes fumaron, aplica si dejaron de fumar en los últimos 15 años.'
+      costLungFormer: ' Para quienes fumaron, aplica si dejaron de fumar en los últimos 15 años.',
+      costLungQuitIn: ' Dejó de fumar hace {n}, dentro de los últimos 15 años, así que aplica.'
     }
   };
   var LANGS = ['en', 'es'];
@@ -267,27 +280,54 @@
    * USPSTF cross-check for a topic. differs = true where the USPSTF advice for this age is not the
    * same as the ACS advice shown on the card (start age, how often, or when to stop).
    */
-  function usNote(key, age, smoking, py, l) {
+  /**
+   * USPSTF 15-year rule for someone who used to smoke (USPSTF 2021: "currently smoke or have quit
+   * within the past 15 years"; stop "once a person has not smoked for 15 years").
+   * Returns null when not a former smoker or the field is blank, 'within' for 0-15 years, 'over' for >15.
+   * ACS (lung guideline, revised Jan 29, 2024) has no years-since-quitting limit.
+   */
+  function quitRule(smoking, quitYears) {
+    if (smoking !== 'former') return null;
+    var q = num(quitYears);
+    if (!(q >= 0)) return null;
+    return q <= 15 ? 'within' : 'over';
+  }
+  function quitSpan(q, T) {
+    q = num(q);
+    return q < 1 ? T.yr0 : q === 1 ? T.yr1 : fmt(T.yrN, { n: q });
+  }
+
+  function usNote(key, age, smoking, py, l, quitYears) {
     if (!SRC_US[key]) return null;
     var T = TEXT[lang(l)];
     var differs = false;
     var text = T.us[key];
     if (key === 'breast') differs = !(age >= 55 && age <= 74);
     else if (key === 'cervical') differs = age >= 21 && age <= 29;
-    else if (key === 'lung') { differs = smoking === 'former'; if (differs) text += T.usLungFormer; }
+    else if (key === 'lung' && smoking === 'former') {
+      var qr = quitRule(smoking, quitYears);
+      var meets = age >= 50 && age <= 80 && py >= 20;
+      if (!qr) { differs = true; text += T.usLungFormer; }
+      else if (qr === 'within') { differs = false; text += fmt(meets ? T.usLungQuitIn : T.usLungQuitInOnly, { n: quitSpan(quitYears, T) }); }
+      else { differs = true; text += fmt(meets ? T.usLungQuitOver : T.usLungQuitOverOnly, { n: quitSpan(quitYears, T) }); }
+    }
     else if (key === 'prostate') differs = age < 55 || age >= 70;
     return { text: text, differs: differs, source: SRC_US[key] };
   }
 
   /** No-copay note when the person's age is inside the range HealthCare.gov lists. */
-  function costNote(key, age, smoking, py, l) {
+  function costNote(key, age, smoking, py, l, quitYears) {
     var T = TEXT[lang(l)];
+    var qr = key === 'lung' ? quitRule(smoking, quitYears) : null;
+    if (qr === 'over') return null; // HealthCare.gov: "have quit in the past 15 years"; the USPSTF line says why
     var ok = (key === 'breast' && age >= 40) ||
       (key === 'colorectal' && age >= 45 && age <= 75) ||
       (key === 'cervical' && age >= 21 && age <= 65) ||
       (key === 'lung' && age >= 50 && age <= 80 && py >= 20 && smoking !== 'never');
     if (!ok) return null;
-    return { text: T.cost + (key === 'lung' && smoking === 'former' ? T.costLungFormer : ''), source: SRC_COST[lang(l)][key] };
+    var tail = '';
+    if (key === 'lung' && smoking === 'former') tail = qr === 'within' ? fmt(T.costLungQuitIn, { n: quitSpan(quitYears, T) }) : T.costLungFormer;
+    return { text: T.cost + tail, source: SRC_COST[lang(l)][key] };
   }
 
   /**
@@ -295,6 +335,7 @@
    *   label: 'Mom', age: 47,
    *   breasts, cervix, uterus, prostate, menopause: bool,
    *   smoking: 'never' | 'former' | 'current', packYears: number,
+   *   quitYears: number or '' (optional, former smokers only: years since quitting),
    *   africanAmerican: bool, prostateFamily: 'none' | 'one' | 'multiple',
    *   familyHistory: bool (family history of cancer / known inherited condition)
    * }
@@ -432,10 +473,11 @@
 
     // ---- Cross-check with the USPSTF, and the no-copay rule (HealthCare.gov)
     topics.forEach(function (t) {
-      var n = usNote(t.key, age, smoking, num(person.packYears), l);
+      var n = usNote(t.key, age, smoking, num(person.packYears), l, person.quitYears);
       if (n) t.uspstf = n;
-      var cst = costNote(t.key, age, smoking, num(person.packYears), l);
+      var cst = costNote(t.key, age, smoking, num(person.packYears), l, person.quitYears);
       if (cst) t.cost = cst;
+      if (t.key === 'lung') t.quitRule = quitRule(smoking, person.quitYears);
     });
 
     // ---- Notes (person-specific only; the general average-risk note is shown once on the page)
@@ -469,7 +511,7 @@
   var api = {
     evaluate: evaluate, packYears: packYears, familySummary: familySummary,
     smokingStatus: smokingStatus, prostateFamily: prostateFamily, prostateStartAge: prostateStartAge, hasUterus: hasUterus,
-    STATUS: STATUS, SOURCES: SRC, SOURCES_ES: SRC_ES, SOURCES_US: SRC_US, SOURCES_COST: SRC_COST, usNote: usNote, costNote: costNote, TEXT: TEXT, LANGS: LANGS
+    STATUS: STATUS, SOURCES: SRC, SOURCES_ES: SRC_ES, SOURCES_US: SRC_US, SOURCES_COST: SRC_COST, usNote: usNote, costNote: costNote, quitRule: quitRule, TEXT: TEXT, LANGS: LANGS
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ScreenTalkRules = api;
