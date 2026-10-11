@@ -224,14 +224,17 @@ test('Myth-or-Fact, habits, resources, and progress all have Spanish; Spanish so
   C.PROGRESS.forEach(p => assert.ok(p.es && p.es !== p.label));
 });
 
-test('every Spanish link in the app is https and goes to ACS, NCI, or CDC', () => {
+test('every Spanish link in the app is https and goes to ACS, NCI, CDC, USPSTF, or CuidadoDeSalud.gov', () => {
   const urls = [];
   leaves(I.STRINGS.es).forEach(s => { for (const m of s.matchAll(/href="([^"]+)"/g)) urls.push(m[1]); });
   Object.values(R.SOURCES_ES).forEach(u => urls.push(u));
   C.CARDS.forEach(c => urls.push(c.es.src));
   C.RESOURCES.forEach(r => { if (!r.es.href.startsWith('tel:')) urls.push(r.es.href); });
   assert.ok(urls.length > 20);
-  urls.forEach(u => assert.match(u, /^https:\/\/www\.(cancer\.org|cancer\.gov|cdc\.gov)\//, u));
+  Object.values(R.SOURCES_US).forEach(u => urls.push(u));
+  Object.values(R.SOURCES_COST.es).forEach(u => urls.push(u));
+  urls.forEach(u => assert.match(u, /^https:\/\/www\.(cancer\.org|cancer\.gov|cdc\.gov|uspreventiveservicestaskforce\.org|cuidadodesalud\.gov)\//, u));
+  Object.values(R.SOURCES_COST.es).forEach(u => assert.match(u, /cuidadodesalud\.gov\/es\//, 'Spanish cost link should be the Spanish HealthCare.gov page: ' + u));
 });
 
 test('the Spanish UI says a native-speaker review is pending (top of page and footer)', () => {
