@@ -169,6 +169,10 @@ with sync_playwright() as p:
     ics = open(path, encoding='utf-8').read()
     check('reminder .ics downloaded', ics.startswith('BEGIN:VCALENDAR') and 'Check in with Dad' in ics, dl.value.suggested_filename)
 
+    # Guidelines-checked line (dates from the source list only) and each topic's ACS revision date
+    check('results show the "Guidelines last checked: October 2026" line with ACS and USPSTF dates',
+          pg.is_visible('#plan-checked') and pg.inner_text('#plan-checked').startswith('Guidelines last checked: October 2026') and 'Oct 10, 2026' in pg.inner_text('#plan-checked') and 'USPSTF and HealthCare.gov on Oct 11, 2026' in pg.inner_text('#plan-checked'))
+    check('each topic shows its ACS page revision date', pg.locator('#people .topic').count() > 0 and pg.locator('#people .topic .src-rev').count() == pg.locator('#people .topic').count() and 'ACS page revised May 27, 2026' in pg.inner_text('#people'))
     # One-page checkup sheet
     pg.evaluate("() => { window.__printed = 0; window.print = function () { window.__printed++; }; }")
     pg.locator('.person').first.locator('button.sheet-btn').click()
@@ -183,6 +187,7 @@ with sync_playwright() as p:
     check('sheet: No-copay tag on colorectal + lung, not on prostate', pg.locator('#checkup-sheet .sheet-cost').count() == 2 and [bool(r['cost']) for r in us_rows].count(True) == 2 and all(r['cost'] == 'No copay*' for r in us_rows if r['cost']))
     check('sheet: one no-copay note under the table, with the quit-within-15-years tail', pg.locator('#checkup-sheet .sheet-cost-note').count() == 1 and 'no copay or deductible from an in-network provider' in pg.inner_text('#checkup-sheet .sheet-cost-note') and 'quit in the past 15 years' in sheet)
     check('sheet footer names USPSTF and HealthCare.gov', 'uspreventiveservicestaskforce.org' in sheet and 'Cost: healthcare.gov' in sheet)
+    check('sheet has the guidelines-checked line with each row\'s ACS revision date', 'Guidelines last checked: October 2026 (ACS: Oct 10, 2026; each ACS page last revised: colorectal May 27, 2026, lung Jan 29, 2024, prostate Nov 22, 2023; USPSTF and HealthCare.gov: Oct 11, 2026).' in sheet, pg.inner_text('#checkup-sheet .sheet-checked'))
     pg.emulate_media(media='print')
     check('print shows only the sheet', pg.is_visible('#checkup-sheet') and not pg.is_visible('#plan'))
     check('sheet USPSTF + cost lines visible in print', pg.is_visible('#checkup-sheet .sheet-us >> nth=0') and pg.is_visible('#checkup-sheet .sheet-cost >> nth=0'))
@@ -362,6 +367,7 @@ with sync_playwright() as p:
     check('demo family has Spanish nicknames', all(n in plan for n in ['Mamá', 'Papá', 'Abuela', 'Hermana mayor']))
     badges = es.eval_on_selector_all('#people .badge', 'bs => bs.map(b => b.textContent)')
     check('plan topics, statuses, and guideline text in Spanish', 'Detección del cáncer de colon y recto' in plan and 'Hablar ahora' in badges and 'Para decidir' in badges and 'paquetes-año' in plan and 'Colon and rectal' not in plan, badges)
+    check('Spanish results: guidelines-checked line and per-topic ACS revision dates', es.inner_text('#plan-checked').startswith('Guías verificadas por última vez: octubre de 2026') and '11 de octubre de 2026' in es.inner_text('#plan-checked') and 'Página de la ACS revisada el 27 may 2026' in plan and 'Guidelines last checked' not in plan)
     check('ACS links say "(en inglés)" and each topic links a CDC Spanish page', es.locator('#people a.src-es[hreflang="es"]').count() >= 8 and 'Leer la guía de la ACS (en inglés)' in plan)
     check('summary in Spanish', 'personas en tu plan' in es.inner_text('#summary') and '1 de 4' in es.inner_text('#summary'))
     check('progress options in Spanish', es.locator('.person').nth(1).locator('select.progress-select option:checked').inner_text() == 'Ya lo hablamos')
@@ -395,6 +401,7 @@ with sync_playwright() as p:
     check('Spanish sheet: demo Dad quit 18 years ago, USPSTF stop, no lung no-copay tail', 'dejó de fumar hace 18 años' in sheet and 'ya no la recomienda' in sheet and 'dentro de los últimos 15 años' not in sheet)
     check('Spanish sheet: no-copay tag (colorectal only) + note in Spanish', es.locator('#checkup-sheet .sheet-cost').count() == 1 and sheet.count('Sin copago*') == 1 and 'sin copago ni deducible' in sheet and 'no copay' not in sheet.lower() and 'Same as ACS' not in sheet)
     check('Spanish sheet footer names USPSTF and CuidadoDeSalud.gov', 'uspreventiveservicestaskforce.org' in sheet and 'cuidadodesalud.gov' in sheet)
+    check('Spanish sheet: guidelines-checked line in Spanish with ACS revision dates', 'Guías verificadas por última vez: octubre de 2026 (ACS: 10 oct 2026; revisiones de la ACS: colorrectal 27 may 2026' in sheet and 'USPSTF y CuidadoDeSalud.gov: 11 oct 2026).' in sheet and 'Guidelines last checked' not in sheet)
     es.emulate_media(media='print')
     check('Spanish print shows only the sheet', es.is_visible('#checkup-sheet') and not es.is_visible('#plan'))
     pdf = es.pdf(format='Letter', print_background=True, margin={'top': '0.4in', 'bottom': '0.4in', 'left': '0.4in', 'right': '0.4in'})
