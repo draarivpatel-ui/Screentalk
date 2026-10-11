@@ -1,12 +1,16 @@
 # 💬 ScreenTalk
 
+**Live demo:** https://aariv.me/Screentalk/ · Spanish: https://aariv.me/Screentalk/?lang=es
+
 **Help your family get cancer screening on time, one conversation at a time.**
+
+![ScreenTalk home screen: "You can't order your parents a colonoscopy. But you can start the conversation." with the four-step plan](docs/hero.png)
+
+*Screenshot of the live site (Oct 2026), taken with headless Chromium.*
 
 ScreenTalk is a free, private web app that helps teens turn the American Cancer Society (ACS) cancer screening guidelines into a simple plan for the adults they love, and then helps them start the conversation and follow through.
 
 Built by Aariv Patel for the [2026 International CodeTheCure Hackathon](https://codethecure-hackathon-26.devpost.com/) · Track: **Prevention & Education**
-
-**Live demo:** https://aariv.me/Screentalk/
 
 > ⚠️ ScreenTalk is an educational tool. It shares general ACS guidelines for people at average risk with no symptoms. It does **not** diagnose, estimate anyone's cancer risk, or replace a healthcare provider.
 
@@ -16,7 +20,7 @@ Built by Aariv Patel for the [2026 International CodeTheCure Hackathon](https://
 
 Screening tests can find some cancers early, before symptoms, when they are easier to treat. ACS publishes clear guidelines on who should talk with a provider about which test and when. But the adults those guidelines are written for often put off checkups. Teens learn about health at school and often look things up for their families, yet have no easy way to turn that knowledge into action at home.
 
-## What ScreenTalk does
+## Features
 
 | Feature | What it does |
 |---|---|
@@ -68,7 +72,7 @@ ScreenTalk is not affiliated with or endorsed by ACS or NCI. Guidelines are for 
 - `js/rehearse.js`: the rehearsal script (English and Spanish), sources, and a pure engine for branching and scoring (runs in the browser and in Node).
 - `js/rehearse-ui.js`: the rehearsal UI.
 - `js/i18n.js`: page language (English/Spanish), the UI strings in both languages, and `data-i18n` attributes in `index.html`. Same pattern as the rehearsal: `STRINGS[lang][key]` with `{placeholders}`. `rules.js` and `content.js` take a language argument (`evaluate(person, 'es')`).
-- `tests/rules.test.js`: 28 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 17 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
+- `tests/rules.test.js`: 28 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 18 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
 - `tests/e2e_test.py`: 121 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the printable checkup sheet, clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
 - `docs/quality-log.md`: what each review round found and fixed.
 
@@ -97,25 +101,39 @@ Open `index.html` in any modern browser. That's it.
 Unit tests (Node 18+):
 
 ```bash
-node tests/rules.test.js
+node tests/rules.test.js     # 63 tests: 28 rules/content + 17 rehearsal + 18 English/Spanish
 ```
 
 Browser tests (optional):
 
 ```bash
 pip install playwright && playwright install chromium
-python3 tests/e2e_test.py
+python3 tests/e2e_test.py    # 121 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
 ```
+
+Last run Oct 10, 2026: **63/63 unit tests and 121/121 browser checks passing**.
 
 ### Deploy on GitHub Pages
 
 Repo **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)` → Save**. The site is served at `https://aariv.me/Screentalk/` (custom domain for `draarivpatel-ui.github.io`).
 
-## Limits
+## Data sources
+
+- **Guidelines:** American Cancer Society screening pages, one per topic, linked with their last-revised dates in the table above.
+- **Myth or Fact:** NCI *Common Cancer Myths and Misconceptions* and ACS guidance. **Rehearsal tips:** ACS, NCI and CDC pages, each cited in the app.
+- **Spanish medical terms:** CDC and NCI Spanish pages ([docs/glossary-es.md](docs/glossary-es.md)).
+- **Statistic on the home page:** CDC (2022 colorectal screening rate, linked in the app).
+- All of it is written into the app's code; the app makes **no network requests** at runtime.
+
+## Limits and honesty
 
 - Covers the ACS average-risk guidelines in the US. People at higher risk are pointed to a provider rather than given a plan.
 - English and Spanish. The Spanish has not yet been reviewed by a native speaker.
 - Not yet reviewed by a clinician or health educator.
+
+## AI assistance
+
+This project was built with help from an AI assistant (Hark), which drafted code, tests and copy under Aariv Patel's direction. The app calls no AI service: the plan comes from a rules engine that encodes the ACS guidelines, the rehearsal parent's lines are scripted, and every fact links to its ACS, NCI or CDC source.
 
 ## What's next
 
