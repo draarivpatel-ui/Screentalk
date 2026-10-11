@@ -583,6 +583,35 @@ with sync_playwright() as p:
             check(f'[{lang}] {who}: body text stays >= 8.5pt (min {info["minPt"]:.2f}pt)', info['minPt'] >= 8.5 - 0.01, info['minPt'])
         cx.close()
 
+    # ---------- Offline: after one online visit over http, the app opens with no connection ----------
+    import socket, subprocess, time as _t
+    so = socket.socket(); so.bind(('127.0.0.1', 0)); port = so.getsockname()[1]; so.close()
+    srv = subprocess.Popen([sys.executable, '-m', 'http.server', str(port), '--bind', '127.0.0.1'], cwd=str(ROOT), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        for _ in range(50):
+            try: socket.create_connection(('127.0.0.1', port), timeout=0.2).close(); break
+            except OSError: _t.sleep(0.1)
+        oc = browser.new_context(viewport={'width': 390, 'height': 844})
+        op = oc.new_page(); oerr = []
+        op.on('pageerror', lambda e: oerr.append(str(e)))
+        op.goto(f'http://127.0.0.1:{port}/index.html')
+        op.wait_for_function("navigator.serviceWorker && navigator.serviceWorker.ready.then(() => true)", timeout=15000)
+        op.wait_for_function("!!navigator.serviceWorker.controller || (location.reload(), false)", timeout=15000)
+        check('offline: service worker installed and controls the page over http', op.evaluate("!!navigator.serviceWorker.controller"))
+        ck = op.evaluate("caches.keys()")
+        check('offline: one ScreenTalk cache, named screentalk-*', [k for k in ck if k.startswith('screentalk-')] == ck and len(ck) == 1, ck)
+        oc.set_offline(True)
+        op.reload()
+        check('offline: page reloads with no connection (title + Add-person form)', 'ScreenTalk' in op.title() and op.locator('#save-btn').is_visible(), op.title())
+        op.click('#demo-btn')
+        check('offline: demo family loads with no connection', op.locator('.person').count() == 4, op.locator('.person').count())
+        op.goto(f'http://127.0.0.1:{port}/?lang=es')
+        check('offline: ?lang=es page load also works offline, in Spanish', op.evaluate("document.documentElement.lang") == 'es', op.evaluate("document.documentElement.lang"))
+        check('offline: no page errors while offline', not oerr, oerr)
+        oc.close()
+    finally:
+        srv.terminate()
+
     check('no console errors', not errors, errors)
     check('zero network requests', not external, external)
     browser.close()
