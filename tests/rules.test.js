@@ -386,6 +386,89 @@ test('resources use https or tel links only', () => {
   C.RESOURCES.forEach(r => assert.match(r.href, /^(https:\/\/|tel:)/));
 });
 
+test('years since quitting: 15 years -> USPSTF 15-year rule met, no-copay line applies, ACS card unchanged', () => {
+  const p = M(60, { smoking: 'former', packYears: 30, quitYears: 15 });
+  const t = topic(p, 'lung');
+  assert.equal(t.status, 'talk-now');
+  assert.equal(t.summary, R.TEXT.en.lungNowS); // ACS wording does not use years since quitting
+  assert.equal(t.quitRule, 'within');
+  assert.equal(t.uspstf.differs, false);
+  assert.match(t.uspstf.text, /They quit 15 years ago \(15 or fewer\), so the USPSTF still recommends it\.$/);
+  assert.ok(!/year they quit matters/.test(t.uspstf.text));
+  assert.match(t.cost.text, /They quit 15 years ago, within 15 years, so this applies\.$/);
+  const es = R.evaluate(p, 'es').topics.find(x => x.key === 'lung');
+  assert.equal(es.summary, R.TEXT.es.lungNowS);
+  assert.match(es.uspstf.text, /Dejó de fumar hace 15 años \(15 o menos\), así que el USPSTF todavía la recomienda\.$/);
+  assert.match(es.cost.text, /Dejó de fumar hace 15 años, dentro de los últimos 15 años, así que aplica\.$/);
+  assert.equal(R.quitRule('former', 0), 'within');
+  assert.match(topic(M(60, { smoking: 'former', packYears: 30, quitYears: 1 }), 'lung').uspstf.text, /quit 1 year ago/);
+  assert.match(topic(M(60, { smoking: 'former', packYears: 30, quitYears: 0 }), 'lung').uspstf.text, /quit less than a year ago/);
+});
+
+test('years since quitting: 16 years -> USPSTF stops, no no-copay line, ACS still recommends', () => {
+  const p = M(60, { smoking: 'former', packYears: 30, quitYears: 16 });
+  const t = topic(p, 'lung');
+  assert.equal(t.status, 'talk-now');
+  assert.equal(t.summary, R.TEXT.en.lungNowS);
+  assert.equal(t.quitRule, 'over');
+  assert.equal(t.uspstf.differs, true);
+  assert.match(t.uspstf.text, /They quit 16 years ago \(more than 15\), so the USPSTF no longer recommends it, and the no-copay rule \(quit in the past 15 years\) does not apply\. ACS has no years-since-quitting limit\.$/);
+  assert.equal(t.cost, undefined);
+  const es = R.evaluate(p, 'es').topics.find(x => x.key === 'lung');
+  assert.match(es.uspstf.text, /Dejó de fumar hace 16 años \(más de 15\), así que el USPSTF ya no la recomienda y la regla de cero copago .* no aplica\. La ACS no tiene límite/);
+  assert.equal(es.cost, undefined);
+  // other topics keep their no-copay line
+  assert.ok(topic(p, 'colorectal').cost);
+  // below 20 pack-years: say where the 15-year rule stands without claiming USPSTF recommends or stopped recommending it
+  assert.match(topic(M(60, { smoking: 'former', packYears: 10, quitYears: 16 }), 'lung').uspstf.text, /past the USPSTF 15-year limit\. ACS has no years-since-quitting limit\.$/);
+  assert.match(topic(M(60, { smoking: 'former', packYears: 10, quitYears: 5 }), 'lung').uspstf.text, /inside the 15-year limit\.$/);
+});
+
+test('years since quitting: blank field keeps the explain-the-rule wording; ignored for people who smoke now', () => {
+  ['', undefined, null, 'abc'].forEach(q => {
+    const t = topic(M(60, { smoking: 'former', packYears: 30, quitYears: q }), 'lung');
+    assert.equal(t.quitRule, null, String(q));
+    assert.equal(t.uspstf.differs, true);
+    assert.match(t.uspstf.text, /year they quit matters/);
+    assert.match(t.cost.text, /quit in the past 15 years\.$/);
+  });
+  const c = topic(M(60, { smoking: 'current', packYears: 30, quitYears: 20 }), 'lung');
+  assert.equal(c.quitRule, null); assert.equal(c.uspstf.differs, false); assert.ok(c.cost);
+});
+
+test('years since quitting on the checkup sheet (EN and ES) and in saved-data cleaning', () => {
+  const mk = q => C.sanitizePerson({ label: 'Dad', age: 60, prostate: true, smoking: 'former', ppd: '1', years: '30', quitYears: q }, R.packYears);
+  const d15 = mk('15'), s15 = C.checkupSheet(d15, R.evaluate(d15));
+  assert.equal(d15.quitYears, '15');
+  assert.match(s15.smoking, /30 pack-years \(1 pack a day for 30 years\) · quit 15 years ago$/);
+  assert.match(s15.costNote, /For lung screening, they quit 15 years ago, within 15 years, so this applies\.$/);
+  assert.equal(s15.rows.find(r => r.key === 'lung').costTag, 'No copay*');
+  assert.equal(s15.rows.find(r => r.key === 'lung').uspstf.differs, false);
+  const d16 = mk(16), s16 = C.checkupSheet(d16, R.evaluate(d16));
+  assert.match(s16.smoking, /quit 16 years ago$/);
+  assert.equal(s16.rows.find(r => r.key === 'lung').costTag, '');
+  assert.match(s16.rows.find(r => r.key === 'lung').uspstf.text, /no longer recommends it/);
+  assert.ok(!/15 years/.test(s16.costNote));
+  const e16 = C.checkupSheet(d16, R.evaluate(d16, 'es'), 'es');
+  assert.match(e16.smoking, /dejó de fumar hace 16 años$/);
+  const e15 = C.checkupSheet(d15, R.evaluate(d15, 'es'), 'es');
+  assert.match(e15.costNote, /dejó de fumar hace 15 años, dentro de los últimos 15 años, así que aplica\.$/);
+  const blank = mk(''), sb = C.checkupSheet(blank, R.evaluate(blank));
+  assert.equal(blank.quitYears, '');
+  assert.ok(!/quit .* ago/.test(sb.smoking));
+  assert.match(sb.costNote, /quit in the past 15 years\.$/);
+  // cleaning: kept only for former smokers, numbers 0-120 that fit inside their age
+  assert.equal(C.sanitizePerson({ age: 60, smoking: 'current', quitYears: 5 }).quitYears, '');
+  assert.equal(C.sanitizePerson({ age: 60, smoking: 'never', quitYears: 5 }).quitYears, '');
+  assert.equal(C.sanitizePerson({ age: 60, smokes: true, quitYears: 5 }).quitYears, '');
+  assert.equal(C.sanitizePerson({ age: 40, smoking: 'former', quitYears: 50 }).quitYears, '');
+  assert.equal(C.sanitizePerson({ age: 40, smoking: 'former', quitYears: -2 }).quitYears, '');
+  assert.equal(C.sanitizePerson({ age: 40, smoking: 'former', quitYears: 'abc' }).quitYears, '');
+  assert.equal(C.sanitizePerson({ age: 40, smoking: 'former', quitYears: '<b>1</b>' }).quitYears, '');
+  assert.equal(C.sanitizePerson({ age: 40, smoking: 'former' }).quitYears, '');
+  assert.equal(C.sanitizePerson({ age: 40, smoking: 'former', quitYears: 0 }).quitYears, '0');
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
 
 // Also run the "Rehearse the talk" and English/Spanish tests so one command covers all unit tests.
