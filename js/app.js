@@ -707,6 +707,19 @@
   // Everything re-renders in the new language; people, progress, habits, and the game keep their state.
   // The message box is rebuilt in the new language (any edits to it are replaced).
   I.onChange(function () {
+    // An untouched demo family follows the language (Mom/Dad/Nana/Big sis <-> Mamá/Papá/Abuela/Hermana mayor). Any edit, addition or removal keeps the names as typed.
+    (function () {
+      var now = S('demoNames'), n = state.people.length;
+      if (n !== now.length) return;
+      I.LANGS.forEach(function (other) {
+        if (other === L()) return;
+        var names = I.STRINGS[other].demoNames;
+        if (state.people.every(function (x, i) { return x.label === names[i]; })) {
+          state.people.forEach(function (x, i) { x.label = now[i]; });
+          save();
+        }
+      });
+    })();
     if ($('edit-id').value) {
       var editing = state.people.filter(function (x) { return x.id === $('edit-id').value; })[0];
       $('form-title').textContent = editing ? F('formEdit', { name: editing.label }) : S('formAdd');
