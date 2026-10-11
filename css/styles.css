@@ -150,6 +150,11 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .topic p { margin: 2px 0; }
 .topic .detail { color: var(--muted); font-size: .92rem; }
 .topic .src { font-size: .82rem; }
+.topic .us-note, .topic .cost-note { font-size: .86rem; color: var(--muted); margin-top: 6px; }
+.btn.talk-with { min-height: 44px; }
+.us-chip { display: inline-block; font-size: .72rem; font-weight: 800; padding: 1px 7px; border-radius: 999px; border: 1px solid; margin-right: 2px; }
+.us-chip.same { color: #065f46; border-color: #6ee7b7; background: #ecfdf5; }
+.us-chip.diff { color: #92400e; border-color: #fcd34d; background: #fffbeb; }
 .notes { margin: 0; padding: 12px 18px 14px 36px; background: #fffbeb; font-size: .9rem; }
 .empty { text-align: center; }
 .plan-tools { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
