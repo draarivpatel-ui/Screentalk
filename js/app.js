@@ -229,7 +229,8 @@
       var tracker = el('div', { class: 'tracker' }, [
         el('label', { for: progressId, text: S('progress') }), progress,
         btn(S('sheetBtn'), 'small ghost sheet-btn', function () { printCheckupSheet(p); }, F('sheetAria', { name: p.label })),
-        btn(S('remindBtn'), 'small ghost', function () { downloadReminder(p, res.topics); }, F('remindAria', { name: p.label }))
+        btn(S('remindBtn'), 'small ghost', function () { downloadReminder(p, res.topics); }, F('remindAria', { name: p.label })),
+        btn(F('talkWithBtn', { name: p.label }), 'small primary talk-with', function () { startTalkWith(p); })
       ]);
 
       var list = el('ul', { class: 'topics' });
@@ -246,6 +247,15 @@
           el('h4', { text: t.title }),
           el('p', { text: t.summary }),
           more,
+          t.uspstf ? el('p', { class: 'us-note' }, [
+            el('span', { class: 'us-chip ' + (t.uspstf.differs ? 'diff' : 'same'), text: S(t.uspstf.differs ? 'usDiff' : 'usSame') }), ' ',
+            t.uspstf.text + ' ',
+            el('a', { href: t.uspstf.source, target: '_blank', rel: 'noopener noreferrer', hreflang: 'en', text: S('usLink') })
+          ]) : null,
+          t.cost ? el('p', { class: 'cost-note' }, [
+            t.cost.text + ' ',
+            el('a', { href: t.cost.source, target: '_blank', rel: 'noopener noreferrer', text: S('costLink') })
+          ]) : null,
           el('p', { class: 'src' }, [
             el('a', { href: t.source, target: '_blank', rel: 'noopener noreferrer', text: S('readAcs') }),
             (L() === 'es' && t.sourceEs) ? ' \u00b7 ' : null,
@@ -429,6 +439,14 @@
     renderTalk();
     announce(docPref === 'auto' ? S('docLangAuto') : SD('docLangSet'));
   });
+  // From a person's card: pick them in "Start the talk" and jump there (saves a long scroll on a phone).
+  function startTalkWith(p) {
+    $('talk-who').value = p.id; renderTalk();
+    var box = $('talk-text');
+    box.scrollIntoView({ behavior: 'instant', block: 'center' }); // instant ('auto' would follow the CSS smooth scroll): a long smooth scroll on a phone is slow and easy to interrupt
+    box.focus({ preventScroll: true });
+    announce(F('talkWithAria', { name: p.label }));
+  }
   $('talk-who').addEventListener('change', renderTalk);
   $('talk-tone').addEventListener('change', renderTalk);
   $('copy-btn').addEventListener('click', function () {
