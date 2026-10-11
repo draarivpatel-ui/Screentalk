@@ -542,6 +542,47 @@ with sync_playwright() as p:
     check('quit field text keeps WCAG AA contrast', not low, low)
     ctx5.close()
 
+    # ---------- Every demo person's printed sheet fits one Letter page, in English and Spanish ----------
+    print('Printed sheets: whole demo family, both languages')
+    SHEET_JS = """(() => {
+      const s = document.getElementById('checkup-sheet');
+      const pt = el => parseFloat(getComputedStyle(el).fontSize) * 0.75;
+      const body = [...s.querySelectorAll('.sheet-intro, .sheet-table td, .sheet-table td strong, .sheet-table td small, .sheet-status, .sheet-cost, .sheet-sum, .sheet-qs li, .sheet-note, .sheet-later')];
+      const foot = s.querySelector('.sheet-foot'), chk = s.querySelector('.sheet-checked');
+      return { h: s.offsetHeight, minPt: Math.min(...body.map(pt)), qs: s.querySelectorAll('.sheet-qs li').length,
+               rows: s.querySelectorAll('.sheet-table:not(.sheet-fh) tbody tr').length,
+               foot: foot ? foot.textContent : '', checked: chk ? chk.textContent : '',
+               footVisible: !!(foot && foot.offsetHeight), title: s.querySelector('h2').textContent };
+    })()"""
+    expect = {'en': {'names': ['Mom', 'Dad', 'Nana', 'Big sis'], 'disc': 'not medical advice', 'chk': 'Guidelines last checked: October 2026', 'src': 'cancer.org/screening'},
+              'es': {'names': ['Mamá', 'Papá', 'Abuela', 'Hermana mayor'], 'disc': 'no es consejo médico', 'chk': 'Guías verificadas por última vez: octubre de 2026', 'src': 'cancer.org/screening'}}
+    for lang in ('en', 'es'):
+        # Letter minus 0.4in margins = 7.7in x 10.2in = 739 x 979 CSS px
+        cx = browser.new_context(viewport={'width': 739, 'height': 979})
+        sp = cx.new_page()
+        sp.on('pageerror', lambda e: errors.append(str(e)))
+        sp.on('request', lambda r: r.url.split(':')[0] not in ('file', 'data', 'blob') and external.append(r.url))
+        sp.goto(APP)
+        if lang == 'es':
+            sp.click('.lang-switch button[data-setlang="es"]')
+        sp.click('#demo-btn')
+        sp.evaluate("() => { window.print = function () {}; }")
+        n = sp.locator('.person').count()
+        check(f'[{lang}] demo family has 4 people to print', n == 4, n)
+        for i in range(n):
+            sp.emulate_media(media='screen'); sp.evaluate("window.dispatchEvent(new Event('afterprint'))")
+            sp.locator('.person').nth(i).locator('button.sheet-btn').click()
+            sp.emulate_media(media='print')
+            info = sp.evaluate(SHEET_JS)
+            who = expect[lang]['names'][i] if i < 4 else str(i)
+            pdf = sp.pdf(format='Letter', print_background=True, margin={'top': '0.4in', 'bottom': '0.4in', 'left': '0.4in', 'right': '0.4in'})
+            check(f'[{lang}] {who}: sheet is one Letter page (pdf pages, height {info["h"]} <= 979 px)', pdf_pages(pdf) == 1 and info['h'] <= 979, [pdf_pages(pdf), info['h']])
+            check(f'[{lang}] {who}: at least 40 px of headroom on the page (height {info["h"]} <= 939)', info['h'] <= 939, info['h'])
+            check(f'[{lang}] {who}: title, topic rows, and questions all printed', who in info['title'] and info['rows'] >= 1 and info['qs'] >= 1, info)
+            check(f'[{lang}] {who}: sources + guidelines-checked date line and disclaimer printed', info['footVisible'] and expect[lang]['src'] in info['foot'] and expect[lang]['disc'] in info['foot'] and info['checked'].startswith(expect[lang]['chk']), info['foot'][-160:])
+            check(f'[{lang}] {who}: body text stays >= 8.5pt (min {info["minPt"]:.2f}pt)', info['minPt'] >= 8.5 - 0.01, info['minPt'])
+        cx.close()
+
     check('no console errors', not errors, errors)
     check('zero network requests', not external, external)
     browser.close()
