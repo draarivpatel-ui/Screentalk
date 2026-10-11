@@ -16,6 +16,67 @@ const smoker = (status, py) => ({ smoking: status, packYears: py });
 
 console.log('ScreenTalk rules');
 
+test('USPSTF cross-check: breast every 2 yrs 40-74; differs from ACS under 55 and at 75+', () => {
+  [39, 40, 44, 45, 54, 75, 90].forEach(a => assert.equal(topic(F(a), 'breast').uspstf.differs, true, 'age ' + a));
+  [55, 60, 74].forEach(a => assert.equal(topic(F(a), 'breast').uspstf.differs, false, 'age ' + a));
+  assert.match(topic(F(46), 'breast').uspstf.text, /every 2 years for women 40 to 74/);
+  assert.equal(topic(F(46), 'breast').uspstf.source, 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-screening');
+});
+
+test('USPSTF cross-check: colorectal same ages as ACS; cervical differs only 21-29', () => {
+  [30, 45, 75, 80, 90].forEach(a => assert.equal(topic(F(a), 'colorectal').uspstf.differs, false));
+  assert.match(topic(F(50), 'colorectal').uspstf.text, /45 to 75/);
+  [20, 30, 50, 65, 70].forEach(a => assert.equal(topic(F(a), 'cervical').uspstf.differs, false, 'age ' + a));
+  [21, 25, 29].forEach(a => assert.equal(topic(F(a), 'cervical').uspstf.differs, true, 'age ' + a));
+  assert.match(topic(F(25), 'cervical').uspstf.text, /Pap test every 3 years from 21 to 29/);
+});
+
+test('USPSTF cross-check: lung adds the 15-years-since-quitting rule for former smokers only', () => {
+  const f = topic(M(60, smoker('former', 30)), 'lung').uspstf;
+  assert.equal(f.differs, true); assert.match(f.text, /quit within the past 15 years/); assert.match(f.text, /year they quit matters/);
+  const c = topic(M(60, smoker('current', 30)), 'lung').uspstf;
+  assert.equal(c.differs, false); assert.ok(!/year they quit matters/.test(c.text));
+});
+
+test('USPSTF cross-check: prostate is an individual choice 55-69; differs before 55 and from 70', () => {
+  [50, 54, 70, 80].forEach(a => assert.equal(topic(M(a), 'prostate').uspstf.differs, true, 'age ' + a));
+  [55, 62, 69].forEach(a => assert.equal(topic(M(a), 'prostate').uspstf.differs, false, 'age ' + a));
+  assert.match(topic(M(60), 'prostate').uspstf.text, /55 to 69.*70 and older/);
+});
+
+test('no USPSTF note for endometrial awareness or the HPV vaccine (no USPSTF screening rec)', () => {
+  assert.equal(topic(F(55, { menopause: true }), 'endometrial').uspstf, undefined);
+  assert.equal(topic(F(15), 'hpv').uspstf, undefined);
+});
+
+test('no-copay note only inside the HealthCare.gov ranges (breast 40+, colorectal 45-75, cervical 21-65, lung 50-80 with 20+ pack-years)', () => {
+  assert.equal(topic(F(39), 'breast').cost, undefined); assert.ok(topic(F(40), 'breast').cost);
+  assert.equal(topic(F(44), 'colorectal').cost, undefined); assert.ok(topic(F(45), 'colorectal').cost); assert.ok(topic(F(75), 'colorectal').cost); assert.equal(topic(F(76), 'colorectal').cost, undefined);
+  assert.equal(topic(F(20), 'cervical').cost, undefined); assert.ok(topic(F(21), 'cervical').cost); assert.ok(topic(F(65), 'cervical').cost); assert.equal(topic(F(66), 'cervical').cost, undefined);
+  assert.ok(topic(M(55, smoker('current', 20)), 'lung').cost); assert.equal(topic(M(55, smoker('current', 19)), 'lung').cost, undefined);
+  assert.equal(topic(M(81, smoker('current', 40)), 'lung').cost, undefined);
+  assert.match(topic(M(55, smoker('former', 25)), 'lung').cost.text, /quit in the past 15 years/);
+  assert.equal(topic(M(60), 'prostate').cost, undefined);
+  assert.match(topic(F(50), 'colorectal').cost.text, /no copay or deductible.*in-network.*not guaranteed/);
+  assert.match(topic(F(50), 'colorectal').cost.source, /^https:\/\/www\.healthcare\.gov\/preventive-care-adults\/$/);
+  assert.match(topic(F(50), 'breast').cost.source, /^https:\/\/www\.healthcare\.gov\/preventive-care-women\/$/);
+});
+
+test('USPSTF and cost notes: Spanish has the same flags at every age, with Spanish wording', () => {
+  for (let a = 0; a <= 100; a++) {
+    [F(a), M(a, smoker('former', 25))].forEach(p => {
+      const en = R.evaluate(p, 'en').topics, es = R.evaluate(p, 'es').topics;
+      en.forEach((t, i) => {
+        assert.equal(!!t.uspstf, !!es[i].uspstf); assert.equal(!!t.cost, !!es[i].cost);
+        if (t.uspstf) assert.equal(t.uspstf.differs, es[i].uspstf.differs);
+      });
+    });
+  }
+  assert.match(topic(F(50), 'breast').uspstf.text, /^USPSTF/);
+  assert.match(R.evaluate(F(50), 'es').topics.find(t => t.key === 'breast').uspstf.text, /cada 2 años/);
+  assert.match(R.evaluate(F(50), 'es').topics.find(t => t.key === 'colorectal').cost.text, /sin copago/);
+});
+
 test('pack-years = packs/day x years (ACS examples: 1x20 and 2x10 = 20)', () => {
   assert.equal(R.packYears(1, 20), 20);
   assert.equal(R.packYears(2, 10), 20);
