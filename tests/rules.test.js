@@ -551,6 +551,7 @@ test('every topic has a source URL and a revision or check date (ACS, USPSTF, no
 
 console.log(`\n${passed} passed, ${failed} failed`);
 
-// Also run the "Rehearse the talk" and English/Spanish tests so one command covers all unit tests.
+// Also run the "Rehearse the talk", English/Spanish and offline service-worker tests so one command covers all unit tests.
 require('./rehearse.test.js');
 require('./i18n.test.js');
+require('./sw.test.js');
