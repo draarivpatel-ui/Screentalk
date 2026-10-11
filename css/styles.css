@@ -342,3 +342,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
   .topbar .lang-switch .chip { min-height: 32px; padding: 4px 10px; font-size: .85rem; }
 }
 @media print { .lang-switch, .review-note { display: none !important; } }
+
+/* Shown only when JavaScript is off */
+.noscript-note { max-width: 46rem; margin: 16px auto; padding: 14px 18px; background: #fff; border: 2px solid var(--brand); border-radius: 12px; color: var(--ink); line-height: 1.5; }
+.noscript-note a { color: var(--brand); text-decoration: underline; }
