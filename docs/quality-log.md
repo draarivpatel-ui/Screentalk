@@ -76,9 +76,25 @@ Tests: 17 new unit tests (`tests/rehearse.test.js`, also run by `tests/rules.tes
 
 Live check after deploy (https://aariv.me/Screentalk/, headless Chromium at 1280 px and 390 px): deployed files match the repo byte for byte; full rehearsal played by keyboard, switched to Spanish mid-run, reached the score screen; 0 console errors, 0 failed requests, no horizontal scroll. All five ACS/NCI rehearsal source links return 200; the three CDC links were read live the same day (CDC blocks scripted link checkers, so they return 403 to curl).
 
+## Round 6: the whole app in Spanish (October 10, 2026)
+
+The rehearsal was bilingual but everything around it was English. Many teens translate health information for their parents, so the rest of the app now follows one language switch.
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | One page language, set from a switch in the top bar, the rehearsal's own buttons, or `?lang=es`; remembered in `localStorage`. Switching re-renders everything in place: people, progress, habits, and the current Myth-or-Fact card and answer are kept. | Reuses the rehearsal's pattern (`STRINGS[lang][key]`, `{placeholders}`) in a new `js/i18n.js`; `rules.js` and `content.js` take a language argument. |
+| 2 | Translated: the screening finder (form, validation, guideline text for every topic and age, statuses, timeline and its text version, summary), "Start the talk" (all tones), the printed checkup sheet (with `lang="es"` and Spanish dates), Myth or Fact, habits, help, and the about/sources footer. | The whole flow a family would use. |
+| 3 | Neutral Latin American Spanish; medical terms match the CDC and NCI Spanish pages (pruebas de detección, mamografía, colonoscopia, prueba inmunoquímica fecal, cuello uterino, prueba del VPH, Papanicoláu, TC de baja dosis, paquetes-año, antígeno prostático específico, tacto rectal). Table with sources in `docs/glossary-es.md`. A test fails on off-glossary variants (Papanicolaou, mamograma, colonoscopía, HPV, cáncer de seno, paquete-años). | Factual accuracy has to survive translation. |
+| 4 | Guideline text still cites the English ACS pages, marked "(en inglés)"; every topic adds an "En español: CDC" link, and the plan note says CDC follows the USPSTF so some ages differ. NCI myth cards link the NCI Spanish myths page; the lifetime-risk card says "cerca de 4 de cada 10" because the NCI Spanish page says 38% and the English page 39%. Help links go to the NCI, ACS, and CDC Spanish pages (NCI line and chat in Spanish and English; ACS helpline in English and Spanish). | No claim goes further than its source in either language. |
+| 5 | A native-speaker review is pending, and the app says so at the top (in both languages) and in the footer. | Honest about what hasn't been checked. |
+| 6 | Fixed a WCAG failure: disabled dependent fields (pack-year inputs, menopause, prostate questions) were dimmed with `opacity: .45`, which put the pack-year hint and labels at 1.96:1. Now only the controls are dimmed; text stays at least 4.5:1. A new browser check measures contrast of every visible text element (ancestor opacity included) in English and Spanish, and fails on the old CSS. | Accessibility is scored. |
+| 7 | The intro now cites one number: in 2022 only 61% of U.S. adults ages 45 to 75 were up to date with colorectal screening, so about 4 in 10 were behind ([CDC](https://www.cdc.gov/nccdphp/priorities/colorectal-cancer.html), read Oct 10, 2026). | Shows why the conversation matters. |
+
+Tests: 17 new unit tests (`tests/i18n.test.js`: same keys, placeholders, and array lengths in English and Spanish for the UI, rules, content, and rehearsal; every `data-i18n` key in the HTML exists in both; Spanish plan matches English topics, statuses, and ages at every age 0 to 120; Spanish numbers, terms, starters, questions, and checkup sheet), 41 new browser checks (121 total: the Spanish flow end to end, the printed sheet in Spanish in print mode, contrast in both languages, `?lang=es`, Spanish at 390 px). The Spanish checkup sheet prints on one Letter page for each demo family member.
+
 ## Known limits
 
-- US guidelines only (ACS). The rehearsal is in English and Spanish; the rest of the app is English only. The Spanish text has not yet been reviewed by a native speaker.
+- US guidelines only (ACS). The whole app is in English and Spanish; the Spanish has not yet been reviewed by a native speaker. The ACS guideline pages it summarizes are in English (CDC Spanish pages are linked for reading).
 - Rehearsal replies are scripted. Real parents will say other things; the tips are about how to respond, not a script to recite.
 - People at higher than average risk are pointed to a provider, not given a plan.
 - The content has not yet been reviewed by a clinician or health educator.
