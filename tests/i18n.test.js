@@ -247,4 +247,13 @@ test('t() falls back to English for unknown languages; fmt fills placeholders', 
   assert.equal(R.evaluate(F(50), 'fr').topics[0].title, R.evaluate(F(50)).topics[0].title);
 });
 
+test('page has a no-JavaScript fallback in both languages with the ACS helpline and a CSP-safe style', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const ns = html.match(/<noscript>([\s\S]*?)<\/noscript>/);
+  assert.ok(ns, 'noscript block exists');
+  assert.match(ns[1], /1-800-227-2345/);
+  assert.match(ns[1], /lang="es"/);
+  assert.doesNotMatch(ns[1], /style=/, 'no inline style (CSP style-src self)');
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
