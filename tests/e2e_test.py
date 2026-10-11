@@ -4,7 +4,8 @@ Run:  pip install playwright && playwright install chromium
       python3 tests/e2e_test.py            # optional: CHROME_PATH=/path/to/chrome
 Checks real user flows: empty states, form validation, add/edit/remove, progress that
 survives a reload, conversation starters, the full Myth-or-Fact game, calendar reminder
-download, clearing data, mobile layout, and that the page makes zero network requests.
+download, clearing data, mobile layout, the whole app in Spanish (plan, message, printed sheet,
+game, habits, help, footer), and that the page makes zero network requests.
 """
 import os, sys, pathlib
 from playwright.sync_api import sync_playwright
@@ -12,6 +13,30 @@ from playwright.sync_api import sync_playwright
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 APP = (ROOT / 'index.html').as_uri()
 passed, failed = 0, 0
+
+
+# WCAG contrast of every visible text element (opacity of ancestors included), like axe color-contrast.
+CONTRAST_JS = r"""
+(sel) => {
+  const parse = c => { const m = c.match(/rgba?\(([^)]+)\)/); if (!m) return [0,0,0,1]; const v = m[1].split(',').map(Number); return [v[0], v[1], v[2], v.length > 3 ? v[3] : 1]; };
+  const lum = ([r,g,b]) => { const f = x => { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }; return 0.2126*f(r) + 0.7152*f(g) + 0.0722*f(b); };
+  const bgOf = el => { for (let n = el; n; n = n.parentElement) { const c = parse(getComputedStyle(n).backgroundColor); if (c[3] > 0.5) return c; } return [255,255,255,1]; };
+  const out = [];
+  document.querySelectorAll(sel).forEach(el => {
+    if (!el.offsetParent && getComputedStyle(el).position !== 'fixed') return;
+    const own = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
+    if (!own || el.closest('.sr-only,[aria-hidden="true"]') || el.matches(':disabled') || el.closest('button:disabled,select:disabled,textarea:disabled,input:disabled')) return;
+    let op = 1; for (let n = el; n; n = n.parentElement) op *= Number(getComputedStyle(n).opacity);
+    const fg = parse(getComputedStyle(el).color), bg = bgOf(el), a = fg[3] * op;
+    const mix = [0,1,2].map(i => fg[i]*a + bg[i]*(1-a));
+    const L1 = lum(mix), L2 = lum(bg), ratio = (Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05);
+    const cs = getComputedStyle(el), px = parseFloat(cs.fontSize), bold = Number(cs.fontWeight) >= 700;
+    const need = (px >= 24 || (bold && px >= 18.66)) ? 3 : 4.5;
+    if (ratio < need) out.push(el.tagName + '.' + el.className + ' "' + el.textContent.trim().slice(0, 40) + '" ' + ratio.toFixed(2));
+  });
+  return out;
+}
+"""
 
 
 def check(name, cond, info=''):
@@ -62,6 +87,10 @@ with sync_playwright() as p:
     # Dependent fields
     check('menopause disabled until uterus/cervix', pg.is_disabled('#f-menopause'))
     check('pack-year inputs disabled for never-smokers', pg.is_disabled('#f-ppd'))
+    low = pg.evaluate(CONTRAST_JS, '.smoke-calc .hint, .smoke-calc small, .smoke-calc label span, .dep span, .dep.select-row span')
+    check('disabled pack-year hint and dependent labels keep >= 4.5:1 contrast', not low, low)
+    allLow = pg.evaluate(CONTRAST_JS, 'main *, header *, footer *')
+    check('no text below WCAG AA contrast on the page (English)', not allLow, allLow[:5])
     pg.click('.chip[data-preset="male"]')
     check('preset sets aria-pressed', pg.get_attribute('.chip[data-preset="male"]', 'aria-pressed') == 'true')
     pg.check('#f-smoke-former')
@@ -245,6 +274,92 @@ with sync_playwright() as p:
     overflow = pg.evaluate("document.documentElement.scrollWidth - window.innerWidth")
     check('no horizontal scroll at 360px', overflow <= 0, overflow)
     check('nav still available on mobile', pg.is_visible('.topbar nav'))
+
+    # ---------- Spanish across the whole app (fresh browser profile) ----------
+    print('Spanish')
+    ctx2 = browser.new_context(viewport={'width': 1280, 'height': 900}, accept_downloads=True)
+    es = ctx2.new_page()
+    es.on('pageerror', lambda e: errors.append(str(e)))
+    es.on('console', lambda m: m.type == 'error' and errors.append(m.text))
+    es.on('request', lambda r: r.url.split(':')[0] not in ('file', 'data', 'blob') and external.append(r.url))
+    es.on('dialog', lambda d: d.accept())
+    es.goto(APP)
+    check('starts in English for an English browser', es.get_attribute('html', 'lang') == 'en' and es.inner_text('.topbar nav a[href="#plan"]') == 'Family plan')
+    check('topbar language switch is reachable', es.locator('.lang-switch button[data-setlang="es"]').count() == 1)
+    es.focus('.lang-switch button[data-setlang="es"]'); es.keyboard.press('Enter')
+    check('html lang=es, title and nav in Spanish', es.get_attribute('html', 'lang') == 'es' and 'pruebas de detección' in es.title() and es.inner_text('.topbar nav a[href="#plan"]') == 'Plan familiar')
+    check('switch shows pressed state', es.get_attribute('.lang-switch button[data-setlang="es"]', 'aria-pressed') == 'true' and es.get_attribute('.lang-switch button[data-setlang="en"]', 'aria-pressed') == 'false')
+    check('hero, disclaimer, and form labels in Spanish', 'No puedes pedirles una colonoscopia' in es.inner_text('h1') and 'riesgo promedio' in es.inner_text('.disclaimer') and es.inner_text('#form-title') == 'Agregar a un familiar' and es.get_attribute('#f-label', 'placeholder') == 'Mamá')
+    esLow = es.evaluate(CONTRAST_JS, 'main *, header *, footer *')
+    check('no text below WCAG AA contrast on the page (Spanish)', not esLow, esLow[:5])
+    check('intro cites the CDC screening statistic', '61%' in es.inner_text('.hero-stat') and es.get_attribute('.hero-stat a', 'href') == 'https://www.cdc.gov/nccdphp/priorities/colorectal-cancer.html')
+    check('native-speaker review flagged at the top', 'pendiente de revisión por un hablante nativo' in es.inner_text('#review-note'))
+    es.click('#save-btn')
+    check('validation messages in Spanish', 'apodo' in es.inner_text('#form-error').lower())
+    es.click('#demo-btn')
+    plan = es.inner_text('#people')
+    check('demo family has Spanish nicknames', all(n in plan for n in ['Mamá', 'Papá', 'Abuela', 'Hermana mayor']))
+    badges = es.eval_on_selector_all('#people .badge', 'bs => bs.map(b => b.textContent)')
+    check('plan topics, statuses, and guideline text in Spanish', 'Detección del cáncer de colon y recto' in plan and 'Hablar ahora' in badges and 'Para decidir' in badges and 'paquetes-año' in plan and 'Colon and rectal' not in plan, badges)
+    check('ACS links say "(en inglés)" and each topic links a CDC Spanish page', es.locator('#people a.src-es[hreflang="es"]').count() >= 8 and 'Leer la guía de la ACS (en inglés)' in plan)
+    check('summary in Spanish', 'personas en tu plan' in es.inner_text('#summary') and '1 de 4' in es.inner_text('#summary'))
+    check('progress options in Spanish', es.locator('.person').nth(1).locator('select.progress-select option:checked').inner_text() == 'Ya lo hablamos')
+    check('timeline legend + text alternative in Spanish', 'Edad actual' in es.inner_text('#legend') and 'Papá, 52 años' in es.inner_text('#timeline-text'))
+    es.locator('.person').nth(1).locator('details.questions summary').click()
+    check('questions list in Spanish', 'prueba del PSA' in es.locator('.person').nth(1).locator('details.questions').inner_text())
+    # Start the talk in Spanish
+    es.select_option('#talk-who', index=1)
+    msg = es.input_value('#talk-text')
+    check('"Start the talk" message in Spanish', 'Papá' in msg and 'Sociedad Americana Contra el Cáncer' in msg and 'detección del cáncer de pulmón' in msg and es.get_attribute('#talk-text', 'lang') == 'es')
+    es.select_option('#talk-tone', 'text')
+    check('text-message tone in Spanish', es.input_value('#talk-text').startswith('Hola, Papá'))
+    check('copy/share buttons in Spanish', es.inner_text('#copy-btn') == 'Copiar' and es.inner_text('#share-btn').startswith('Compartir'))
+    # Printed checkup sheet in Spanish
+    es.evaluate("() => { window.__printed = 0; window.print = function () { window.__printed++; }; }")
+    es.locator('.person').nth(1).locator('button.sheet-btn').click()
+    sheet = es.evaluate("document.getElementById('checkup-sheet').textContent")
+    check('sheet button label + print call in Spanish', 'Hoja para el chequeo' in es.locator('.person').nth(1).locator('button.sheet-btn').inner_text() and es.evaluate('window.__printed') == 1)
+    check('printed sheet: Spanish title, lang=es, Spanish topics', 'Hoja para el chequeo: Papá, 52 años' in sheet and es.get_attribute('#checkup-sheet', 'lang') == 'es' and 'Detección del cáncer de pulmón' in sheet and 'Decisión sobre la prueba del cáncer de próstata' in sheet)
+    check('printed sheet: Spanish table headers, statuses, tests', all(x in sheet for x in ['Última prueba (fecha)', 'Resultado', 'Próxima fecha', 'La ACS lo recomienda ahora', 'Una opción para conversar', 'TC de baja dosis']))
+    check('printed sheet: pack-years, questions, family history, footer in Spanish', all(x in sheet for x in ['unos 22 paquetes-año (1 paquete al día durante 22 años)', 'Preguntas para hacer', 'Antecedentes familiares para mencionar', 'Lo que dijo el proveedor', 'no es consejo médico']))
+    check('printed sheet has no English left', not any(x in sheet for x in ['Checkup sheet', 'Last test', 'Screenings to bring up', 'Questions to ask', 'pack-years', 'Printed ']), sheet[:200])
+    check('printed date uses Spanish month names', any(m in sheet for m in ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']))
+    es.emulate_media(media='print')
+    check('Spanish print shows only the sheet', es.is_visible('#checkup-sheet') and not es.is_visible('#plan'))
+    es.emulate_media(media='screen')
+    es.evaluate("window.dispatchEvent(new Event('afterprint'))")
+    es.evaluate("window.dispatchEvent(new Event('beforeprint'))")
+    check('family-plan print header in Spanish', 'Plan familiar de detección' in es.evaluate("document.querySelector('.print-head').textContent"))
+    # Myth or Fact in Spanish, with a language switch mid-card
+    check('game in Spanish', es.inner_text('#game-progress') == 'Tarjeta 1 de 12' and es.inner_text('#game-buttons .myth') .strip().endswith('Mito'))
+    es.click('#game-buttons .fact')
+    src = es.get_attribute('#game-src', 'href')
+    check('reveal in Spanish with a Spanish NCI page or an ACS page marked "(en inglés)"', es.inner_text('#game-verdict').startswith(('¡Correcto!', 'No exactamente.')) and (src.startswith('https://www.cancer.gov/espanol/') or '(en inglés)' in es.inner_text('#game-src')), src)
+    claim_es = es.inner_text('#game-claim')
+    es.click('.lang-switch button[data-setlang="en"]')
+    check('switching language keeps the same card and answer', es.is_visible('#game-reveal') and es.inner_text('#game-progress') == 'Card 1 of 12' and es.inner_text('#game-claim') != claim_es and es.inner_text('#game-verdict').startswith(('Correct!', 'Not quite.')))
+    check('switching back to English restores English everywhere', es.get_attribute('html', 'lang') == 'en' and 'Colon and rectal cancer screening' in es.inner_text('#people') and es.inner_text('#form-title') == 'Add a family member')
+    es.click('.lang-switch button[data-setlang="es"]')
+    # Habits, help, footer, rehearsal
+    check('habits in Spanish', 'Aléjate de todas las formas de tabaco.' in es.inner_text('#habit-list'))
+    check('help resources in Spanish, linking Spanish pages', 'Servicio de Información de Cáncer' in es.inner_text('#resources') and es.locator('#resources a[hreflang="es"]').count() >= 3)
+    check('footer (about/sources) in Spanish, citing CDC and NCI Spanish pages', 'pendiente de revisión por un hablante nativo' in es.inner_text('.footer') and es.locator('.footer a[href*="/es/"]').count() >= 5 and es.locator('.footer a[href*="/espanol/"]').count() >= 1)
+    check('rehearsal follows the page language', es.get_attribute('#rh-card', 'lang') == 'es' and es.inner_text('#rh-start') == 'Empezar a practicar' and es.get_attribute('#rh-lang button[data-lang="es"]', 'aria-pressed') == 'true')
+    es.click('#rh-lang button[data-lang="en"]')
+    check('rehearsal language buttons switch the whole page', es.get_attribute('html', 'lang') == 'en' and es.inner_text('.topbar nav a[href="#plan"]') == 'Family plan')
+    es.click('#rh-lang button[data-lang="es"]')
+    es.reload()
+    check('Spanish is remembered after reload', es.get_attribute('html', 'lang') == 'es' and es.inner_text('#form-title') == 'Agregar a un familiar' and 'Mamá' in es.inner_text('#people'))
+    es.set_viewport_size({'width': 390, 'height': 844})
+    es.wait_for_timeout(200)
+    check('Spanish fits 390px (no horizontal scroll)', es.evaluate("document.documentElement.scrollWidth - window.innerWidth") <= 0, es.evaluate("document.documentElement.scrollWidth"))
+    ctx2.close()
+    ctx3 = browser.new_context(viewport={'width': 1280, 'height': 900})
+    es3 = ctx3.new_page()
+    es3.on('pageerror', lambda e: errors.append(str(e)))
+    es3.goto(APP + '?lang=es')
+    check('?lang=es link opens the app in Spanish', es3.get_attribute('html', 'lang') == 'es' and es3.inner_text('#game-progress') == 'Tarjeta 1 de 12')
+    ctx3.close()
 
     check('no console errors', not errors, errors)
     check('zero network requests', not external, external)
