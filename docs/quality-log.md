@@ -109,3 +109,17 @@ Strict-judge review of the live app (desktop and 390 px, English and Spanish, de
 | 2 | Same guideline logic in both languages (the sheet is built from `evaluate(person, lang)`), so wording stays checked by the existing English/Spanish parity tests. | No new medical text; no new claim. |
 
 Tests: 131 browser checks (10 new: default follows the app, English app with Spanish message and sheet, plan stays English, remembered after reload, back to "Same as the app", Spanish app with English message, contrast, reset on clear, 390 px) and all 63 unit tests pass.
+
+## Round 8: USPSTF cross-check, cost, and a shortcut to the talk (October 11, 2026)
+
+Strict-judge review against the CodeTheCure rubric (prelim: pain point 3, prototype 10, feasibility 4, category 3; final: factual accuracy 5, engagement 6, behavioural impact 4, innovation 5, presentation 5), and as a teen on a 390 px phone getting ready to talk with a parent, in English and Spanish, with the demo family.
+
+Medical accuracy: every ACS age in the app was re-read against cancer.org on Oct 11, 2026 (Guidelines for the Early Detection of Cancer, rev. May 27, 2026; breast, rev. Jul 23, 2026) and still matches. Then each topic was compared with the current USPSTF recommendations (uspreventiveservicestaskforce.org): breast every 2 years 40 to 74 (final Apr 30, 2024; insufficient evidence 75+); colorectal 45 to 75, selectively 76 to 85 (2021); cervical Pap every 3 years 21 to 29, then Pap/HPV/co-test 30 to 65 (final Aug 21, 2018, update in progress with a Dec 2024 draft); lung 50 to 80 with 20 pack-years and smoking now or quit within 15 years (2021); prostate individual decision 55 to 69 and against routine PSA at 70+ (final May 8, 2018, update in progress). The real gap: the app showed only ACS, so a parent whose doctor says "every 2 years" or "you quit 20 years ago, so no lung scan" would think the teen had it wrong.
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Every screening topic now shows a USPSTF line with a "Same as ACS" / "Differs from ACS" chip and a link to the USPSTF page (EN and ES). Differs: breast under 55 and 75+, cervical 21 to 29, lung for people who used to smoke (adds the 15-years-since-quitting rule), prostate under 55 and 70+. No USPSTF line for endometrial awareness or the HPV vaccine (no USPSTF screening recommendation). | Factual accuracy: the two main U.S. guidelines side by side, honestly flagged where they differ, so the teen walks in prepared for what the doctor may say. |
+| 2 | A no-copay line on breast (40+), colorectal (45 to 75), cervical (21 to 65), and lung (50 to 80, 20+ pack-years) topics, citing HealthCare.gov (CuidadoDeSalud.gov in Spanish) and saying $0 is not guaranteed. Prostate PSA is not on the list, so no line. | "Too expensive" is one of the five pushbacks in the rehearsal; now the plan itself answers it, with the official source. |
+| 3 | "Start the talk with {name}" button on each person card: picks that person in Start the talk, jumps there instantly, and focuses the message (44 px tall). | On a phone the talk section was about 4,000 to 9,000 px below a card; the next step should be one tap from the plan. |
+
+Tests: 70 unit tests (7 new: USPSTF flags at every boundary, the lung quit rule, no USPSTF for endometrial/HPV, no-copay ranges, English/Spanish parity of flags at ages 0 to 100) and 145 browser checks (14 new: notes, chips, links, contrast, the card button at 360 px, Spanish wording and links) pass.
