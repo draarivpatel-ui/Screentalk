@@ -422,8 +422,24 @@
     };
   }
 
+  // Made-up demo family (labels come from the UI language). Dad used to smoke and quit 18 years ago,
+  // so his lung card shows the USPSTF 15-year cutoff ("Differs from ACS", no no-copay line).
+  var DEMO_FAMILY = [
+    { age: 46, breasts: true, cervix: true, uterus: true, familyHistory: true, smoking: 'never' },
+    { age: 52, prostate: true, smoking: 'former', ppd: '1', years: '22', quitYears: '18', progress: 'talked' },
+    { age: 71, breasts: true, cervix: true, uterus: true, menopause: true, smoking: 'never' },
+    { age: 19, breasts: true, cervix: true, uterus: true, smoking: 'never' }
+  ];
+  function demoFamily(names) {
+    return DEMO_FAMILY.map(function (p, i) {
+      var o = { label: (names && names[i]) || '' };
+      for (var k in p) o[k] = p[k];
+      return o;
+    });
+  }
+
   var api = {
-    CARDS: CARDS, HABITS: HABITS, HABITS_ES: HABITS_ES, RESOURCES: RESOURCES, PROGRESS: PROGRESS, LANGS: LANGS,
+    CARDS: CARDS, DEMO_FAMILY: DEMO_FAMILY, demoFamily: demoFamily, HABITS: HABITS, HABITS_ES: HABITS_ES, RESOURCES: RESOURCES, PROGRESS: PROGRESS, LANGS: LANGS,
     STARTER: STARTER, TOPIC_PHRASES: TOPIC_PHRASES, QUESTIONS: QUESTIONS, SHEET: SHEET, SHEET_STATUS: SHEET_STATUS,
     card: card, habits: habits, resources: resources, progressLabel: progressLabel,
     starter: starter, joinList: joinList, questions: questions, sanitizePerson: sanitizePerson, buildICS: buildICS, checkupSheet: checkupSheet
