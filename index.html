@@ -130,6 +130,12 @@
                 <div class="py-out" aria-live="polite"><span id="py-value">0</span><small data-i18n="pyUnit">pack-years</small></div>
               </div>
               <p class="hint" data-i18n="hintPy">A pack-year is 1 pack (about 20 cigarettes) a day for a year (ACS). Rough numbers are fine.</p>
+              <div class="quit-row dep" data-dep="f-smoke-former">
+                <label><span data-i18n-html="lblQuit">Years since quitting <span class="legend-note">(optional)</span></span>
+                  <input id="f-quit" type="number" min="0" max="120" step="1" inputmode="numeric" placeholder="10" aria-describedby="hint-quit" />
+                </label>
+                <p class="hint" id="hint-quit" data-i18n="hintQuit">USPSTF lung screening stops once someone has not smoked for 15 years. ACS has no such limit.</p>
+              </div>
             </div>
           </fieldset>
 
