@@ -605,8 +605,12 @@
       var tb = el('tbody');
       d.rows.forEach(function (r) {
         tb.appendChild(el('tr', null, [
-          el('td', null, [el('strong', { text: r.title }), el('span', { class: 'sheet-status ' + r.status, text: r.statusLabel }), el('small', { text: r.test })]),
-          el('td', { class: 'sheet-sum', text: r.summary }),
+          el('td', null, [el('strong', { text: r.title }), el('span', { class: 'sheet-status ' + r.status, text: r.statusLabel }), el('small', { text: r.test }),
+            r.costTag ? el('span', { class: 'sheet-cost', text: r.costTag }) : null]),
+          el('td', { class: 'sheet-sum' }, [
+            r.summary,
+            r.uspstf ? el('span', { class: 'sheet-us' }, [el('b', { text: SD(r.uspstf.differs ? 'usDiff' : 'usSame') + '. ' }), r.uspstf.text]) : null
+          ]),
           el('td', { class: 'fill' }), el('td', { class: 'fill' }), el('td', { class: 'fill' })
         ]));
       });
@@ -615,6 +619,7 @@
     } else {
       box.appendChild(el('p', { text: SD('sheetNothing') }));
     }
+    if (d.costNote) box.appendChild(el('p', { class: 'sheet-note sheet-cost-note', text: d.costNote }));
     if (d.later.length) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: SD('sheetLater') }), d.later.join(' \u00b7 ') + '.']));
     if (d.smoking) box.appendChild(el('p', { class: 'sheet-later' }, [el('strong', { text: SD('sheetSmoke') }), d.smoking + SD('sheetSmokeTail')]));
 
