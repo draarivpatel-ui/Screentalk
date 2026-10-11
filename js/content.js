@@ -348,6 +348,9 @@
       current: 'Smokes now', former: 'Used to smoke',
       pyLine: ' \u00b7 about {py} pack-years', pyDetail1: ' ({ppd} pack a day for {years} years)', pyDetailN: ' ({ppd} packs a day for {years} years)',
       pyMissing: ' \u00b7 pack-years not entered',
+      costTag: 'No copay*',
+      costNote: '* No copay: most health plans must cover these screenings with no copay or deductible from an in-network provider ($0 is not guaranteed; check the plan).',
+      costLungFormer: ' For lung screening in people who used to smoke, this applies if they quit in the past 15 years.',
       footer: 'Made with ScreenTalk. General American Cancer Society guidelines for people at average risk with no symptoms. Education only, not medical advice. Anyone with symptoms should see a provider.'
     },
     es: {
@@ -360,6 +363,9 @@
       current: 'Fuma actualmente', former: 'Fumaba antes',
       pyLine: ' \u00b7 unos {py} paquetes-año', pyDetail1: ' ({ppd} paquete al día durante {years} años)', pyDetailN: ' ({ppd} paquetes al día durante {years} años)',
       pyMissing: ' \u00b7 paquetes-año sin escribir',
+      costTag: 'Sin copago*',
+      costNote: '* Sin copago: la mayoría de los planes de salud deben cubrir estas pruebas de detección sin copago ni deducible con un proveedor de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
+      costLungFormer: ' Para la detección del cáncer de pulmón en quienes fumaron, aplica si dejaron de fumar en los últimos 15 años.',
       footer: 'Hecho con ScreenTalk. Guías generales de la Sociedad Americana Contra el Cáncer para personas con riesgo promedio y sin síntomas. Solo para educación, no es consejo médico. Cualquier persona con síntomas debe consultar a un proveedor de atención médica.'
     }
   };
@@ -382,7 +388,8 @@
       if (t.status === 'upcoming') {
         later.push(fmt(S.later, { title: t.title, age: age + (t.startsIn || 0) }));
       } else if (t.status !== 'past') {
-        rows.push({ key: t.key, title: t.title, status: t.status, statusLabel: S.status[t.status] || '', test: S.tests[t.key] || '', summary: t.summary, source: t.source });
+        rows.push({ key: t.key, title: t.title, status: t.status, statusLabel: S.status[t.status] || '', test: S.tests[t.key] || '', summary: t.summary, source: t.source,
+          uspstf: t.uspstf ? { text: t.uspstf.text, differs: !!t.uspstf.differs } : null, cost: t.cost ? t.cost.text : '', costTag: t.cost ? S.costTag : '' });
       }
     });
     var smoking = '';
@@ -397,6 +404,8 @@
       later: later,
       questions: questions(person, result.topics, l),
       smoking: smoking,
+      // One no-copay note under the table (rows only carry a short tag) so the sheet stays on one page
+      costNote: rows.some(function (r) { return r.cost; }) ? S.costNote + (person.smoking === 'former' && rows.some(function (r) { return r.key === 'lung' && r.cost; }) ? S.costLungFormer : '') : '',
       familyHistory: !!person.familyHistory,
       notes: (result.notes || []).slice(),
       footer: S.footer
