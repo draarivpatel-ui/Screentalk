@@ -729,4 +729,11 @@
   renderHabits();
   renderResources();
   startGame(false);
+
+  // ---------- Offline ----------
+  // After one online visit the app opens with no connection (sw.js: network first, cache fallback).
+  // Only over http(s); opening index.html from disk skips it.
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
 })();
