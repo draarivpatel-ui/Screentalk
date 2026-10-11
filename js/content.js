@@ -369,7 +369,7 @@
       pyMissing: ' \u00b7 paquetes-año sin escribir',
       quitLine: ' \u00b7 dejó de fumar hace {n}', yr1: '1 año', yrN: '{n} años', yr0: 'menos de un año',
       costTag: 'Sin copago*',
-      costNote: '* Sin copago: la mayoría de los planes de salud deben cubrir estas pruebas de detección sin copago ni deducible con un proveedor de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
+      costNote: '* Sin copago: la mayoría de los planes de salud deben cubrir estas pruebas de detección sin copago ni deducible de un proveedor dentro de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
       costLungFormer: ' Para la detección del cáncer de pulmón en quienes fumaron, aplica si dejaron de fumar en los últimos 15 años.',
       costLungQuitIn: ' Para la detección del cáncer de pulmón, dejó de fumar hace {n}, dentro de los últimos 15 años, así que aplica.',
       footer: 'Hecho con ScreenTalk. Guías generales de la Sociedad Americana Contra el Cáncer para personas con riesgo promedio y sin síntomas. Solo para educación, no es consejo médico. Cualquier persona con síntomas debe consultar a un proveedor de atención médica.'
