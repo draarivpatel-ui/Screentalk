@@ -289,6 +289,13 @@ with sync_playwright() as p:
     # Demo + mobile layout
     pg.click('#demo-btn')
     check('demo family loads 4 people', pg.locator('.person').count() == 4)
+    pg.click('[data-setlang=es]'); pg.wait_for_timeout(250)
+    names_es = pg.evaluate("[...document.querySelectorAll('.person h3, .person .person-name, #people .person [data-label]')].map(n=>n.innerText).join('|')")
+    body_es = pg.inner_text('#people')
+    check('untouched demo family names follow the language switch (Spanish)', all(w in body_es for w in ['Mamá', 'Papá', 'Abuela', 'Hermana mayor']) and 'Big sis' not in body_es, body_es[:200])
+    pg.click('[data-setlang=en]'); pg.wait_for_timeout(250)
+    body_en = pg.inner_text('#people')
+    check('and back to English', all(w in body_en for w in ['Mom', 'Dad', 'Nana', 'Big sis']) and 'Hermana' not in body_en)
     pg.set_viewport_size({'width': 360, 'height': 780})
     pg.wait_for_timeout(200)
     overflow = pg.evaluate("document.documentElement.scrollWidth - window.innerWidth")
