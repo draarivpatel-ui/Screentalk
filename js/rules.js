@@ -16,6 +16,15 @@
  *  - ACS prostate cancer early detection recommendations (last revised Nov 22, 2023)
  *  - ACS HPV Vaccines (last revised Sep 3, 2026)
  *
+ * Cross-check (re-checked Oct 11, 2026): each screening topic also carries the U.S. Preventive
+ * Services Task Force (USPSTF) recommendation, because many doctors and insurance plans follow it:
+ *  - USPSTF Breast Cancer: Screening (final, Apr 30, 2024): every 2 years, ages 40 to 74
+ *  - USPSTF Colorectal Cancer: Screening (final, 2021): 45 to 75; selectively 76 to 85
+ *  - USPSTF Cervical Cancer: Screening (final, Aug 21, 2018; update in progress, draft Dec 2024)
+ *  - USPSTF Lung Cancer: Screening (final, 2021): 50 to 80, 20 pack-years, smokes now or quit within 15 years
+ *  - USPSTF Prostate Cancer: Screening (final, May 8, 2018; update in progress)
+ * and the no-copay rule for these screenings from HealthCare.gov (preventive care for adults and women).
+ *
  * English and Spanish: evaluate(person, 'es') returns the same topics with Spanish wording.
  * Works in the browser (window.ScreenTalkRules) and in Node (module.exports) for tests.
  */
@@ -32,6 +41,22 @@
     prostate: 'https://www.cancer.org/cancer/types/prostate-cancer/detection-diagnosis-staging/acs-recommendations.html',
     hpv: 'https://www.cancer.org/cancer/risk-prevention/hpv/acs-recommendations-for-hpv-vaccine-use.html',
     quit: 'https://www.cancer.org/cancer/risk-prevention/tobacco/empowered-to-quit.html'
+  };
+  var US = 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/';
+  var SRC_US = {
+    breast: US + 'breast-cancer-screening',
+    colorectal: US + 'colorectal-cancer-screening',
+    cervical: US + 'cervical-cancer-screening',
+    lung: US + 'lung-cancer-screening',
+    prostate: US + 'prostate-cancer-screening'
+  };
+  // HealthCare.gov: plans must cover these screenings without a copay or coinsurance, even before the
+  // deductible, when the provider is in-network ("$0 cost isn't guaranteed in all cases").
+  var SRC_COST = {
+    en: { breast: 'https://www.healthcare.gov/preventive-care-women/', cervical: 'https://www.healthcare.gov/preventive-care-women/',
+      colorectal: 'https://www.healthcare.gov/preventive-care-adults/', lung: 'https://www.healthcare.gov/preventive-care-adults/' },
+    es: { breast: 'https://www.cuidadodesalud.gov/es/preventive-care-women/', cervical: 'https://www.cuidadodesalud.gov/es/preventive-care-women/',
+      colorectal: 'https://www.cuidadodesalud.gov/es/preventive-care-adults/', lung: 'https://www.cuidadodesalud.gov/es/preventive-care-adults/' }
   };
 
   // Status values, ordered by how soon a conversation makes sense.
@@ -142,7 +167,17 @@
       hpvTeenS: 'ACS: teens and young adults 13 through 26 who are not vaccinated, or missed doses, should get the HPV vaccine as soon as possible.',
       hpvD: 'Check vaccine records or ask a provider whether the series is complete. The Vaccines for Children program gives free vaccines to eligible kids and teens under 19.',
       fhNote: 'Family history matters: ACS says some people, because of family history or an inherited condition, need a different screening plan (for example, starting earlier, testing more often, or adding tests). Bring the family history to a provider and ask whether the average-risk guidelines fit.',
-      fhBreast: ' For breast cancer, ACS says some women at high risk get a yearly breast MRI plus a mammogram, typically starting at 30.'
+      fhBreast: ' For breast cancer, ACS says some women at high risk get a yearly breast MRI plus a mammogram, typically starting at 30.',
+      us: {
+        breast: 'USPSTF: a mammogram every 2 years for women 40 to 74. For 75 and older, it says there is not enough evidence to decide.',
+        colorectal: 'USPSTF: screening for adults 45 to 75; from 76 to 85, a provider can offer it to some people based on their health and past screening. Same ages as ACS.',
+        cervical: 'USPSTF: a Pap test every 3 years from 21 to 29; from 30 to 65, a Pap test every 3 years, an HPV test every 5 years, or both together every 5 years. Its update is in progress.',
+        lung: 'USPSTF: yearly low-dose CT from 50 to 80 with a 20 pack-year history, for people who smoke now or quit within the past 15 years. It stops once someone has not smoked for 15 years.',
+        prostate: 'USPSTF: for men 55 to 69, PSA testing is an individual choice made with a provider; it recommends against routine PSA screening at 70 and older. Its update is in progress.'
+      },
+      usLungFormer: ' So the year they quit matters; ask a provider.',
+      cost: 'Cost: most health plans must cover this screening with no copay or deductible from an in-network provider ($0 is not guaranteed; check the plan).',
+      costLungFormer: ' For people who used to smoke, this applies if they quit in the past 15 years.'
     },
     es: {
       ageError: 'Escribe una edad entre 0 y 120.',
@@ -196,7 +231,17 @@
       hpvTeenS: 'ACS: adolescentes y adultos jóvenes de 13 a 26 años que no estén vacunados, o a quienes les falten dosis, deben vacunarse contra el VPH lo antes posible.',
       hpvD: 'Conviene revisar el registro de vacunas o preguntar a un proveedor si la serie está completa. El programa Vacunas para Niños (VFC) da vacunas gratis a niños y adolescentes menores de 19 años que reúnen los requisitos.',
       fhNote: 'Los antecedentes familiares importan: la ACS dice que algunas personas, por sus antecedentes familiares o una condición hereditaria, necesitan un plan de detección diferente (por ejemplo, empezar antes, hacerse pruebas con más frecuencia o agregar pruebas). Conviene llevar los antecedentes familiares al proveedor y preguntar si las guías para riesgo promedio aplican.',
-      fhBreast: ' Para el cáncer de mama, la ACS dice que algunas mujeres con riesgo alto se hacen una resonancia magnética de las mamas cada año además de la mamografía, por lo general desde los 30 años.'
+      fhBreast: ' Para el cáncer de mama, la ACS dice que algunas mujeres con riesgo alto se hacen una resonancia magnética de las mamas cada año además de la mamografía, por lo general desde los 30 años.',
+      us: {
+        breast: 'USPSTF: una mamografía cada 2 años para mujeres de 40 a 74 años. Para 75 años o más, dice que la evidencia no alcanza para decidir.',
+        colorectal: 'USPSTF: pruebas de detección para adultos de 45 a 75 años; de 76 a 85, un proveedor puede ofrecerlas a algunas personas según su salud y sus pruebas anteriores. Mismas edades que la ACS.',
+        cervical: 'USPSTF: una prueba de Papanicoláu cada 3 años de los 21 a los 29; de los 30 a los 65, Papanicoláu cada 3 años, prueba del VPH cada 5 años o ambas juntas cada 5 años. Su actualización está en curso.',
+        lung: 'USPSTF: una tomografía computarizada de baja dosis cada año de los 50 a los 80 años con un historial de 20 paquetes-año, para quienes fuman o dejaron de fumar en los últimos 15 años. Se suspende cuando la persona lleva 15 años sin fumar.',
+        prostate: 'USPSTF: para hombres de 55 a 69 años, la prueba del PSA es una decisión personal con un proveedor; recomienda no hacer pruebas de PSA de rutina a partir de los 70. Su actualización está en curso.'
+      },
+      usLungFormer: ' Por eso importa el año en que dejó de fumar; conviene preguntar a un proveedor.',
+      cost: 'Costo: la mayoría de los planes de salud deben cubrir esta prueba de detección sin copago ni deducible con un proveedor de la red (no siempre cuesta $0; conviene confirmarlo con el plan).',
+      costLungFormer: ' Para quienes fumaron, aplica si dejaron de fumar en los últimos 15 años.'
     }
   };
   var LANGS = ['en', 'es'];
@@ -217,6 +262,33 @@
     prostate: 'https://www.cdc.gov/prostate-cancer/es/screening/index.html',
     hpv: 'https://www.cdc.gov/hpv/es/vaccines/vacuna-contra-el-vph.html'
   };
+
+  /**
+   * USPSTF cross-check for a topic. differs = true where the USPSTF advice for this age is not the
+   * same as the ACS advice shown on the card (start age, how often, or when to stop).
+   */
+  function usNote(key, age, smoking, py, l) {
+    if (!SRC_US[key]) return null;
+    var T = TEXT[lang(l)];
+    var differs = false;
+    var text = T.us[key];
+    if (key === 'breast') differs = !(age >= 55 && age <= 74);
+    else if (key === 'cervical') differs = age >= 21 && age <= 29;
+    else if (key === 'lung') { differs = smoking === 'former'; if (differs) text += T.usLungFormer; }
+    else if (key === 'prostate') differs = age < 55 || age >= 70;
+    return { text: text, differs: differs, source: SRC_US[key] };
+  }
+
+  /** No-copay note when the person's age is inside the range HealthCare.gov lists. */
+  function costNote(key, age, smoking, py, l) {
+    var T = TEXT[lang(l)];
+    var ok = (key === 'breast' && age >= 40) ||
+      (key === 'colorectal' && age >= 45 && age <= 75) ||
+      (key === 'cervical' && age >= 21 && age <= 65) ||
+      (key === 'lung' && age >= 50 && age <= 80 && py >= 20 && smoking !== 'never');
+    if (!ok) return null;
+    return { text: T.cost + (key === 'lung' && smoking === 'former' ? T.costLungFormer : ''), source: SRC_COST[lang(l)][key] };
+  }
 
   /**
    * person = {
@@ -358,6 +430,14 @@
       topics.push(h);
     }
 
+    // ---- Cross-check with the USPSTF, and the no-copay rule (HealthCare.gov)
+    topics.forEach(function (t) {
+      var n = usNote(t.key, age, smoking, num(person.packYears), l);
+      if (n) t.uspstf = n;
+      var cst = costNote(t.key, age, smoking, num(person.packYears), l);
+      if (cst) t.cost = cst;
+    });
+
     // ---- Notes (person-specific only; the general average-risk note is shown once on the page)
     if (person.familyHistory) {
       notes.push(T.fhNote + (person.breasts ? T.fhBreast : ''));
@@ -389,7 +469,7 @@
   var api = {
     evaluate: evaluate, packYears: packYears, familySummary: familySummary,
     smokingStatus: smokingStatus, prostateFamily: prostateFamily, prostateStartAge: prostateStartAge, hasUterus: hasUterus,
-    STATUS: STATUS, SOURCES: SRC, SOURCES_ES: SRC_ES, TEXT: TEXT, LANGS: LANGS
+    STATUS: STATUS, SOURCES: SRC, SOURCES_ES: SRC_ES, SOURCES_US: SRC_US, SOURCES_COST: SRC_COST, usNote: usNote, costNote: costNote, TEXT: TEXT, LANGS: LANGS
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ScreenTalkRules = api;
