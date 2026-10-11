@@ -128,7 +128,7 @@
       sheetNothing: 'Nothing in these ACS guidelines lines up right now. A regular checkup is still a great habit.',
       sheetLater: 'Coming up later: ', sheetSmoke: 'Smoking history: ', sheetSmokeTail: '. Providers use pack-years to decide about lung screening.',
       sheetQs: 'Questions to ask', sheetFh: 'Family history to mention', sheetFhTh: ['Relative', 'Type of cancer', 'Age when diagnosed'],
-      sheetSaid: 'What the provider said', sheetGuides: ' Guidelines: cancer.org/screening', sheetOpening: 'Opening a one-page checkup sheet for {name}.'
+      sheetSaid: 'What the provider said', sheetGuides: ' Guidelines: cancer.org/screening \u00b7 USPSTF: uspreventiveservicestaskforce.org \u00b7 Cost: healthcare.gov', sheetOpening: 'Opening a one-page checkup sheet for {name}.'
     },
     es: {
       docTitle: 'ScreenTalk: ayuda a tu familia a hacerse las pruebas de detección del cáncer a tiempo',
@@ -229,7 +229,7 @@
       sheetNothing: 'Nada en estas guías de la ACS aplica ahora mismo. Igual, un chequeo regular es un gran hábito.',
       sheetLater: 'Más adelante: ', sheetSmoke: 'Historial de tabaquismo: ', sheetSmokeTail: '. Los proveedores usan los paquetes-año para decidir sobre la detección del cáncer de pulmón.',
       sheetQs: 'Preguntas para hacer', sheetFh: 'Antecedentes familiares para mencionar', sheetFhTh: ['Familiar', 'Tipo de cáncer', 'Edad al diagnóstico'],
-      sheetSaid: 'Lo que dijo el proveedor', sheetGuides: ' Guías de la ACS (en inglés): cancer.org/screening', sheetOpening: 'Abriendo la hoja para el chequeo de {name}.'
+      sheetSaid: 'Lo que dijo el proveedor', sheetGuides: ' Guías (en inglés): cancer.org/screening \u00b7 uspreventiveservicestaskforce.org \u00b7 Costos: cuidadodesalud.gov', sheetOpening: 'Abriendo la hoja para el chequeo de {name}.'
     }
   };
 
