@@ -47,6 +47,7 @@ Screening tests can find some cancers early, before symptoms, when they are easi
 - **Education, not diagnosis.** The app never says someone "needs" a test and never calculates risk. Every item is framed as a topic to discuss with a healthcare provider. A unit test scans all generated text for diagnostic or risk-score language.
 - **Every fact is sourced.** Each plan item links to the ACS page it summarizes. Every Myth-or-Fact card links to NCI or ACS. Every rehearsal coaching tip links to the ACS, NCI, or CDC page behind it. All content was re-checked against the live pages on October 10, 2026 (see table below). The plan and the printed checkup sheet say so in English and Spanish: "Guidelines last checked: October 2026", with each topic's ACS revision date (ACS checked Oct 10, 2026; USPSTF and HealthCare.gov Oct 11, 2026).
 - **Private by design.** No accounts, no server, no analytics, no cookies, no fonts or scripts from other sites. A Content-Security-Policy blocks network connections entirely, and the end-to-end test confirms the page makes zero network requests. Data stays in the browser's `localStorage`; "Clear all data" wipes it.
+- **Works offline.** After one online visit, a small service worker (`sw.js`) keeps a copy of ScreenTalk's own files, so the app and the checkup sheet still open with no signal (say, in a clinic waiting room). It always tries the network first, so a new version wins whenever you are online, and it stores nothing from other sites.
 - **Inclusive.** Screenings are chosen by body (breast tissue, cervix, uterus, prostate) as well as Female/Male presets, while keeping ACS's own wording.
 - **Accessible.** Keyboard-friendly, visible focus, labeled controls, live announcements, screen-reader text for the chart, WCAG AA color contrast, reduced-motion support, works at 360 px wide.
 
@@ -76,7 +77,8 @@ ScreenTalk is not affiliated with or endorsed by ACS or NCI. Guidelines are for 
 - `js/rehearse-ui.js`: the rehearsal UI.
 - `js/i18n.js`: page language (English/Spanish), the UI strings in both languages, and `data-i18n` attributes in `index.html`. Same pattern as the rehearsal: `STRINGS[lang][key]` with `{placeholders}`. `rules.js` and `content.js` take a language argument (`evaluate(person, 'es')`).
 - `tests/rules.test.js`: 42 zero-dependency Node tests (it also runs `tests/rehearse.test.js`, 17 tests: every tip cites ACS/NCI/CDC, both languages complete, branching, scoring, endings; and `tests/i18n.test.js`, 21 tests: English and Spanish have the same keys and placeholders everywhere, the Spanish plan has the same topics, statuses, and ages at every age 0–120, CDC/NCI Spanish terms are used consistently, the Spanish checkup sheet and starters are complete) covering every guideline boundary (for example colorectal 44/45/75/76/85/86, lung 19.9 vs 20 pack-years and 15 vs 16 years since quitting, prostate 40/45/50), every age 0–120, banned diagnostic language, saved-data cleaning, calendar files, and checkup-sheet data.
-- `tests/e2e_test.py`: 230 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the years-since-quitting field (USPSTF 15-year rule and no-copay line at 15 and 16 years, English and Spanish, validation, saved-data cleaning; the demo family's Dad quit 18 years ago, so his lung card shows "Differs from ACS" with no no-copay line), the "Guidelines last checked: October 2026" line and per-topic ACS revision dates on the plan and sheet (English and Spanish), the printable checkup sheet (USPSTF line and no-copay tag on every row, fits on one Letter page in English and Spanish), every demo-family person's sheet in both languages (one Letter page with at least 40 px to spare, title, topic rows, questions, sources and guidelines-checked line, disclaimer, body text 8.5pt or larger), clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, zero console errors, zero network requests.
+- `tests/sw.test.js`: 9 tests for the offline service worker (it caches every file the page loads, answers from the network first and from the cache only when offline, deletes only old ScreenTalk caches, registers only over http(s), CSP still blocks other sites).
+- `tests/e2e_test.py`: 236 browser checks with Playwright: validation, add/edit/remove, progress after reload, starters, copy, the whole game by keyboard, the rehearsal by keyboard in English and Spanish (perfect and weak runs, branching, 390 px layout), reminder download, the years-since-quitting field (USPSTF 15-year rule and no-copay line at 15 and 16 years, English and Spanish, validation, saved-data cleaning; the demo family's Dad quit 18 years ago, so his lung card shows "Differs from ACS" with no no-copay line), the "Guidelines last checked: October 2026" line and per-topic ACS revision dates on the plan and sheet (English and Spanish), the printable checkup sheet (USPSTF line and no-copay tag on every row, fits on one Letter page in English and Spanish), every demo-family person's sheet in both languages (one Letter page with at least 40 px to spare, title, topic rows, questions, sources and guidelines-checked line, disclaimer, body text 8.5pt or larger), clearing data, broken saved data, mobile layout, the whole app in Spanish (plan, message, printed sheet in print mode, game, habits, help, footer, `?lang=es`, 390 px), WCAG AA text contrast on every visible element in both languages, offline (served over http, the service worker takes control, then with the connection cut the page reloads, the demo family loads and `?lang=es` opens in Spanish), zero console errors, zero network requests when opened from disk.
 - `docs/quality-log.md`: what each review round found and fixed.
 
 ```
@@ -89,9 +91,11 @@ screentalk/
 ├── js/rehearse.js   # rehearsal script + engine (EN/ES)
 ├── js/rehearse-ui.js
 ├── js/i18n.js       # page language + UI strings (EN/ES)
+├── sw.js            # offline copy of the app's own files (network first)
 ├── tests/rules.test.js
 ├── tests/rehearse.test.js
 ├── tests/i18n.test.js
+├── tests/sw.test.js
 ├── tests/e2e_test.py
 ├── docs/glossary-es.md
 └── docs/quality-log.md
@@ -104,17 +108,17 @@ Open `index.html` in any modern browser. That's it.
 Unit tests (Node 18+):
 
 ```bash
-node tests/rules.test.js     # 80 tests: 42 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish
+node tests/rules.test.js     # 89 tests: 42 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish + 9 offline service worker
 ```
 
 Browser tests (optional):
 
 ```bash
 pip install playwright && playwright install chromium
-python3 tests/e2e_test.py    # 230 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
+python3 tests/e2e_test.py    # 236 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
 ```
 
-Last run Oct 11, 2026: **80/80 unit tests and 230/230 browser checks passing (Chromium, 2:35 PM CT)**.
+Last run Oct 11, 2026: **89/89 unit tests and 236/236 browser checks passing (Chromium, 5:50 PM CT)**.
 
 ### Deploy on GitHub Pages
 
@@ -127,7 +131,7 @@ Repo **Settings → Pages → Build and deployment → Deploy from a branch → 
 - **Myth or Fact:** NCI *Common Cancer Myths and Misconceptions* and ACS guidance. **Rehearsal tips:** ACS, NCI and CDC pages, each cited in the app.
 - **Spanish medical terms:** CDC and NCI Spanish pages ([docs/glossary-es.md](docs/glossary-es.md)).
 - **Statistic on the home page:** CDC (2022 colorectal screening rate, linked in the app).
-- All of it is written into the app's code; the app makes **no network requests** at runtime.
+- All of it is written into the app's code; the app makes **no requests to other sites** at runtime (it only loads its own files, which `sw.js` keeps for offline use).
 
 ## Limits and honesty
 
