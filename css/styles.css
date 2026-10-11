@@ -102,7 +102,10 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .chip.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 .checks { display: grid; gap: 6px; }
 .checks label, .check { font-weight: 500 !important; display: flex !important; gap: 8px; align-items: center; }
-.dep.disabled { opacity: .45; }
+/* Disabled dependent fields: dim only the controls, never the text (WCAG AA 4.5:1; the old opacity .45 gave 1.9:1). */
+.dep.disabled { color: var(--muted); }
+.dep.disabled input, .dep.disabled select { opacity: .55; }
+.dep.disabled .hint, .dep.disabled .py-out small { color: #4b5565; }
 .smoke-calc { margin-top: 8px; }
 .py-out { text-align: center; background: #f0fdfa; border-radius: 10px; padding: 6px 10px; min-width: 84px; }
 .py-out span { display: block; font-size: 1.3rem; font-weight: 800; color: var(--brand); }
@@ -326,3 +329,16 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .sheet-line { display: block; height: 18px; border-bottom: 1px solid #999; }
 .sheet-note { margin: 6px 0 0; font-size: 8.5pt; color: #333; }
 .sheet-foot { margin: 10px 0 0; padding-top: 6px; border-top: 1px solid #ccc; font-size: 8pt; color: #444; }
+
+/* ---------- Language switch + Spanish review note ---------- */
+.topbar .lang-switch { gap: 6px; flex-wrap: nowrap; }
+.topbar .lang-switch .chip { padding: 6px 12px; min-height: 36px; font-size: .9rem; }
+.disclaimer p { margin: 0; }
+.disclaimer .review-note { margin-top: 8px; font-size: .92rem; }
+.src-es { white-space: nowrap; }
+.hero-stat { margin: 0 0 18px; font-size: .98rem; color: #374151; max-width: 60ch; border-left: 4px solid var(--accent, #f59e0b); padding-left: 12px; }
+@media (max-width: 900px) {
+  .topbar .lang-switch { position: absolute; top: 8px; right: 12px; }
+  .topbar .lang-switch .chip { min-height: 32px; padding: 4px 10px; font-size: .85rem; }
+}
+@media print { .lang-switch, .review-note { display: none !important; } }
