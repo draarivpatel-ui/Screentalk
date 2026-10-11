@@ -70,7 +70,7 @@
   var fields = {
     label: $('f-label'), age: $('f-age'), breasts: $('f-breasts'), cervix: $('f-cervix'), uterus: $('f-uterus'),
     prostate: $('f-prostate'), menopause: $('f-menopause'),
-    ppd: $('f-ppd'), years: $('f-years'), aa: $('f-aa'), pfam: $('f-pfam'), fh: $('f-fh')
+    ppd: $('f-ppd'), years: $('f-years'), quit: $('f-quit'), aa: $('f-aa'), pfam: $('f-pfam'), fh: $('f-fh')
   };
   function smokingValue() {
     var r = form.querySelector('input[name="smoking"]:checked');
@@ -125,6 +125,7 @@
       breasts: fields.breasts.checked, cervix: fields.cervix.checked, uterus: fields.uterus.checked,
       prostate: fields.prostate.checked, menopause: fields.menopause.checked,
       smoking: smoking, ppd: fields.ppd.value, years: fields.years.value,
+      quitYears: smoking === 'former' ? fields.quit.value : '',
       packYears: smoking === 'never' ? 0 : R.packYears(fields.ppd.value, fields.years.value),
       africanAmerican: fields.aa.checked, prostateFamily: fields.pfam.value,
       familyHistory: fields.fh.checked
@@ -138,6 +139,7 @@
     setSmoking(p.smoking || 'never');
     syncDeps();
     fields.ppd.value = p.ppd || ''; fields.years.value = p.years || '';
+    fields.quit.value = p.smoking === 'former' && p.quitYears != null ? p.quitYears : '';
     fields.menopause.checked = !!p.menopause; fields.aa.checked = !!p.africanAmerican;
     fields.pfam.value = p.prostateFamily || 'none'; fields.fh.checked = !!p.familyHistory;
     syncDeps();
@@ -168,6 +170,10 @@
       var ppd = p.ppd === '' ? 0 : Number(p.ppd), yrs = p.years === '' ? 0 : Number(p.years);
       if (!(ppd >= 0 && ppd <= 10)) return [S('errPpd'), fields.ppd];
       if (!(yrs >= 0) || yrs > p.age) return [S('errYears'), fields.years];
+      if (p.smoking === 'former' && p.quitYears !== '') {
+        var q = Number(p.quitYears);
+        if (!(q >= 0) || q + yrs > p.age) return [S('errQuit'), fields.quit];
+      }
     }
     return null;
   }
