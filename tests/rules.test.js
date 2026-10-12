@@ -565,3 +565,4 @@ require('./sw.test.js');
 require('./devpost-claims.test.js');
 require('./uspstf-audit.test.js');
 require('./resources.test.js');
+require('./links.test.js');

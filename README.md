@@ -99,6 +99,7 @@ screentalk/
 ├── tests/devpost-claims.test.js
 ├── tests/uspstf-audit.test.js
 ├── tests/resources.test.js
+├── tests/links.test.js
 ├── tests/e2e_test.py
 ├── docs/glossary-es.md
 └── docs/quality-log.md
@@ -111,7 +112,7 @@ Open `index.html` in any modern browser. That's it.
 Unit tests (Node 18+):
 
 ```bash
-node tests/rules.test.js     # 117 tests: 43 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish + 11 offline service worker and link preview (Open Graph image is a real 1280x800 screenshot of the finished demo-family plan; caption numbers re-computed from the rules) + 11 Devpost-claims checks (every guideline, count and feature claim on the submitted page, re-checked against the code) + 7 USPSTF primary-source checks (every age range and interval re-read on the current USPSTF final statements on Oct 11, 2026, and the Same/Differs chip at each published edge) + 7 free-resource checks (`tests/resources.test.js`: the NBCCEDP card keeps its 40–64 / 21–64 ages, income/insurance condition and "state rules vary" hedge in English and Spanish, the VFC card keeps "under 19" / "menores de 19", the quit-tobacco card keeps ACS Empowered to Quit + 1-800-227-2345 in English and the NCI Spanish/English quit line 1-877-448-7848 in Spanish (sources re-read Oct 12, 2026), English and Spanish stay in step, and long text cannot widen the 390 px grid)
+node tests/rules.test.js     # 122 tests: 43 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish + 11 offline service worker and link preview (Open Graph image is a real 1280x800 screenshot of the finished demo-family plan; caption numbers re-computed from the rules) + 11 Devpost-claims checks (every guideline, count and feature claim on the submitted page, re-checked against the code) + 7 USPSTF primary-source checks (every age range and interval re-read on the current USPSTF final statements on Oct 11, 2026, and the Same/Differs chip at each published edge) + 7 free-resource checks (`tests/resources.test.js`: the NBCCEDP card keeps its 40–64 / 21–64 ages, income/insurance condition and "state rules vary" hedge in English and Spanish, the VFC card keeps "under 19" / "menores de 19", the quit-tobacco card keeps ACS Empowered to Quit + 1-800-227-2345 in English and the NCI Spanish/English quit line 1-877-448-7848 in Spanish (sources re-read Oct 12, 2026), English and Spanish stay in step, and long text cannot widen the 390 px grid) + 5 link-hygiene checks (`tests/links.test.js`: every link in the page and the app code is https, an in-page anchor or tel:, and every new-tab link carries rel="noopener")
 ```
 
 Browser tests (optional):
@@ -123,7 +124,7 @@ python3 tests/edge_test.py        # 65 checks at 390 px: each form error (nickna
 python3 tests/axe_states_test.py  # 224 checks: axe-core 0 violations in 11 states (empty, form errors, demo family, editing, starter, high-risk person, rehearsal question/feedback/result, game feedback/end) x 390/1280 px x EN/ES, again after switching language mid-flow
 ```
 
-Last run Oct 12, 2026 (GitHub Actions, headless Chromium): **117/117 unit tests and 535/535 browser checks passing (246 end-to-end, 224 axe-core, 65 edge-case)**. GitHub Actions (`.github/workflows/tests.yml`) runs the unit tests and all three browser suites (`e2e_test.py`, `axe_states_test.py`, `edge_test.py`) on every push to `main`.
+Last run Oct 12, 2026: **122/122 unit tests passing (re-run Oct 12 after the last change) and 246/246 browser checks passing (Chromium, run earlier Oct 12)**. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push to `main`.
 
 ### Deploy on GitHub Pages
 
