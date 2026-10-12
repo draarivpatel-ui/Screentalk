@@ -116,6 +116,7 @@ Browser tests (optional):
 ```bash
 pip install playwright && playwright install chromium
 python3 tests/e2e_test.py    # 246 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
+python3 tests/edge_test.py        # 65 checks at 390 px: each form error (nickname, age 121 / 47.5, no body choice, 11 packs/day, quit + smoked > age) is re-worded, not dropped, when you switch EN/ES, with the same field still marked and focus left on the language button; edit mode, rehearsal round, game card and score kept across a switch; ages 0/120 saved, 121/-1 refused; 10 vs 10.25 packs; 30 people with no sideways scroll
 python3 tests/axe_states_test.py  # 224 checks: axe-core 0 violations in 11 states (empty, form errors, demo family, editing, starter, high-risk person, rehearsal question/feedback/result, game feedback/end) x 390/1280 px x EN/ES, again after switching language mid-flow
 ```
 

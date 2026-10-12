@@ -728,7 +728,10 @@
       $('form-title').textContent = S('formAdd');
       $('save-btn').textContent = S('saveAdd');
     }
+    // A form error that is showing is re-worded in the new language (same field marked; focus stays on the language button).
+    var again = $('form-error').textContent ? validate(readForm()) : null;
     showError('', null);
+    if (again) { $('form-error').textContent = again[0]; again[1].setAttribute('aria-invalid', 'true'); }
     renderAll(); renderHabits(); renderResources(); renderGame();
     if ($('print-date').textContent) $('print-date').textContent = today();
     announce(S('langChanged'));
