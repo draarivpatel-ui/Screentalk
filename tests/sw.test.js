@@ -121,5 +121,22 @@ function fire(h, type, extra) {
     assert.ok(png.length < 300e3, 'small enough for chat previews');
   });
 
+  await test('link preview + README hero show the finished demo-family plan; every number in their captions is re-computed from the rules', () => {
+    const R = require('../js/rules.js'); const C = require('../js/content.js');
+    const alt = (html.match(/<meta property="og:image:alt" content="([^"]+)"/) || [])[1];
+    const readme = read('README.md'); const top = readme.slice(0, readme.indexOf('\n## '));
+    const m = top.match(/!\[([^\]]+)\]\(docs\/hero\.png\)/);
+    assert.ok(m, 'README opens with docs/hero.png before its first section');
+    assert.equal(m[1], alt, 'README alt text = link-preview alt text');
+    const fam = C.demoFamily(['Mom', 'Dad', 'Nana', 'Big sis']).map(p => C.sanitizePerson(p, R.packYears));
+    const s = R.familySummary(fam, 'en');
+    const moving = fam.filter(p => p.progress && p.progress !== 'not-started').length;
+    assert.ok(alt.includes(fam.length + ' people, ' + s.talkCount + ' topics to talk about now, ' + moving + ' of ' + fam.length + ' on track'), alt);
+    const b = R.evaluate(fam[0]).topics.find(t => t.key === 'breast');
+    assert.equal(fam[0].age, 46); assert.ok(alt.includes('Mom, 46'));
+    assert.match(b.summary, /every year/); assert.match(b.uspstf.text, /every 2 years/); assert.equal(b.uspstf.differs, true);
+    assert.match(alt, /made-up demo family/);
+  });
+
   console.log(`\n${passed} passed, ${failed} failed`);
 })();
