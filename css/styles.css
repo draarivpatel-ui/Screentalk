@@ -111,7 +111,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .quit-row label { max-width: 260px; }
 .py-out { text-align: center; background: #f0fdfa; border-radius: 10px; padding: 6px 10px; min-width: 84px; }
 .py-out span { display: block; font-size: 1.3rem; font-weight: 800; color: var(--brand); }
-.py-out small { color: var(--muted); font-size: .72rem; }
+.py-out small { color: var(--muted); font-size: .75rem; }
 .hint { color: var(--muted); font-size: .85rem; margin: 6px 0 0; }
 .form-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
 .form-error { color: var(--danger); font-weight: 600; min-height: 1em; margin: 8px 0 0; }
@@ -144,7 +144,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .topics { list-style: none; margin: 0; padding: 0; }
 .topic { padding: 14px 18px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 120px 1fr; gap: 14px; }
 .topic:last-child { border-bottom: 0; }
-.badge { display: inline-block; font-size: .74rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; padding: 4px 8px; border-radius: 6px; color: #fff; height: fit-content; text-align: center; }
+.badge { display: inline-block; font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; padding: 4px 8px; border-radius: 6px; color: #fff; height: fit-content; text-align: center; }
 .badge.talk-now { background: var(--talk); }
 .badge.option { background: var(--option); }
 .badge.upcoming { background: var(--upcoming); }
@@ -156,7 +156,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .topic .src { font-size: .82rem; }
 .topic .us-note, .topic .cost-note { font-size: .86rem; color: var(--muted); margin-top: 6px; }
 .btn.talk-with { min-height: 44px; }
-.us-chip { display: inline-block; font-size: .72rem; font-weight: 800; padding: 1px 7px; border-radius: 999px; border: 1px solid; margin-right: 2px; }
+.us-chip { display: inline-block; font-size: .75rem; font-weight: 800; padding: 1px 7px; border-radius: 999px; border: 1px solid; margin-right: 2px; }
 .us-chip.same { color: #065f46; border-color: #6ee7b7; background: #ecfdf5; }
 .us-chip.diff { color: #92400e; border-color: #fcd34d; background: #fffbeb; }
 .notes { margin: 0; padding: 12px 18px 14px 36px; background: #fffbeb; font-size: .9rem; }

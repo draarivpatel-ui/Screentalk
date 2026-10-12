@@ -449,6 +449,19 @@ with sync_playwright() as p:
     es.evaluate("(()=>{const n=document.querySelector('.topbar nav'); n.scrollLeft = n.scrollWidth; n.dispatchEvent(new Event('scroll'));})()")
     es.wait_for_timeout(100)
     check('390px ES: fade goes away at the end, so the last link (Ayuda) reads in full', not es.evaluate("document.querySelector('.topbar nav').classList.contains('nav-more')"))
+    # strict-judge round 3: chips/badges/pack-years note were 11.5-11.8 px; nothing visible on screen may be under 12 px
+    MINFONT = """() => { const out = []; for (const e of document.querySelectorAll('body *')) {
+      const st = getComputedStyle(e), r = e.getBoundingClientRect();
+      if (st.display === 'none' || st.visibility === 'hidden' || !r.width || !r.height || e.closest('.sr-only,[hidden],#checkup-sheet')) continue;
+      if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue;
+      const fs = parseFloat(st.fontSize); if (fs < 12) out.push(e.tagName + '.' + e.className + ' ' + fs.toFixed(2) + 'px "' + e.textContent.trim().slice(0, 24) + '"'); }
+      return out; }"""
+    tiny = es.evaluate(MINFONT)
+    check('390px ES demo: no visible text under 12 px (USPSTF chips, HABLAR AHORA badges, paquetes-año note)', not tiny and es.locator('.us-chip').count() > 0 and es.locator('.badge').count() > 0, tiny[:6])
+    es.click('[data-setlang=en]'); es.wait_for_timeout(250)
+    tiny = es.evaluate(MINFONT)
+    check('390px EN demo: no visible text under 12 px (Same/Differs chips, TALK NOW badges, pack-years note)', not tiny, tiny[:6])
+    es.click('[data-setlang=es]'); es.wait_for_timeout(250)
     es.set_viewport_size({'width': 1280, 'height': 900}); es.wait_for_timeout(200)
     check('1280px: all section links fit, no fade', not es.evaluate("document.querySelector('.topbar nav').classList.contains('nav-more')"))
     ctx2.close()
