@@ -7,7 +7,7 @@
  * caches that belong to other apps on the same domain are never touched.
  * Bump VERSION whenever the SHELL list changes.
  */
-var VERSION = 'st-5';
+var VERSION = 'st-6';
 var CACHE = 'screentalk-' + VERSION;
 var SHELL = ['./', 'index.html', 'css/styles.css', 'js/i18n.js', 'js/rules.js', 'js/content.js',
   'js/app.js', 'js/rehearse.js', 'js/rehearse-ui.js'];

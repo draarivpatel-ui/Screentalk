@@ -108,7 +108,7 @@ Open `index.html` in any modern browser. That's it.
 Unit tests (Node 18+):
 
 ```bash
-node tests/rules.test.js     # 100 tests: 42 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish + 9 offline service worker + 11 Devpost-claims checks (every guideline, count and feature claim on the submitted page, re-checked against the code)
+node tests/rules.test.js     # 101 tests: 42 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish + 10 offline service worker and link preview (Open Graph image is a real 1280x800 screenshot) + 11 Devpost-claims checks (every guideline, count and feature claim on the submitted page, re-checked against the code)
 ```
 
 Browser tests (optional):
@@ -120,7 +120,7 @@ python3 tests/edge_test.py        # 65 checks at 390 px: each form error (nickna
 python3 tests/axe_states_test.py  # 224 checks: axe-core 0 violations in 11 states (empty, form errors, demo family, editing, starter, high-risk person, rehearsal question/feedback/result, game feedback/end) x 390/1280 px x EN/ES, again after switching language mid-flow
 ```
 
-Last run Oct 11, 2026: **100/100 unit tests and 246/246 browser checks passing (Chromium, 7:10 PM CT)**. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push to `main`.
+Last run Oct 11, 2026: **101/101 unit tests and 246/246 browser checks passing (Chromium)**. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push to `main`.
 
 ### Deploy on GitHub Pages
 
