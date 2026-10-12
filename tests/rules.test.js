@@ -549,6 +549,13 @@ test('every topic has a source URL and a revision or check date (ACS, USPSTF, no
   assert.equal(R.shortDate('2025-12-04', 'es'), '4 dic 2025');
 });
 
+test('cervical detail names the Jan 2026 HRSA guideline and that USPSTF is not finalized (EN/ES)', () => {
+  const en = topic(F(35), 'cervical').detail;
+  assert.match(en, /HRSA/); assert.match(en, /Jan 2026/); assert.match(en, /starting in 2027/); assert.match(en, /has not finalized/);
+  const es = R.evaluate(F(35), 'es').topics.find(t => t.key === 'cervical').detail;
+  assert.match(es, /HRSA/); assert.match(es, /enero de 2026/); assert.match(es, /desde 2027/); assert.match(es, /no ha finalizado/);
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
 
 // Also run the "Rehearse the talk", English/Spanish and offline service-worker tests so one command covers all unit tests.

@@ -24,6 +24,8 @@
  *  - USPSTF Lung Cancer: Screening (final, 2021): 50 to 80, 20 pack-years, smokes now or quit within 15 years
  *    (optional years-since-quitting field decides it; ACS has no such cutoff, checked Oct 11, 2026)
  *  - USPSTF Prostate Cancer: Screening (final, May 8, 2018; update in progress)
+ * Cervical detail text also cites HRSA Women's Preventive Services Guidelines (Jan 5, 2026; HHS press release Jan 12, 2026;
+ * effective for most plans in 2027); USPSTF cervical still the Aug 21, 2018 final, update unfinalized (re-checked Oct 12, 2026).
  * and the no-copay rule for these screenings from HealthCare.gov (preventive care for adults and women).
  *
  * English and Spanish: evaluate(person, 'es') returns the same topics with Spanish wording.
@@ -164,7 +166,7 @@
       cxUpS: 'ACS: people with a cervix start screening at 25 ({in}).',
       cxUpD: 'Screening is still needed even after the HPV vaccine.',
       cxNowS: 'ACS: screen from 25 until at least 65. Preferred: an HPV test collected by a provider every 5 years.',
-      cxNowD: 'Other options: a self-collected HPV test every 3 years (FDA-approved kits, only through a provider), an HPV + Pap co-test every 5 years, or a Pap test alone every 3 years if HPV testing is not available. Screening is still needed after the HPV vaccine, in a long-term relationship, or after menopause.',
+      cxNowD: 'Other options: a self-collected HPV test every 3 years (FDA-approved kits, only through a provider), an HPV + Pap co-test every 5 years, or a Pap test alone every 3 years if HPV testing is not available. Screening is still needed after the HPV vaccine, in a long-term relationship, or after menopause. Coverage: the federal HRSA Women\'s Preventive Services Guidelines (updated Jan 2026) also prefer an HPV test from 30 to 65 and say self-collected HPV tests should be offered; most plans must cover that starting in 2027. The USPSTF has not finalized its own update (checked Oct 12, 2026).',
       cxOptS: 'ACS: at 65 or older, screening can stop if regular screening has been normal.',
       cxOptD: 'That means the last 2 HPV tests (or co-tests) or the last 3 Pap tests were normal. If no one is sure when the last screening was, ACS says to keep screening until there are 2 normal HPV tests or 3 normal Pap tests in a row. A provider can confirm.',
       endoS: 'ACS: at menopause, women should be told about the risks and symptoms of endometrial cancer.',
@@ -235,7 +237,7 @@
       cxUpS: 'ACS: las personas con cuello uterino empiezan las pruebas de detección a los 25 años ({in}).',
       cxUpD: 'Las pruebas de detección siguen siendo necesarias aun después de la vacuna contra el VPH.',
       cxNowS: 'ACS: hacerse pruebas de detección desde los 25 hasta al menos los 65 años. La preferida: una prueba del VPH tomada por un proveedor cada 5 años.',
-      cxNowD: 'Otras opciones: una prueba del VPH autotomada cada 3 años (kits aprobados por la FDA, solo a través de un proveedor), una prueba conjunta del VPH y Papanicoláu cada 5 años, o una prueba de Papanicoláu sola cada 3 años si no hay prueba del VPH disponible. Las pruebas siguen siendo necesarias después de la vacuna contra el VPH, en una relación de muchos años o después de la menopausia.',
+      cxNowD: 'Otras opciones: una prueba del VPH autotomada cada 3 años (kits aprobados por la FDA, solo a través de un proveedor), una prueba conjunta del VPH y Papanicoláu cada 5 años, o una prueba de Papanicoláu sola cada 3 años si no hay prueba del VPH disponible. Las pruebas siguen siendo necesarias después de la vacuna contra el VPH, en una relación de muchos años o después de la menopausia. Cobertura: las Pautas de Servicios Preventivos para la Mujer de HRSA (actualizadas en enero de 2026) también prefieren una prueba del VPH de los 30 a los 65 años y dicen que se debe ofrecer la prueba del VPH autotomada; la mayoría de los planes deberán cubrirla desde 2027. El USPSTF aún no ha finalizado su propia actualización (revisado el 12 de oct. de 2026).',
       cxOptS: 'ACS: a partir de los 65 años, las pruebas de detección pueden suspenderse si las pruebas regulares han sido normales.',
       cxOptD: 'Es decir, las últimas 2 pruebas del VPH (o pruebas conjuntas) o las últimas 3 pruebas de Papanicoláu fueron normales. Si nadie sabe cuándo fue la última prueba, la ACS dice que hay que seguir hasta tener 2 pruebas del VPH normales o 3 pruebas de Papanicoláu normales seguidas. Un proveedor lo puede confirmar.',
       endoS: 'ACS: al llegar a la menopausia, se debe informar a las mujeres sobre los riesgos y los síntomas del cáncer de endometrio.',
