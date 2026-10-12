@@ -12,3 +12,4 @@ jobs:
         with: { python-version: '3.12' }
       - run: pip install playwright && python -m playwright install --with-deps chromium
       - run: python tests/e2e_test.py     # real-browser checks: flows, Spanish, print fit, contrast, offline
+      - run: python tests/axe_states_test.py   # axe-core: 11 states x 390/1280 x EN/ES, plus a language switch mid-flow

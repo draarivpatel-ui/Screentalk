@@ -116,6 +116,7 @@ Browser tests (optional):
 ```bash
 pip install playwright && playwright install chromium
 python3 tests/e2e_test.py    # 246 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
+python3 tests/axe_states_test.py  # 224 checks: axe-core 0 violations in 11 states (empty, form errors, demo family, editing, starter, high-risk person, rehearsal question/feedback/result, game feedback/end) x 390/1280 px x EN/ES, again after switching language mid-flow
 ```
 
 Last run Oct 11, 2026: **100/100 unit tests and 246/246 browser checks passing (Chromium, 7:10 PM CT)**. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push to `main`.
