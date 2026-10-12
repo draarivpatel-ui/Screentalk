@@ -564,3 +564,4 @@ require('./i18n.test.js');
 require('./sw.test.js');
 require('./devpost-claims.test.js');
 require('./uspstf-audit.test.js');
+require('./resources.test.js');
