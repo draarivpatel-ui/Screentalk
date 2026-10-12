@@ -25,7 +25,7 @@
  *    (optional years-since-quitting field decides it; ACS has no such cutoff, checked Oct 11, 2026)
  *  - USPSTF Prostate Cancer: Screening (final, May 8, 2018; update in progress)
  * Cervical detail text also cites HRSA Women's Preventive Services Guidelines (Jan 5, 2026; HHS press release Jan 12, 2026;
- * effective for most plans in 2027); USPSTF cervical still the Aug 21, 2018 final, update unfinalized (re-checked Oct 12, 2026).
+ * effective for most plans in 2027); USPSTF cervical still the Aug 21, 2018 final, update unfinalized (re-checked Oct 12, 2026). NBCCEDP eligibility line (ACS page rev. May 27, 2026: ages 40-64 breast, 21-64 cervical, income under 250% FPL, state rules vary).
  * and the no-copay rule for these screenings from HealthCare.gov (preventive care for adults and women).
  *
  * English and Spanish: evaluate(person, 'es') returns the same topics with Spanish wording.

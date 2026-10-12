@@ -13,3 +13,7 @@
 ## Cycle (Oct 12 2026, 6:40 AM CT; code-level only, no Chromium in the sandbox)
 - Source re-check: USPSTF cervical is still the Aug 21, 2018 final ("update in progress"); the Dec 2024 draft was never finalized. New since our last check: HRSA's Women's Preventive Services Guidelines (updated Jan 5, 2026; HHS release Jan 12, 2026) prefer primary HPV testing at 30-65, say self-collected HPV tests should be offered, and take effect for most plans in 2027.
 - Shipped: the cervical card's detail (EN/ES, screen only, not on the printed sheet) now names the HRSA guideline and says the USPSTF has not finalized its update. +1 unit test (rules.test.js 44 incl. this). Browser suites not run (no Chromium); change is a text-only string on the screen card.
+
+## Cycle (Oct 12 2026, 12:30 PM CT; code-level only, no Chromium in the sandbox)
+- Source re-check: ACS HPV Vaccines (rev. Sep 3, 2026: 2 doses at 9-12, catch-up 13-26, none after 26; VFC to age 19) and ACS NBCCEDP page (rev. May 27, 2026) match the app. No drift.
+- Shipped: the free/low-cost breast and cervical screening resource now says who it is usually for (low income, little or no insurance, ages 40-64 breast / 21-64 cervical, state rules vary; EN/ES), from the ACS NBCCEDP page. sw cache st-8. rules.test.js 11 files pass; browser suites not run (text-only change).
