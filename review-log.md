@@ -17,3 +17,4 @@
 ## Cycle (Oct 12 2026, 12:30 PM CT; code-level only, no Chromium in the sandbox)
 - Source re-check: ACS HPV Vaccines (rev. Sep 3, 2026: 2 doses at 9-12, catch-up 13-26, none after 26; VFC to age 19) and ACS NBCCEDP page (rev. May 27, 2026) match the app. No drift.
 - Shipped: the free/low-cost breast and cervical screening resource now says who it is usually for (low income, little or no insurance, ages 40-64 breast / 21-64 cervical, state rules vary; EN/ES), from the ACS NBCCEDP page. sw cache st-8. rules.test.js 11 files pass; browser suites not run (text-only change).
+- Mon Oct 12 ~1:10 PM CDT: README test list + counts brought in line (resources.test.js, devpost-claims, uspstf-audit in the tree; unit total 115/115). Docs only; browser suite not re-run (no Chromium).
