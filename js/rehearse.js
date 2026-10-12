@@ -190,7 +190,7 @@
       you: 'Tú', choose: '¿Qué le dices?', next: 'Siguiente objeción \u2192', finish: 'Ver mis resultados \u2192',
       quality: { strong: 'Muy buena respuesta', ok: 'Respuesta regular', weak: 'Eso salió mal' },
       sources: 'Fuentes:', resultTitle: 'Tus resultados', scoreLine: 'Obtuviste {s} de {m} puntos.',
-      rating: { ready: '¡Ya puedes tener la conversación de verdad!', almost: 'Ya casi.', practice: 'Sigue practicando. Cada intento lo hace más fácil.' },
+      rating: { ready: 'Ya puedes tener la conversación de verdad.', almost: 'Ya casi.', practice: 'Sigue practicando. Cada intento lo hace más fácil.' },
       ending: {
         yes: '{p}: \u201cEstá bien. Ayúdame a llamar esta semana y preguntamos por la prueba en casa.\u201d',
         maybe: '{p}: \u201cDéjame pensarlo. Vuelve a mencionarlo después del fin de semana.\u201d',

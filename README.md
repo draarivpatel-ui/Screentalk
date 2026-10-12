@@ -1,18 +1,18 @@
-# 💬 ScreenTalk
+# ScreenTalk
 
 **Live demo:** https://aariv.me/Screentalk/ · Spanish: https://aariv.me/Screentalk/?lang=es
 
-**Help your family get cancer screening on time, one conversation at a time.**
+ScreenTalk shows which cancer screening guidelines apply to each adult in your family and helps you bring it up with them.
 
 ![ScreenTalk family plan with the made-up demo family: 4 people, 10 topics to talk about now, 1 of 4 on track; Mom, 46: ACS says a mammogram every year, the USPSTF every 2 years (Differs from ACS)](docs/hero.png)
 
 *The finished family plan after one tap on "Load demo family" (made-up people). Real screenshot of the app at 1280 px, taken with headless Chromium on Oct 11, 2026.*
 
-ScreenTalk is a free, private web app that helps teens turn the American Cancer Society (ACS) cancer screening guidelines into a simple plan for the adults they love, and then helps them start the conversation and follow through.
+ScreenTalk is a free, private web app that helps teens turn the American Cancer Society (ACS) cancer screening guidelines into a plan for the adults in their family, then helps them bring it up and keep track of what happens next.
 
 Built by Aariv Patel for the [2026 International CodeTheCure Hackathon](https://codethecure-hackathon-26.devpost.com/) · Track: **Prevention & Education**
 
-> ⚠️ ScreenTalk is an educational tool. It shares general ACS guidelines for people at average risk with no symptoms. It does **not** diagnose, estimate anyone's cancer risk, or replace a healthcare provider.
+> **Note:** ScreenTalk is an educational tool. It shares general ACS guidelines for people at average risk with no symptoms. It does **not** diagnose, estimate anyone's cancer risk, or replace a healthcare provider.
 
 ---
 
@@ -135,7 +135,7 @@ Repo **Settings → Pages → Build and deployment → Deploy from a branch → 
 - **Statistic on the home page:** CDC (2022 colorectal screening rate, linked in the app).
 - All of it is written into the app's code; the app makes **no requests to other sites** at runtime (it only loads its own files, which `sw.js` keeps for offline use).
 
-## Limits and honesty
+## Limits
 
 - Covers the ACS average-risk guidelines in the US. People at higher risk are pointed to a provider rather than given a plan.
 - English and Spanish. The Spanish has not yet been reviewed by a native speaker.

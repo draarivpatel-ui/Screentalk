@@ -18,7 +18,7 @@
   <title>ScreenTalk: help your family get cancer screening on time</title>
   <meta name="description" content="ScreenTalk helps teens turn American Cancer Society screening guidelines into a family plan and a conversation starter. Free, private, no sign-up." />
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%230f766e'/><path d='M24 30h52v32H46l-14 12V62h-8z' fill='%23fff'/></svg>" />
 </head>
 <body>
   <noscript>
@@ -31,7 +31,7 @@
   <p class="sr-only" id="status-live" role="status" aria-live="polite"></p>
 
   <header class="topbar">
-    <a class="brand" href="#top"><span aria-hidden="true">💬</span> ScreenTalk</a>
+    <a class="brand" href="#top">ScreenTalk</a>
     <nav aria-label="Sections" data-i18n-attr="aria-label:navLabel">
       <a href="#plan" data-i18n="navPlan">Family plan</a>
       <a href="#talk" data-i18n="navTalk">Start the talk</a>
@@ -50,18 +50,18 @@
     <p class="print-only print-head"><span data-i18n="printHeadA">ScreenTalk family screening plan</span> · <span id="print-date"></span> · <span data-i18n="printHeadB">Bring this to a checkup. Based on American Cancer Society guidelines for people at average risk. Not medical advice.</span></p>
     <section class="hero" id="top">
       <div class="hero-text">
-        <p class="eyebrow" data-i18n-html="heroEyebrow">Prevention &amp; Education · built by a teen, for teens</p>
-        <h1 data-i18n-html="heroH1">You can't order your parents a colonoscopy.<br /><span>But you can start the conversation.</span></h1>
-        <p class="lead" data-i18n="heroLead">Screening tests can find some cancers early, before symptoms, when they are easier to treat. ScreenTalk turns the American Cancer Society (ACS) guidelines into a simple plan for the people you love, then helps you bring it up.</p>
+        <p class="eyebrow" data-i18n-html="heroEyebrow">CodeTheCure 2026, Prevention &amp; Education track. Made by a high school student.</p>
+        <h1 data-i18n-html="heroH1">Help your family get cancer screening on time</h1>
+        <p class="lead" data-i18n="heroLead">Screening tests can find some cancers early, before symptoms, when they are easier to treat. Add the adults in your family and ScreenTalk shows which American Cancer Society (ACS) guidelines apply to each of them. Then it helps you bring it up.</p>
         <p class="hero-stat" data-i18n-html="heroStat">In 2022, only 61% of U.S. adults ages 45 to 75 were up to date with colorectal cancer screening, so about 4 in 10 were behind (<a href="https://www.cdc.gov/nccdphp/priorities/colorectal-cancer.html" target="_blank" rel="noopener noreferrer">CDC</a>).</p>
         <div class="hero-actions">
           <a class="btn primary" href="#plan" data-i18n="heroBtnPlan">Build my family plan</a>
           <a class="btn ghost" href="#game" data-i18n="heroBtnGame">Play Myth or Fact</a>
         </div>
         <ul class="trust">
-          <li><span aria-hidden="true">🔒</span> <span data-i18n="trust1">Nothing leaves your device</span></li>
-          <li><span aria-hidden="true">📚</span> <span data-i18n="trust2">Every fact links to ACS, NCI, or CDC</span></li>
-          <li><span aria-hidden="true">🩺</span> <span data-i18n="trust3">Education, not a diagnosis</span></li>
+          <li><span data-i18n="trust1">Nothing leaves your device</span></li>
+          <li><span data-i18n="trust2">Every fact links to ACS, NCI, or CDC</span></li>
+          <li><span data-i18n="trust3">Education, not a diagnosis</span></li>
         </ul>
       </div>
       <aside class="hero-card" aria-label="How it works" data-i18n-attr="aria-label:howAria">
@@ -176,7 +176,7 @@
             <button class="btn ghost" id="demo-btn" type="button" data-i18n="demoBtn">Load demo family</button>
           </div>
           <div class="plan-tools">
-            <button class="btn ghost" id="print-btn" type="button" disabled><span aria-hidden="true">🖨️</span> <span data-i18n="printBtn">Print / save as PDF</span></button>
+            <button class="btn ghost" id="print-btn" type="button" disabled><span data-i18n="printBtn">Print / save as PDF</span></button>
             <button class="btn ghost danger" id="clear-btn" type="button" data-i18n="clearBtn">Clear all data</button>
           </div>
         </div>
@@ -279,8 +279,8 @@
         <div class="progress"><div id="game-bar"></div></div>
         <p class="claim" id="game-claim" tabindex="-1"></p>
         <div class="game-buttons" id="game-buttons">
-          <button class="btn big myth" data-answer="myth" type="button"><span aria-hidden="true">❌</span> <span data-i18n="btnMyth">Myth</span></button>
-          <button class="btn big fact" data-answer="fact" type="button"><span aria-hidden="true">✅</span> <span data-i18n="btnFact">Fact</span></button>
+          <button class="btn big myth" data-answer="myth" type="button"><span data-i18n="btnMyth">Myth</span></button>
+          <button class="btn big fact" data-answer="fact" type="button"><span data-i18n="btnFact">Fact</span></button>
         </div>
         <div class="reveal hidden" id="game-reveal" aria-live="polite">
           <p class="verdict" id="game-verdict"></p>
