@@ -2,7 +2,7 @@ name: tests
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: ubuntu-latest moves to 26.04 from Oct 19, 2026 (actions/runner-images#14748)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -10,7 +10,7 @@ jobs:
       - run: node tests/rules.test.js     # rules/content + rehearsal + English/Spanish + offline service worker
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - run: pip install playwright==1.63.0 && python -m playwright install --with-deps chromium
       - run: python tests/e2e_test.py     # real-browser checks: flows, Spanish, print fit, contrast, offline
       - run: python tests/axe_states_test.py   # axe-core: 11 states x 390/1280 x EN/ES, plus a language switch mid-flow
       - run: python tests/edge_test.py         # language switch mid-flow (form errors re-worded, edit/rehearsal/game kept), extreme inputs, 30 people
