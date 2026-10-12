@@ -630,9 +630,15 @@ with sync_playwright() as p:
         oc = browser.new_context(viewport={'width': 390, 'height': 844})
         op = oc.new_page(); oerr = []
         op.on('pageerror', lambda e: oerr.append(str(e)))
-        op.goto(f'http://127.0.0.1:{port}/index.html')
-        op.wait_for_function("navigator.serviceWorker && navigator.serviceWorker.ready.then(() => true)", timeout=15000)
-        op.wait_for_function("!!navigator.serviceWorker.controller || (location.reload(), false)", timeout=15000)
+        op.goto(f'http://127.0.0.1:{port}/index.html')  # goto waits for 'load', and app.js registers sw.js on 'load'
+        # Deterministic, no polling reload: (1) await serviceWorker.ready inside one evaluate (resolves only once
+        # install has precached the shell and the worker is active), (2) reload exactly once from the test, because
+        # a page loaded after a worker is active is always controlled by it (no clients.claim() timing involved),
+        # (3) then wait for the controller. The old predicate called location.reload() on every poll, which raced
+        # with its own navigation ("execution context was destroyed") and failed about 1 run in N.
+        op.evaluate("navigator.serviceWorker.ready.then(() => true)")
+        op.reload(wait_until='load')
+        op.wait_for_function("!!navigator.serviceWorker.controller", timeout=15000)
         check('offline: service worker installed and controls the page over http', op.evaluate("!!navigator.serviceWorker.controller"))
         ck = op.evaluate("caches.keys()")
         check('offline: one ScreenTalk cache, named screentalk-*', [k for k in ck if k.startswith('screentalk-')] == ck and len(ck) == 1, ck)
