@@ -52,4 +52,25 @@ test('phone layout: one column at 560px, and long text in a card cannot widen th
   assert.ok(longest <= 30, 'longest word ' + longest + ' chars');
 });
 
+// Quit-tobacco card, sources re-read Oct 12, 2026:
+//  EN: ACS Empowered to Quit (cancer.org/.../empowered-to-quit.html): free, email-based program; ACS helpline
+//      1-800-227-2345 "Available any time of day or night" and lists "Tobacco-related topics".
+//  ES: NCI (cancer.gov/espanol/contactenos): "Llame al 1-877-448-7848 (1-877-44U-QUIT)"; "Todos los servicios
+//      están disponibles en español e inglés de lunes a viernes, de 9:00 a. m. a 9 p. m., hora del Este".
+test('quit-tobacco card (EN) names ACS Empowered to Quit + the 24/7 ACS line, linked to the ACS program page', () => {
+  const r = C.resources('en').find(r => /quit tobacco/i.test(r.name)); assert.ok(r, 'card exists');
+  assert.match(r.name, /^Free help to quit tobacco$/);
+  assert.match(r.detail, /Empowered to Quit/); assert.match(r.detail, /1-800-227-2345/);
+  assert.equal(r.href, 'https://www.cancer.org/cancer/risk-prevention/tobacco/empowered-to-quit.html');
+});
+
+test('quit-tobacco card (ES) gives the NCI quit line 1-877-448-7848, says Spanish and English, links the NCI Spanish contact page', () => {
+  const r = C.resources('es').find(r => /dejar el tabaco/.test(r.name)); assert.ok(r, 'card exists');
+  assert.match(r.detail, /1-877-448-7848/); assert.match(r.detail, /NCI/);
+  assert.match(r.detail, /en español e inglés/);
+  assert.equal(r.href, 'https://www.cancer.gov/espanol/contactenos');
+  // the card must not promise hours the source doesn't give (24/7 is the ACS line, not the NCI quit line)
+  assert.doesNotMatch(r.detail, /24\/7|cualquier hora/);
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
