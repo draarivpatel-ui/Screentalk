@@ -1,0 +1,119 @@
+1
+00:00:00,399 --> 00:00:08,371
+In 2022, only 61 percent of U.S. adults aged 45
+to 75 were up to date on colon cancer screening.
+
+2
+00:00:10,791 --> 00:00:16,720
+Parents often put their own checkups last. ScreenTalk
+helps teens start the screening conversation at home.
+
+3
+00:00:17,093 --> 00:00:23,578
+It follows American Cancer Society guidelines. It's education, not
+diagnosis, and nothing you type leaves your device.
+
+4
+00:00:25,998 --> 00:00:31,244
+Load a made-up demo family. Mom is 46,
+so it's time to talk about breast,
+
+5
+00:00:31,264 --> 00:00:35,106
+colon, and cervical cancer screening, each linked to the ACS guideline.
+
+6
+00:00:37,628 --> 00:00:42,155
+Each topic also shows what the
+U.S. Preventive Services Task Force says,
+
+7
+00:00:42,175 --> 00:00:47,459
+tagged Same as ACS or Differs from
+ACS, plus a note on no-copay coverage.
+
+8
+00:00:49,879 --> 00:00:56,167
+Dad is 52 and quit smoking 18 years ago, so
+his lung card explains where the two guidelines differ,
+
+9
+00:00:56,187 --> 00:00:58,823
+and prostate testing is a choice to discuss.
+
+10
+00:01:00,294 --> 00:01:03,443
+Adding someone takes seconds, and the pack-year helper does the math.
+
+11
+00:01:06,832 --> 00:01:10,446
+Because Uncle still smokes, ScreenTalk links free help to quit.
+
+12
+00:01:15,769 --> 00:01:19,443
+Each person also gets questions for the checkup, a progress tracker,
+
+13
+00:01:19,463 --> 00:01:20,786
+and a calendar reminder.
+
+14
+00:01:23,251 --> 00:01:27,556
+Now the hard part: bringing it up.
+Tap Start the talk with Mom,
+
+15
+00:01:27,576 --> 00:01:31,215
+and ScreenTalk writes an opener that names her exact topics. Casual,
+
+16
+00:01:31,235 --> 00:01:34,209
+heartfelt, or a text. Edit it, then copy it.
+
+17
+00:01:36,735 --> 00:01:40,363
+Parents push back, so you can
+practice. Mom says, I feel fine.
+
+18
+00:01:40,383 --> 00:01:44,315
+Pick a reply, and the coach explains
+why it works, with a source.
+
+19
+00:01:49,755 --> 00:01:53,841
+Lecture her about cost, and her openness drops.
+At the end you get a score,
+
+20
+00:01:53,861 --> 00:01:56,579
+Mom's final answer, and a better line for each round.
+
+21
+00:02:01,403 --> 00:02:03,726
+One switch turns the whole app into Spanish.
+
+22
+00:02:06,146 --> 00:02:10,432
+Load the demo family, and it's
+Mamá, Papá, Abuela, and Hermana mayor.
+
+23
+00:02:14,647 --> 00:02:18,992
+There's also a Myth or Fact
+game sourced from NCI and ACS,
+
+24
+00:02:19,012 --> 00:02:21,175
+plus free hotlines and screening programs.
+
+25
+00:02:22,231 --> 00:02:31,256
+It's plain JavaScript, with no server and no tracking. 115 unit
+tests and 246 browser checks keep every guideline boundary honest.
+
+26
+00:02:32,614 --> 00:02:37,419
+ScreenTalk. You can't order your parents a
+colonoscopy, but you can start the conversation.
+

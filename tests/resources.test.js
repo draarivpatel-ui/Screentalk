@@ -30,6 +30,7 @@ test('NBCCEDP card (ES) keeps the same ages, conditions and hedge, and points at
   assert.match(r.href, /^https:\/\/www\.cdc\.gov\/breast-cervical-cancer-screening\/es\//);
 });
 
+// Age source: CDC 'About the Vaccines for Children (VFC) Program' (cdc.gov/vaccines-for-children/about/): eligible children "ages 18 or younger" = under 19. The linked CDC HPV ES page does not print the age.
 test('VFC card keeps "under 19" in EN and "menores de 19" in ES', () => {
   const en = C.resources('en').find(r => /Vaccines for Children/.test(r.detail));
   const es = C.resources('es').find(r => /Vacunas para Niños/.test(r.detail));

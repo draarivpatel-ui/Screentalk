@@ -1,0 +1,12 @@
+$ node tests/rules.test.js
+43 passed, 0 failed
+17 passed, 0 failed
+21 passed, 0 failed
+11 passed, 0 failed
+7 passed, 0 failed
+5 passed, 0 failed
+11 passed, 0 failed
+  = 115 unit tests passed, 0 failed
+
+$ python3 tests/e2e_test.py   (from the README, last run Oct 12, 2026)
+246/246 browser checks passing

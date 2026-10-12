@@ -134,6 +134,7 @@ Repo **Settings → Pages → Build and deployment → Deploy from a branch → 
 - **Guidelines:** American Cancer Society screening pages, one per topic, linked with their last-revised dates in the table above.
 - **Cross-check:** USPSTF recommendation pages for breast, colorectal, cervical, lung, and prostate cancer screening; **cost:** HealthCare.gov preventive care for adults and for women (checked Oct 11, 2026).
 - **Myth or Fact:** NCI *Common Cancer Myths and Misconceptions* and ACS guidance. **Rehearsal tips:** ACS, NCI and CDC pages, each cited in the app.
+- **Free vaccines for kids and teens:** the "under 19" age on the Vaccines for Children card comes from the CDC *About the Vaccines for Children (VFC) Program* page (eligible children "ages 18 or younger", page reviewed Aug 27, 2026, re-read Oct 12, 2026); the card's Spanish link is the CDC HPV Spanish page, which names the program and the 800-232-4636 line but not the age.
 - **Spanish medical terms:** CDC and NCI Spanish pages ([docs/glossary-es.md](docs/glossary-es.md)).
 - **Statistic on the home page:** CDC (2022 colorectal screening rate, linked in the app).
 - All of it is written into the app's code; the app makes **no requests to other sites** at runtime (it only loads its own files, which `sw.js` keeps for offline use).
