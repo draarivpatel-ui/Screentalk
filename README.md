@@ -123,7 +123,7 @@ python3 tests/edge_test.py        # 65 checks at 390 px: each form error (nickna
 python3 tests/axe_states_test.py  # 224 checks: axe-core 0 violations in 11 states (empty, form errors, demo family, editing, starter, high-risk person, rehearsal question/feedback/result, game feedback/end) x 390/1280 px x EN/ES, again after switching language mid-flow
 ```
 
-Last run Oct 12, 2026: **117/117 unit tests passing (re-run Oct 12 after the last change) and 246/246 browser checks passing (Chromium, run earlier Oct 12)**. GitHub Actions (`.github/workflows/tests.yml`) runs the unit tests and all three browser suites (`e2e_test.py`, `axe_states_test.py`, `edge_test.py`) on every push to `main`.
+Last run Oct 12, 2026 (GitHub Actions, headless Chromium): **117/117 unit tests and 535/535 browser checks passing (246 end-to-end, 224 axe-core, 65 edge-case)**. GitHub Actions (`.github/workflows/tests.yml`) runs the unit tests and all three browser suites (`e2e_test.py`, `axe_states_test.py`, `edge_test.py`) on every push to `main`.
 
 ### Deploy on GitHub Pages
 
