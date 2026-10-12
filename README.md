@@ -108,7 +108,7 @@ Open `index.html` in any modern browser. That's it.
 Unit tests (Node 18+):
 
 ```bash
-node tests/rules.test.js     # 89 tests: 42 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish + 9 offline service worker
+node tests/rules.test.js     # 100 tests: 42 rules/content (incl. USPSTF cross-check, no-copay ranges, the 15-year quit rule, and a source URL plus revision/check date for every topic) + 17 rehearsal + 21 English/Spanish + 9 offline service worker + 11 Devpost-claims checks (every guideline, count and feature claim on the submitted page, re-checked against the code)
 ```
 
 Browser tests (optional):
@@ -118,7 +118,7 @@ pip install playwright && playwright install chromium
 python3 tests/e2e_test.py    # 246 checks; CHROME_PATH=/usr/bin/chromium to use a system Chromium
 ```
 
-Last run Oct 11, 2026: **89/89 unit tests and 246/246 browser checks passing (Chromium, 7:10 PM CT)**. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push to `main`.
+Last run Oct 11, 2026: **100/100 unit tests and 246/246 browser checks passing (Chromium, 7:10 PM CT)**. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push to `main`.
 
 ### Deploy on GitHub Pages
 

@@ -555,3 +555,4 @@ console.log(`\n${passed} passed, ${failed} failed`);
 require('./rehearse.test.js');
 require('./i18n.test.js');
 require('./sw.test.js');
+require('./devpost-claims.test.js');
