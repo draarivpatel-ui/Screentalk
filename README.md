@@ -161,6 +161,10 @@ This project was built with help from an AI assistant (Hark), which drafted code
 - Review of the content by a health educator or clinician.
 - Running "ScreenTalk nights" with school health classes, libraries, and youth groups, and measuring how many families report a conversation or a booked checkup.
 
+## Third-party licences
+
+ScreenTalk ships no third-party code, fonts, images or data files: it uses system fonts, its own CSS and JavaScript, and loads nothing from other sites. The guideline, myth and glossary content is written in the project's own words from the ACS, USPSTF, NCI, CDC and HealthCare.gov pages listed above, and each fact links to its source rather than copying the page. Test tooling only (runs in CI, never shipped to users): Playwright (Apache-2.0) and axe-core (MPL-2.0). Checked Oct 13, 2026.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
