@@ -13,4 +13,5 @@ jobs:
       - run: pip install playwright==1.63.0 && python -m playwright install --with-deps chromium
       - run: python tests/e2e_test.py     # real-browser checks: flows, Spanish, print fit, contrast, offline
       - run: python tests/axe_states_test.py   # axe-core: 11 states x 390/1280 x EN/ES, plus a language switch mid-flow
+      - run: python tests/axe_baseline_test.py # axe-core WCAG 2.2 AA (incl. target-size) at 360/1280: no NEW serious/critical vs the Oct 12 audit baseline
       - run: python tests/edge_test.py         # language switch mid-flow (form errors re-worded, edit/rehearsal/game kept), extreme inputs, 30 people
