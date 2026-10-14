@@ -130,7 +130,7 @@ python3 tests/axe_baseline_test.py  # 12 checks: WCAG 2.2 AA + best-practice axe
 python3 tests/axe_states_test.py  # 224 checks: axe-core 0 violations in 11 states (empty, form errors, demo family, editing, starter, high-risk person, rehearsal question/feedback/result, game feedback/end) x 390/1280 px x EN/ES, again after switching language mid-flow
 ```
 
-Last run Oct 14, 2026: **134/134 unit tests, 261/261 e2e, 65/65 edge and 12/12 axe-baseline checks passing (branch `post-judging-storage`, local Chromium)**; axe states run in CI. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push.
+Last run Oct 14, 2026: **134/134 unit tests passing, plus 261/261 e2e, 65/65 edge and 12/12 axe-baseline checks (branch `post-judging-storage`, local Chromium)**; axe states run in CI. GitHub Actions (`.github/workflows/tests.yml`) runs both suites on every push.
 
 ### Deploy on GitHub Pages
 
