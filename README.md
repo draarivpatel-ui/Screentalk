@@ -149,6 +149,7 @@ Repo **Settings → Pages → Build and deployment → Deploy from a branch → 
 
 - Covers the ACS average-risk guidelines in the US. People at higher risk are pointed to a provider rather than given a plan.
 - English and Spanish. The Spanish has not yet been reviewed by a native speaker.
+- Saved family members and progress live only in this browser's `localStorage`, with no export yet. On Safari (iPhone, iPad, Mac), WebKit deletes a site's LocalStorage and service-worker cache "after seven days of Safari use without user interaction on the site" ([WebKit](https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/)), so a family plan not opened for a week of Safari use can disappear. Adding ScreenTalk to the Home Screen avoids this (WebKit does not expect Home Screen web apps to be affected), and the printed checkup sheet is a paper copy.
 - Not yet reviewed by a clinician or health educator.
 
 ## AI assistance
