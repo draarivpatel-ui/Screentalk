@@ -163,6 +163,8 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 .notes { margin: 0; padding: 12px 18px 14px 36px; background: #fffbeb; font-size: .9rem; }
 .empty { text-align: center; }
 .plan-tools { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.data-msg { text-align: right; margin: 6px 0 0; min-height: 0; }
+.data-msg:empty { display: none; }
 
 /* Timeline */
 .timeline-card { overflow-x: auto; }
@@ -292,7 +294,7 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--da
 /* Print: just the plan */
 @media print {
   h1, h2, h3, .claim { font-family: var(--sans); }
-  .topbar, .hero, .disclaimer, #talk, #rehearse, #game, #habits, #person-form, .plan-tools, .empty, .person-actions, .footer, .skip, #timeline-section, .tracker .btn, .more summary, #plan .section-head p { display: none !important; }
+  .topbar, .hero, .disclaimer, #talk, #rehearse, #game, #habits, #person-form, .plan-tools, .data-msg, .empty, .person-actions, .footer, .skip, #timeline-section, .tracker .btn, .more summary, #plan .section-head p { display: none !important; }
   .print-only { display: block !important; }
   .print-head { font-size: .85rem; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
   .more > *:not(summary) { display: block !important; }

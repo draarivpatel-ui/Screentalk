@@ -309,6 +309,58 @@
     return p;
   }
 
+  // ---------- Back up / Restore (post-judging; drafted by Hark) ----------
+  var MAX_BACKUP_BYTES = 1024 * 1024; // 30 people is ~15 KB; anything over 1 MB is not a ScreenTalk backup
+  var MAX_PEOPLE = 30;
+  function byteLength(text) {
+    if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(text).length;
+    return unescape(encodeURIComponent(text)).length;
+  }
+  function cleanHabits(h) {
+    var out = {};
+    if (!h || typeof h !== 'object' || Array.isArray(h)) return out;
+    Object.keys(h).forEach(function (k) { if (/^\d{1,2}$/.test(k) && h[k] === true) out[k] = true; });
+    return out;
+  }
+  /** The JSON the "Back up" button saves. parseBackup(backupText(state)) gives the same people and habits back. */
+  function backupText(state, nowIso) {
+    return JSON.stringify({ app: 'screentalk', version: 1, exportedAt: nowIso, people: state.people, habits: state.habits }, null, 2);
+  }
+  /**
+   * text: the contents of a file the user picked. Returns {ok: true, people, habits} or
+   * {ok: false, error: 'too_big' | 'bad_json' | 'not_backup'}. Every person goes through sanitizePerson,
+   * so a hand-edited file can never break the page; at most 30 people are kept (same as saved data).
+   */
+  function parseBackup(text, packYearsFn) {
+    if (typeof text !== 'string') return { ok: false, error: 'bad_json' };
+    if (text.length > MAX_BACKUP_BYTES || byteLength(text) > MAX_BACKUP_BYTES) return { ok: false, error: 'too_big' };
+    var raw;
+    try { raw = JSON.parse(text); } catch (e) { return { ok: false, error: 'bad_json' }; }
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw) || !Array.isArray(raw.people)) return { ok: false, error: 'not_backup' };
+    if (raw.app != null && raw.app !== 'screentalk') return { ok: false, error: 'not_backup' };
+    var rows = raw.people.filter(function (p) { return p && typeof p === 'object' && !Array.isArray(p); });
+    if (raw.people.length && !rows.length) return { ok: false, error: 'not_backup' };
+    var seen = {};
+    var people = rows.slice(0, MAX_PEOPLE).map(function (p) {
+      var c = sanitizePerson(p, packYearsFn);
+      while (seen[c.id]) c.id = 'p' + Math.random().toString(36).slice(2, 10); // two rows with one id would edit together
+      seen[c.id] = true;
+      return c;
+    });
+    return { ok: true, people: people, habits: cleanHabits(raw.habits) };
+  }
+  /** Ask the browser once per profile to keep this site's storage (feature-detected, no UI, never throws). */
+  function requestPersist(nav, storage, flagKey) {
+    try {
+      if (!nav || !nav.storage || typeof nav.storage.persist !== 'function') return false;
+      if (storage.getItem(flagKey)) return false;
+      storage.setItem(flagKey, '1');
+      var p = nav.storage.persist();
+      if (p && typeof p.catch === 'function') p.catch(function () { /* refused */ });
+      return true;
+    } catch (e) { return false; }
+  }
+
   // ---------- Calendar reminder (.ics), built on the device ----------
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function icsDate(d) { return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }
@@ -450,7 +502,7 @@
     CARDS: CARDS, DEMO_FAMILY: DEMO_FAMILY, demoFamily: demoFamily, HABITS: HABITS, HABITS_ES: HABITS_ES, RESOURCES: RESOURCES, PROGRESS: PROGRESS, LANGS: LANGS,
     STARTER: STARTER, TOPIC_PHRASES: TOPIC_PHRASES, QUESTIONS: QUESTIONS, SHEET: SHEET, SHEET_STATUS: SHEET_STATUS,
     card: card, habits: habits, resources: resources, progressLabel: progressLabel,
-    starter: starter, joinList: joinList, questions: questions, sanitizePerson: sanitizePerson, buildICS: buildICS, checkupSheet: checkupSheet
+    starter: starter, joinList: joinList, questions: questions, sanitizePerson: sanitizePerson, buildICS: buildICS, backupText: backupText, parseBackup: parseBackup, requestPersist: requestPersist, MAX_BACKUP_BYTES: MAX_BACKUP_BYTES, checkupSheet: checkupSheet
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ScreenTalkContent = api;

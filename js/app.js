@@ -40,8 +40,10 @@
     } catch (e) { /* ignore broken data */ }
     return { people: [], habits: {} };
   }
+  var PERSIST_KEY = 'screentalk.persist-asked.v1';
   function save() {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* private mode */ }
+    C.requestPersist(navigator, localStorage, PERSIST_KEY); // once per browser: ask to keep this storage (no UI)
   }
   function uid() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
@@ -209,6 +211,7 @@
     $('plan-note').classList.toggle('hidden', !has);
     $('plan-checked').classList.toggle('hidden', !has);
     $('print-btn').disabled = !has;
+    $('backup-btn').disabled = !has;
     state.people.forEach(function (p) {
       var res = evaluate(p);
       var progressId = 'prog-' + p.id;
@@ -680,9 +683,34 @@
     if (!confirm(S('clearConfirm'))) return;
     state = { people: [], habits: {} }; docPref = 'auto'; $('doc-lang').value = 'auto';
     try { localStorage.removeItem(STORE_KEY); localStorage.removeItem('screentalk.rehearse.v1'); localStorage.removeItem(I.KEY); localStorage.removeItem(DOC_KEY); } catch (e) { /* ignore */ }
-    resetForm(); renderAll(); renderHabits();
+    resetForm(); renderAll(); renderHabits(); showDataMsg(null);
     announce(S('cleared'));
   });
+  // Back up / Restore: a JSON file the user keeps (Safari can delete localStorage after 7 days without a visit).
+  var dataMsg = null; // i18n key of the last Restore result, re-worded on a language switch
+  function showDataMsg(key) { dataMsg = key; $('data-msg').textContent = key ? S(key) : ''; if (key) announce(S(key)); }
+  $('backup-btn').addEventListener('click', function () {
+    var url = URL.createObjectURL(new Blob([C.backupText(state, new Date().toISOString())], { type: 'application/json' }));
+    var a = el('a', { href: url, download: 'screentalk-backup.json' });
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    showDataMsg('backupDone');
+  });
+  $('restore-btn').addEventListener('click', function () { $('restore-file').value = ''; $('restore-file').click(); });
+  $('restore-file').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    if (f.size > C.MAX_BACKUP_BYTES) return showDataMsg('restoreTooBig');
+    var read = f.text ? f.text() : new Promise(function (ok, bad) { var r = new FileReader(); r.onload = function () { ok(r.result); }; r.onerror = bad; r.readAsText(f); });
+    read.then(function (text) {
+      var b = C.parseBackup(text, R.packYears);
+      if (!b.ok) return showDataMsg(b.error === 'too_big' ? 'restoreTooBig' : 'restoreBad');
+      if (state.people.length && !confirm(F('restoreConfirm', { n: b.people.length }))) return;
+      state = { people: b.people, habits: b.habits };
+      save(); resetForm(); renderAll(); renderHabits();
+      showDataMsg('restored');
+    }, function () { showDataMsg('restoreBad'); });
+  });
+
   $('demo-btn').addEventListener('click', function () {
     var names = S('demoNames');
     state.people = C.demoFamily(names).map(function (p) { p.id = uid(); return C.sanitizePerson(p, R.packYears); });
@@ -707,6 +735,7 @@
   // Everything re-renders in the new language; people, progress, habits, and the game keep their state.
   // The message box is rebuilt in the new language (any edits to it are replaced).
   I.onChange(function () {
+    if (dataMsg) $('data-msg').textContent = S(dataMsg); // the last Back up / Restore note, re-worded
     // An untouched demo family follows the language (Mom/Dad/Nana/Big sis <-> Mamá/Papá/Abuela/Hermana mayor). Any edit, addition or removal keeps the names as typed.
     (function () {
       var now = S('demoNames'), n = state.people.length;

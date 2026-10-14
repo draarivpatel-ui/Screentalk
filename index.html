@@ -177,8 +177,12 @@
           </div>
           <div class="plan-tools">
             <button class="btn ghost" id="print-btn" type="button" disabled><span data-i18n="printBtn">Print / save as PDF</span></button>
+            <button class="btn ghost" id="backup-btn" type="button" disabled data-i18n="backupBtn">Back up (JSON)</button>
+            <button class="btn ghost" id="restore-btn" type="button" data-i18n="restoreBtn">Restore from backup</button>
+            <input type="file" id="restore-file" accept="application/json,.json" hidden aria-label="Backup file to restore" />
             <button class="btn ghost danger" id="clear-btn" type="button" data-i18n="clearBtn">Clear all data</button>
           </div>
+          <p class="data-msg" id="data-msg"></p>
         </div>
       </div>
     </section>
