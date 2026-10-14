@@ -156,6 +156,8 @@ Repo **Settings → Pages → Build and deployment → Deploy from a branch → 
 
 This project was built with help from an AI assistant (Hark), which drafted code, tests and copy under Aariv Patel's direction. The app calls no AI service: the plan comes from a rules engine that encodes the ACS guidelines, the rehearsal parent's lines are scripted, and every fact links to its ACS, NCI or CDC source.
 
+The demo video (submitted Oct 11, 2026) was also made with Hark: the narration is a synthetic text-to-speech voice (Microsoft Edge neural TTS, en-US-Andrew) reading a Hark-drafted script, over screen recordings of the live app with the made-up demo family. Its test counts (72 unit, 156 browser) were true when it was recorded; the current counts are in **Tech** and **Run it**.
+
 ## What's next
 
 - A native-speaker review of the Spanish, then more languages (ACS publishes materials in many languages).
