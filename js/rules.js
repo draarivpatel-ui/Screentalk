@@ -385,7 +385,7 @@
     // ---- Breast cancer. ACS words this for "women"; we ask about breast tissue so the
     // plan fits everyone, and keep ACS's wording in the guideline text.
     if (person.breasts) {
-      timeline.push({ key: 'breast', label: 'Breast', start: 40, end: 90, open: true, segments: [{ start: 40, end: 45, soft: true, ages: '40\u201344' }, { start: 45, end: 90, ages: '45+' }] });
+      timeline.push({ key: 'breast', label: 'Breast', start: 40, end: 90, open: true, segments: [{ start: 40, end: 45, soft: true, ages: '40-44' }, { start: 45, end: 90, ages: '45+' }] });
       var b = mk('breast');
       if (age < 40) {
         b.status = STATUS.UPCOMING; b.startsIn = 40 - age;
@@ -402,7 +402,7 @@
     }
 
     // ---- Colorectal cancer (everyone at average risk)
-    timeline.push({ key: 'colorectal', label: 'Colorectal', start: 45, end: 85, segments: [{ start: 45, end: 76, ages: '45\u201375' }, { start: 76, end: 85, soft: true, ages: '76\u201385' }] });
+    timeline.push({ key: 'colorectal', label: 'Colorectal', start: 45, end: 85, segments: [{ start: 45, end: 76, ages: '45-75' }, { start: 76, end: 85, soft: true, ages: '76-85' }] });
     var c = mk('colorectal');
     if (age < 45) {
       c.status = STATUS.UPCOMING; c.startsIn = 45 - age;
@@ -419,7 +419,7 @@
 
     // ---- Cervical cancer
     if (person.cervix) {
-      timeline.push({ key: 'cervical', label: 'Cervical', start: 25, end: 90, open: true, segments: [{ start: 25, end: 66, ages: '25\u201365' }, { start: 66, end: 90, soft: true, ages: '66+' }] });
+      timeline.push({ key: 'cervical', label: 'Cervical', start: 25, end: 90, open: true, segments: [{ start: 25, end: 66, ages: '25-65' }, { start: 66, end: 90, soft: true, ages: '66+' }] });
       var cv = mk('cervical');
       if (age < 25) {
         cv.status = STATUS.UPCOMING; cv.startsIn = 25 - age;
@@ -447,7 +447,7 @@
       var pyKnown = py > 0;
       if (!(py >= 0)) py = 0;
       var qualifiesPY = py >= 20;
-      if (qualifiesPY) timeline.push({ key: 'lung', label: 'Lung', start: 50, end: 80, segments: [{ start: 50, end: 80, ages: '50\u201380' }] });
+      if (qualifiesPY) timeline.push({ key: 'lung', label: 'Lung', start: 50, end: 80, segments: [{ start: 50, end: 80, ages: '50-80' }] });
       var lg = mk('lung');
       if (age >= 50 && age <= 80 && qualifiesPY) {
         lg.status = STATUS.TALK_NOW; lg.summary = T.lungNowS; lg.detail = T.lungNowD;

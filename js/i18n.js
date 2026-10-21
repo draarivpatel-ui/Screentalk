@@ -28,7 +28,6 @@
       printHeadA: 'ScreenTalk family screening plan',
       printHeadB: 'Bring this to a checkup. Based on American Cancer Society guidelines for people at average risk. Not medical advice.',
       // ---- hero
-      heroEyebrow: 'CodeTheCure 2026, Prevention &amp; Education track. Made by a high school student.',
       heroH1: 'Help your family get cancer screening on time',
       heroLead: 'Screening tests can find some cancers early, before symptoms, when they are easier to treat. Add the adults in your family and ScreenTalk shows which American Cancer Society (ACS) guidelines apply to each of them. Then it helps you bring it up.',
       heroStat: 'In 2022, only 61% of U.S. adults ages 45 to 75 were up to date with colorectal cancer screening, so about 4 in 10 were behind (' + A(CDC_CRC_STAT, 'CDC') + ').',
@@ -142,7 +141,6 @@
       langChanged: 'Idioma: español',
       printHeadA: 'Plan familiar de detección de ScreenTalk',
       printHeadB: 'Lleva esto a un chequeo. Basado en las guías de la Sociedad Americana Contra el Cáncer para personas con riesgo promedio. No es consejo médico.',
-      heroEyebrow: 'CodeTheCure 2026, categoría Prevención y educación. Hecho por un estudiante de secundaria.',
       heroH1: 'Ayuda a tu familia a hacerse a tiempo las pruebas de detección del cáncer',
       heroLead: 'Las pruebas de detección pueden encontrar algunos cánceres temprano, antes de que haya síntomas, cuando son más fáciles de tratar. Agrega a los adultos de tu familia y ScreenTalk muestra qué guías de la Sociedad Americana Contra el Cáncer (ACS) aplican a cada uno. Luego te ayuda a sacar el tema.',
       heroStat: 'En 2022, solo el 61% de los adultos de 45 a 75 años en EE. UU. estaba al día con las pruebas de detección del cáncer colorrectal; es decir, cerca de 4 de cada 10 estaban atrasados (' + A(CDC_CRC_STAT, 'CDC, en inglés') + ').',

@@ -223,9 +223,9 @@ test('timeline segments match ACS: soft = choice to discuss', () => {
   const tl = R.evaluate(F(50)).timeline;
   const seg = k => tl.find(b => b.key === k).segments;
   const desc = k => seg(k).map(s => s.ages + (s.soft ? ' soft' : '')).join(', ');
-  assert.equal(desc('breast'), '40\u201344 soft, 45+');
-  assert.equal(desc('colorectal'), '45\u201375, 76\u201385 soft');
-  assert.equal(desc('cervical'), '25\u201365, 66+ soft');
+  assert.equal(desc('breast'), '40-44 soft, 45+');
+  assert.equal(desc('colorectal'), '45-75, 76-85 soft');
+  assert.equal(desc('cervical'), '25-65, 66+ soft');
   assert.ok(R.evaluate(M(50)).timeline.find(b => b.key === 'prostate').segments[0].soft);
 });
 

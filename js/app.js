@@ -338,7 +338,7 @@
   function describeBand(b) {
     var name = S('band')[b.key] || b.label;
     var parts = (b.segments || [{ start: b.start, end: b.end }]).map(function (sg) {
-      var range = sg.ages || (sg.start + '\u2013' + sg.end);
+      var range = sg.ages || (sg.start + '-' + sg.end);
       return range + (sg.soft ? S('tlSoft') : S('tlSolid'));
     });
     return name + ': ' + parts.join(', ');
