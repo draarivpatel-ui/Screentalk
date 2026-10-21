@@ -8,9 +8,9 @@ ScreenTalk shows which cancer screening guidelines apply to each adult in your f
 
 *The finished family plan after one tap on "Load demo family" (made-up people). Real screenshot of the app at 1280 px, taken with headless Chromium on Oct 11, 2026.*
 
-ScreenTalk is a free, private web app I built so high school students can turn the American Cancer Society (ACS) cancer screening guidelines into a concrete plan for the adults in their family, then bring the conversation up at home and keep track of what happens next.
+ScreenTalk is a free, private web app built so students and families can turn the American Cancer Society (ACS) cancer screening guidelines into a concrete plan for the adults in their family, then bring the conversation up at home and keep track of what happens next.
 
-Built by Aariv Patel (9th grade, Dulles High School Math and Science Academy) for the [2026 International CodeTheCure Hackathon](https://codethecure-hackathon-26.devpost.com/) · Track: **Prevention & Education**
+Built by Aariv Patel for the [2026 International CodeTheCure Hackathon](https://codethecure-hackathon-26.devpost.com/) · Track: **Prevention & Education**
 
 > **Note:** ScreenTalk is an educational tool. It shares general ACS guidelines for people at average risk with no symptoms. It does **not** diagnose, estimate anyone's cancer risk, or replace a healthcare provider.
 
