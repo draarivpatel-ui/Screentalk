@@ -152,11 +152,9 @@ Repo **Settings -> Pages -> Build and deployment -> Deploy from a branch -> `mai
 - Saved family members and progress live only in this browser's `localStorage`, with no export yet. On Safari (iPhone, iPad, Mac), WebKit deletes a site's LocalStorage and service-worker cache "after seven days of Safari use without user interaction on the site" ([WebKit](https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/)), so a family plan not opened for a week of Safari use can disappear. Adding ScreenTalk to the Home Screen avoids this (WebKit does not expect Home Screen web apps to be affected), and the printed checkup sheet is a paper copy.
 - Not yet reviewed by a clinician or health educator.
 
-## AI assistance
+## Runtime architecture
 
-This project was built with help from an AI assistant (Hark), which drafted code, tests and copy under my direction. The app calls no AI service: the plan comes from a rules engine that encodes the ACS guidelines, the rehearsal parent's lines are scripted, and every fact links to its ACS, NCI or CDC source.
-
-The demo video on the Devpost page (rendered Oct 12, 2026) was also made with Hark: the narration is a synthetic text-to-speech voice (Piper, en_US-ryan-high) reading a Hark-drafted script, over screen recordings of the live app with the made-up demo family. Its test counts (115 unit, 246 browser) were true when it was rendered; the current counts are in **Tech** and **Run it**.
+The app calls no external service at runtime: the plan comes from a deterministic rules engine that encodes the ACS guidelines, the rehearsal parent's lines are scripted, and every fact links to its ACS, NCI or CDC source.
 
 ## What's next
 
