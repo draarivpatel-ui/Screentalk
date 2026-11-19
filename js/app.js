@@ -63,7 +63,6 @@
     b.addEventListener('click', onClick);
     return b;
   }
-  function possessive(name) { return name + (/s$/i.test(name) ? '\u2019' : '\u2019s'); }
 
   // ---------- Form ----------
   var form = $('person-form');
