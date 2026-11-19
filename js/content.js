@@ -381,7 +381,6 @@
       footer: 'Hecho con ScreenTalk. Guías generales de la Sociedad Americana Contra el Cáncer para personas con riesgo promedio y sin síntomas. Solo para educación, no es consejo médico. Cualquier persona con síntomas debe consultar a un proveedor de atención médica.'
     }
   };
-  var SHEET_STATUS = SHEET.en.status;
   /**
    * Data for a one-page sheet to bring to a checkup. Pure data, so it can be tested in Node.
    * rows   = topics to bring up now (talk-now, option, info), each with a fill-in "last test" row
@@ -448,7 +447,7 @@
 
   var api = {
     CARDS: CARDS, DEMO_FAMILY: DEMO_FAMILY, demoFamily: demoFamily, HABITS: HABITS, HABITS_ES: HABITS_ES, RESOURCES: RESOURCES, PROGRESS: PROGRESS, LANGS: LANGS,
-    STARTER: STARTER, TOPIC_PHRASES: TOPIC_PHRASES, QUESTIONS: QUESTIONS, SHEET: SHEET, SHEET_STATUS: SHEET_STATUS,
+    STARTER: STARTER, TOPIC_PHRASES: TOPIC_PHRASES, QUESTIONS: QUESTIONS, SHEET: SHEET,
     card: card, habits: habits, resources: resources, progressLabel: progressLabel,
     starter: starter, joinList: joinList, questions: questions, sanitizePerson: sanitizePerson, buildICS: buildICS, checkupSheet: checkupSheet
   };
