@@ -305,7 +305,6 @@
 
   var api = {
     ROUNDS: ROUNDS, SOURCES: SRC, STRINGS: STRINGS, LANGS: LANGS, PARENTS: PARENTS,
-    POINTS: POINTS, MOOD: MOOD, START_MOOD: START_MOOD,
     fmt: fmt, t: t, parentName: parentName,
     create: create, isDone: isDone, parentLine: parentLine, options: options, choose: choose,
     feedback: feedback, maxScore: maxScore, ratingKey: ratingKey, endingKey: endingKey, result: result

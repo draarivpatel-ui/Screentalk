@@ -535,8 +535,8 @@
 
   var api = {
     evaluate: evaluate, packYears: packYears, familySummary: familySummary,
-    smokingStatus: smokingStatus, prostateFamily: prostateFamily, prostateStartAge: prostateStartAge, hasUterus: hasUterus,
-    STATUS: STATUS, SOURCES: SRC, CHECKED: CHECKED, REVISED: REVISED, US_FINAL: US_FINAL, shortDate: shortDate, SOURCES_ES: SRC_ES, SOURCES_US: SRC_US, SOURCES_COST: SRC_COST, usNote: usNote, costNote: costNote, quitRule: quitRule, TEXT: TEXT, LANGS: LANGS
+    smokingStatus: smokingStatus, prostateFamily: prostateFamily, prostateStartAge: prostateStartAge,
+    SOURCES: SRC, CHECKED: CHECKED, REVISED: REVISED, US_FINAL: US_FINAL, shortDate: shortDate, SOURCES_ES: SRC_ES, SOURCES_US: SRC_US, SOURCES_COST: SRC_COST, costNote: costNote, quitRule: quitRule, TEXT: TEXT, LANGS: LANGS
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ScreenTalkRules = api;
